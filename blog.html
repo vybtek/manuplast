@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog</title>
+    <link href="style.css" rel="stylesheet" />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="headerFooter.js"></script>
+  </head>
+  <body>
+    <!-- Header area section start -->
+    <special-header></special-header>
+
+    <!-- banner section -->
+    <div class="max-w-6xl mx-auto grid md:grid-cols-3 gap-8 mt-12 mb-8">
+      <!-- Left Section: Image -->
+      <div class="md:col-span-2">
+        <img
+          src="https://klbtheme.com/furnob/wp-content/uploads/2021/12/blog-post-01.jpg"
+          alt="Blog Image"
+          class="w-full rounded-lg shadow-md"
+        />
+      </div>
+
+      <!-- Right Section: Sidebar -->
+      <div class="bg-white p-6">
+        <!-- Categories -->
+        <div class="mb-6">
+          <h3 class="font-semibold text-lg mb-2">Categories</h3>
+          <ul class="text-gray-700">
+            <li class="mb-1">> Decoration</li>
+            <li class="mb-1">> Home Living</li>
+            <li>> Interior Design</li>
+          </ul>
+        </div>
+
+        <!-- Popular Posts -->
+        <div>
+          <h3 class="font-semibold text-lg mb-2">Popular Posts</h3>
+          <div class="space-y-4">
+            <div class="flex items-center space-x-4">
+              <img
+                src="https://klbtheme.com/furnob/wp-content/uploads/2021/12/blog-post-02-100x100.jpg"
+                class="w-16 h-16 object-cover"
+              />
+              <div>
+                <p class="text-sm text-gray-500">December 19, 2024</p>
+                <h4 class="font-medium text-gray-900">
+                  My House Designed In Wood
+                </h4>
+              </div>
+            </div>
+            <div class="flex items-center space-x-4">
+              <img
+                src="https://klbtheme.com/furnob/wp-content/uploads/2021/12/blog-post-01-100x100.jpg"
+                class="w-16 h-16 object-cover"
+              />
+              <div>
+                <p class="text-sm text-gray-500">December 23, 2024</p>
+                <h4 class="font-medium text-gray-900">
+                  Decorating a Rustic Home
+                </h4>
+              </div>
+            </div>
+            <div class="flex items-center space-x-4">
+              <img
+                src="https://klbtheme.com/furnob/wp-content/uploads/2021/12/blog-post-03-100x100.jpg"
+                class="w-16 h-16 object-cover"
+              />
+              <div>
+                <p class="text-sm text-gray-500">December 29, 2024</p>
+                <h4 class="font-medium text-gray-900">
+                  When four walls get too small
+                </h4>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- blogs are coming from backend -->
+    <div
+      class="max-w-6xl mx-auto grid md:grid-cols-1 gap-8 mt-12 mb-8"
+      id="blog-grid"
+    >
+      <!-- Blogs will be dynamically inserted here -->
+    </div>
+    <script src="blogs.js"></script>
+    <special-footer></special-footer>
+  </body>
+</html>

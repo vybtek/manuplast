@@ -1,0 +1,33 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Projects</title>
+    <script src="sidebar.js" defer></script>
+    <link href="style.css" rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="headerFooter.js"></script>
+    <script src="projects.js"></script>
+  </head>
+  <body class="bg-gray-100 flex">
+    <!-- Sidebar -->
+    <special-sidebar class="w-1/4 h-screen"></special-sidebar>
+
+    <!-- Main Content -->
+    <div class="flex justify-center items-start w-3/4 pt-10 p-4">
+      <div id="dashboard-project-list" class="space-y-4 w-full">
+        <!-- Projects will be dynamically loaded here -->
+      </div>
+    </div>
+
+    <script>
+      window.onload = function() {
+        fetchProjects('dashboard-project-list', 'dashboard');
+      };
+    </script>
+  </body>
+</html>

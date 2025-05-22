@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="h-screen flex items-center justify-center bg-gray-100">
+    <div class="bg-white p-8 rounded shadow-md w-full max-w-sm">
+      <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Login</h2>
+      <form id="login-form" class="space-y-4">
+        <input
+          type="text"
+          id="username"
+          placeholder="Username"
+          class="w-full p-2 border rounded"
+          required
+        />
+        <input
+          type="password"
+          id="password"
+          placeholder="Password"
+          class="w-full p-2 border rounded"
+          required
+        />
+        <button
+          type="submit"
+          class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+        >
+          Login
+        </button>
+      </form>
+      <p
+        id="error-message"
+        class="text-red-500 text-sm mt-3 text-center hidden"
+      >
+        Invalid credentials
+      </p>
+    </div>
+
+    <script>
+      document
+        .getElementById("login-form")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          const username = document.getElementById("username").value;
+          const password = document.getElementById("password").value;
+          const errorMessage = document.getElementById("error-message");
+
+          const validUsername = "admin";
+          const validPassword = "admin123";
+
+          if (username === validUsername && password === validPassword) {
+            localStorage.setItem("isLoggedIn", "true");
+            window.location.href = "dashboard.html";
+          } else {
+            errorMessage.classList.remove("hidden");
+          }
+        });
+    </script>
+  </body>
+</html>

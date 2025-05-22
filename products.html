@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Products</title>
+    <link href="style.css" rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- CSS Animations -->
+    <style>
+      .animate-spin-slow {
+        animation: spin 12s linear infinite;
+      }
+      @keyframes spin {
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .animate-width-expand {
+        animation: widthGrow 2s ease-out forwards;
+      }
+      @keyframes widthGrow {
+        0% {
+          width: 0;
+        }
+        100% {
+          width: 80px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Header -->
+    <special-header></special-header>
+
+    <!-- Minimal Monochrome + Red Accent Banner -->
+    <section
+      class="relative w-full h-[80vh] flex items-center bg-black overflow-hidden"
+    >
+      <!-- Dynamic Stripe Pattern Background -->
+      <div class="absolute inset-0 opacity-20">
+        <div
+          class="absolute inset-0 bg-[linear-gradient(135deg,#000_25%,transparent_25%,transparent_50%,#000_50%,#000_75%,transparent_75%)] bg-[length:6px_6px]"
+        ></div>
+      </div>
+
+      <!-- Animated Red Accent Elements -->
+      <div
+        class="absolute top-20 left-10 w-3 h-3 bg-red-600 rounded-full animate-pulse"
+      ></div>
+      <div
+        class="absolute bottom-1/4 right-16 w-6 h-6 border-2 border-red-600 animate-spin-slow"
+      ></div>
+
+      <!-- Main Content with Bold Typography -->
+      <div class="relative z-10 text-center px-6 mx-auto max-w-4xl">
+        <!-- Striking Text Layout -->
+        <div class="overflow-hidden">
+          <h1
+            class="text-white text-5xl md:text-6xl font-bold mb-6 leading-tight"
+          >
+            <span class="block">GET STARTED WITH</span>
+            <span class="block text-red-600">MANU PLAST</span>
+            <span class="block">PERFECT.</span>
+          </h1>
+        </div>
+
+        <!-- Animated Red Underline -->
+        <div class="relative max-w-xs mx-auto mb-8">
+          <p class="text-gray-300 text-sm md:text-base">
+            Timeless designs with bold accents
+          </p>
+          <div
+            class="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-20 h-0.5 bg-red-600 animate-width-expand"
+          ></div>
+        </div>
+
+        <!-- Unique Interactive Button -->
+        <button
+          class="group relative px-8 py-3 bg-transparent border border-white text-white font-medium rounded-none overflow-hidden transition-all duration-500 hover:text-black"
+        >
+          <span class="relative z-10">DISCOVER NOW</span>
+          <span
+            class="absolute inset-0 bg-red-600 origin-left transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500"
+          ></span>
+          <span
+            class="absolute right-4 group-hover:translate-x-1 transition-transform duration-300"
+            >→</span
+          >
+        </button>
+
+        <div id="#products"></div>
+      </div>
+
+      <!-- Subtle Product Silhouette (Optional) -->
+      <div class="absolute bottom-0 right-10 w-64 h-64 opacity-10">
+        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+          <path
+            fill="white"
+            d="M50,50 L150,50 L180,100 L150,150 L50,150 L20,100 Z"
+          />
+        </svg>
+      </div>
+    </section>
+
+    <!-- Product categories section -->
+    <section class="max-w-6xl mx-auto px-6 py-12">
+      <div
+        id="product-grid"
+        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"
+      >
+        <!-- Products will be dynamically added here -->
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <special-footer></special-footer>
+    <script src="headerFooter.js"></script>
+    <script src="products.js"></script>
+  </body>
+</html>

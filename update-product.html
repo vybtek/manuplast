@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Update Product</title>
+    <script src="sidebar.js" defer></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+  </head>
+  <body class="bg-gray-100 flex">
+    <!-- Sidebar -->
+    <special-sidebar class="w-1/4 h-screen"></special-sidebar>
+
+    <!-- Main Content -->
+    <div class="flex justify-center items-start w-3/4 pt-10 pl-4">
+      <div class="w-full max-w-4xl bg-white p-8 rounded-lg shadow-lg">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">
+          Update Product
+        </h1>
+
+        <form id="update-product-form" class="space-y-6">
+          <!-- Product ID (disabled) -->
+          <div>
+            <label for="product-id" class="block text-gray-700 font-medium mb-1"
+              >Product ID</label
+            >
+            <input
+              type="text"
+              id="product-id"
+              class="w-full p-3 border border-gray-300 rounded-lg bg-gray-100 text-gray-600 cursor-not-allowed"
+              disabled
+            />
+          </div>
+
+          <!-- Product Name -->
+          <div>
+            <label for="name" class="block text-gray-700 font-medium mb-1"
+              >Product Name</label
+            >
+            <input
+              type="text"
+              id="name"
+              class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Enter Product Name"
+            />
+          </div>
+
+          <!-- Product Image -->
+          <div>
+            <label for="image" class="block text-gray-700 font-medium mb-1"
+              >Product Image URL</label
+            >
+            <input
+              type="url"
+              id="image"
+              class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Enter Product Image URL"
+            />
+          </div>
+
+          <!-- Product Description -->
+          <div>
+            <label
+              for="description"
+              class="block text-gray-700 font-medium mb-1"
+              >Product Description</label
+            >
+            <textarea
+              id="description"
+              rows="4"
+              class="w-full p-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Enter Product Description"
+            ></textarea>
+          </div>
+
+          <!-- Product Types Section -->
+          <div>
+            <h2 class="text-2xl font-semibold text-gray-800 mb-2">
+              Product Types
+            </h2>
+            <div id="types-container" class="space-y-6"></div>
+          </div>
+
+          <!-- Submit Button -->
+          <div class="text-center">
+            <button
+              type="submit"
+              class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-300 w-full sm:w-auto"
+            >
+              Update Product
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="products.js"></script>
+  </body>
+</html>

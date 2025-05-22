@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>About</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="script.js"></script>
+    <script src="headerFooter.js"></script>
+    <link href="style.css" rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+  </head>
+  <body class="bg-gray-100">
+    <!-- Header -->
+    <special-header></special-header>
+
+    <!-- Banner Section -->
+    <section
+      class="relative w-full h-[60vh] md:h-[80vh] flex items-center justify-center bg-cover bg-center"
+      style="
+        background-image: url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+      "
+    >
+      <div class="absolute inset-0 bg-black bg-opacity-40"></div>
+      <div class="relative text-center px-6 md:px-12">
+        <h3 class="text-white text-sm md:text-lg font-medium mb-2">
+          Sustainable Hydration Solutions
+        </h3>
+        <p class="text-white text-sm md:text-lg max-w-2xl mx-auto">
+          Discover our journey to revolutionize hydration with eco-friendly,
+          stylish, and innovative bottles designed for a better planet.
+        </p>
+      </div>
+    </section>
+
+    <!-- Company Profile Section -->
+    <section class="py-16 bg-white">
+      <div class="container mx-auto px-6 md:px-12">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl md:text-4xl font-bold text-gray-800">
+            Who We Are
+          </h2>
+          <p class="text-gray-600 mt-4 max-w-3xl mx-auto">
+            AquaVita is a leading innovator in sustainable drinkware, dedicated
+            to crafting high-quality, eco-conscious bottles that inspire
+            healthier lifestyles and a greener planet.
+          </p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+          <div>
+            <img
+              src="https://cdn.shopify.com/s/files/1/0439/2537/3087/files/Screen_Shot_2022-11-29_at_1.59.55_PM.png?v=1669755785"
+              alt="AquaVita bottles"
+              class="rounded-lg shadow-lg w-[90%]"
+            />
+          </div>
+          <div>
+            <h3 class="text-2xl font-semibold text-gray-800 mb-4">Our Story</h3>
+            <p class="text-gray-600 leading-relaxed">
+              Founded in 2018, AquaVita began with a simple mission: to reduce
+              single-use plastic waste by creating durable, stylish, and
+              functional bottles. From our headquarters in Seattle, we’ve grown
+              into a global brand trusted by millions. Our team of designers and
+              engineers works tirelessly to blend cutting-edge technology with
+              sustainable materials, ensuring every AquaVita bottle is a step
+              toward a cleaner future.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Mission & Vision Section -->
+    <section class="py-16 bg-gray-100">
+      <div class="container mx-auto px-6 md:px-12">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+          <div class="text-center">
+            <h3 class="text-2xl font-semibold text-gray-800 mb-4">
+              Our Mission
+            </h3>
+            <p class="text-gray-600 max-w-md mx-auto">
+              To empower people to live sustainably by providing innovative,
+              eco-friendly hydration solutions that reduce waste and promote
+              wellness.
+            </p>
+          </div>
+          <div class="text-center">
+            <h3 class="text-2xl font-semibold text-gray-800 mb-4">
+              Our Vision
+            </h3>
+            <p class="text-gray-600 max-w-md mx-auto">
+              A world where single-use plastics are a thing of the past, and
+              every individual has access to stylish, sustainable drinkware that
+              reflects their values.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Milestones/Timeline Section -->
+    <section class="py-16 bg-white">
+      <div class="container mx-auto px-6 md:px-12">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl md:text-4xl font-bold text-gray-800">
+            Our Journey
+          </h2>
+          <p class="text-gray-600 mt-4 max-w-3xl mx-auto">
+            From our humble beginnings to global impact, here are the key
+            milestones that define AquaVita’s story.
+          </p>
+        </div>
+        <div class="relative max-w-4xl mx-auto">
+          <!-- Timeline Line -->
+          <div
+            class="absolute left-1/2 transform -translate-x-1/2 w-1 bg-gray-300 h-full"
+          ></div>
+          <!-- Timeline Items -->
+          <div class="mb-12 relative flex flex-col md:flex-row items-center">
+            <div class="md:w-5/12 text-right order-2 md:order-1">
+              <div class="bg-gray-100 p-6 rounded-lg shadow-md">
+                <h4 class="text-xl font-semibold text-gray-800">2018</h4>
+                <p class="text-gray-600">
+                  AquaVita founded in Seattle, launching our first reusable
+                  bottle line.
+                </p>
+              </div>
+            </div>
+            <div
+              class="w-8 h-8 bg-blue-600 rounded-full absolute left-1/2 transform -translate-x-1/2 z-10 order-1 md:order-2"
+            ></div>
+            <div class="md:w-5/12 order-3"></div>
+          </div>
+          <div class="mb-12 relative flex flex-col md:flex-row items-center">
+            <div class="md:w-5/12 order-3"></div>
+            <div
+              class="w-8 h-8 bg-blue-600 rounded-full absolute left-1/2 transform -translate-x-1/2 z-10 order-1 md:order-2"
+            ></div>
+            <div class="md:w-8/12 text-left pl-40 order-2 md:order-3">
+              <div class="bg-gray-100 p-6 rounded-lg shadow-md">
+                <h4 class="text-xl font-semibold text-gray-800">2020</h4>
+                <p class="text-gray-600">
+                  Introduced biodegradable materials, reducing our carbon
+                  footprint by 30%.
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="mb-12 relative flex flex-col md:flex-row items-center">
+            <div class="md:w-5/12 text-right  order-2 md:order-1">
+              <div class="bg-gray-100 p-6 rounded-lg shadow-md">
+                <h4 class="text-xl font-semibold text-gray-800">2022</h4>
+                <p class="text-gray-600">
+                  AquaVita founded in Seattle, launching our first reusable
+                  bottle line.
+                </p>
+              </div>
+            </div>
+            <div
+              class="w-8 h-8 bg-blue-600 rounded-full absolute left-1/2 transform -translate-x-1/2 z-10 order-1 md:order-2"
+            ></div>
+            <div class="md:w-5/12 order-3"></div>
+          </div>
+          <div class="mb-12 relative flex flex-col md:flex-row items-center">
+            <div class="md:w-5/12 order-3"></div>
+            <div
+              class="w-8 h-8 bg-blue-600 rounded-full absolute left-1/2 transform -translate-x-1/2 z-10 order-1 md:order-2"
+            ></div>
+            <div class="md:w-8/12 text-left pl-40 order-2 md:order-3">
+              <div class="bg-gray-100 p-6 rounded-lg shadow-md">
+                <h4 class="text-xl font-semibold text-gray-800">2024</h4>
+                <p class="text-gray-600">
+                  Introduced biodegradable materials, reducing our carbon
+                  footprint by 30%.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <special-footer></special-footer>
+  </body>
+</html>

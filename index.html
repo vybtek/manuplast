@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manu Plast</title>
+    <link href="style.css" rel="stylesheet" />
+    <!-- Swiper CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="script.js"></script>
+    <script src="headerFooter.js"></script>
+  </head>
+  <body>
+    <!-- Header area section start -->
+    <special-header></special-header>
+
+    <!-- Unique Homepage Banner Section -->
+    <section
+      class="relative max-w-full mx-auto px-6 md:px-12 lg:px-16 py-12 overflow-hidden"
+    >
+      <!-- Abstract Background Elements -->
+      <div
+        class="absolute top-0 left-0 w-1/3 h-full bg-gray-100 -skew-x-12 -translate-x-20"
+      ></div>
+      <div
+        class="absolute bottom-10 right-10 w-40 h-40 rounded-full bg-orange-500 opacity-10"
+      ></div>
+
+      <div
+        class="grid grid-cols-1 md:grid-cols-2 gap-10 items-center relative z-10"
+      >
+        <!-- Left Content -->
+        <div class="text-left">
+          <div class="flex items-center gap-3 mb-4">
+            <span class="text-orange-500 text-2xl animate-pulse">
+              <i class="fa-solid fa-sparkles"></i>
+            </span>
+            <span class="text-sm font-medium tracking-widest text-gray-500">
+              TRENDING 2025 COLLECTION
+            </span>
+          </div>
+
+          <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
+            <span class="block">Redefine Your</span>
+            <span class="relative inline-block">
+              <span class="text-red-700">Space</span>
+              <svg
+                class="absolute -bottom-2 left-0 w-full h-2"
+                viewBox="0 0 100 10"
+              >
+                <path
+                  d="M 0,5 Q 25,10 50,5 T 100,5"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  fill="none"
+                  class="text-red-300"
+                />
+              </svg>
+            </span>
+          </h1>
+
+          <p class="text-gray-600 text-lg mt-6 max-w-lg">
+            Elevate every sip with bottles that reflect your personality.
+            Precision-crafted vessels blending sleek design with everyday
+            functionality.
+          </p>
+
+          <div class="flex gap-4 mt-8">
+            <a
+              href="products.html"
+              class="px-6 py-3 bg-red-700 text-white font-medium hover:bg-red-600 transition-all transform hover:scale-105"
+            >
+              Shop Now
+            </a>
+            <a
+              href="#features"
+              class="px-6 py-3 border border-gray-300 font-medium hover:bg-gray-50 transition-all"
+            >
+              Explore Designs
+            </a>
+          </div>
+
+          <!-- Mini Stats -->
+          <div class="flex gap-6 mt-10 text-sm">
+            <div class="border-r pr-6 border-gray-200">
+              <p class="font-bold text-lg">10K+</p>
+              <p class="text-gray-500">Happy Homes</p>
+            </div>
+            <div class="border-r pr-6 border-gray-200">
+              <p class="font-bold text-lg">5★</p>
+              <p class="text-gray-500">Rated Quality</p>
+            </div>
+            <div>
+              <p class="font-bold text-lg">100%</p>
+              <p class="text-gray-500">Customizable</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Image - Modern Layout -->
+        <div class="relative h-full min-h-[400px]">
+          <!-- Main Product Image -->
+          <div
+            class="absolute top-0 right-0 w-3/4 h-3/4 bg-gray-50 shadow-xl overflow-hidden"
+          >
+            <img
+              src="https://www.seriouseats.com/thmb/S-Xc0JnmzGOrgIPYsaH3IepjR4Q=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/waterbottle_lineup_reshoot_1-630ca81c320c48d684f269d82783acb2.jpeg"
+              alt="Modern Furniture"
+              class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+            />
+          </div>
+
+          <!-- Secondary Image Overlay -->
+          <div
+            class="absolute bottom-0 left-0 w-1/2 h-1/2 border-4 border-white shadow-lg z-10"
+          >
+            <img
+              src="https://m.media-amazon.com/images/I/4121l07JxoL._AC_UF1000,1000_QL80_.jpg"
+              alt="Furniture Detail"
+              class="w-full h-full object-cover"
+            />
+          </div>
+
+          <!-- Decorative Badge -->
+          <div
+            class="absolute -right-4 top-1/4 bg-red-700 text-white px-4 py-2 rotate-12 shadow-lg"
+          >
+            <p class="font-bold text-sm">NEW<br />ARRIVAL</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- bottle designs section start -->
+    <div id="features" class="max-w-6xl mx-auto px-4 py-12">
+      <!-- Heading -->
+      <div class="text-center">
+        <h2 class="text-2xl md:text-3xl font-semibold">
+          Top Bottle Designs With <span class="italic">'BottleVibe'</span>
+        </h2>
+        <p class="text-gray-600 mt-2 max-w-2xl mx-auto">
+          From eco-friendly reusables to sleek premium designs — we craft
+          bottles that combine style, function, and sustainability
+        </p>
+      </div>
+
+      <!-- Bottle Designs Grid -->
+      <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        <!-- Bottle Card 1 -->
+        <div class="bg-white overflow-hidden">
+          <img
+            src="https://www.shutterstock.com/image-photo/top-view-thermos-water-bottle-600nw-1477738205.jpg"
+            alt="EcoSip Bottle"
+            class="w-full h-80 object-cover"
+          />
+          <div class="p-4">
+            <h3 class="text-lg font-bold">EcoSip Bottle</h3>
+            <p class="text-gray-600 text-sm">Sustainable Stainless Steel</p>
+          </div>
+        </div>
+
+        <!-- Bottle Card 2 -->
+        <div class="bg-white overflow-hidden">
+          <img
+            src="data:image/jpeg;base64,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"
+            alt="CrystalFlow Bottle"
+            class="w-full h-80 object-cover"
+          />
+          <div class="p-4">
+            <h3 class="text-lg font-bold">CrystalFlow Bottle</h3>
+            <p class="text-gray-600 text-sm">BPA-Free Glass Design</p>
+          </div>
+        </div>
+
+        <!-- Bottle Card 3 -->
+        <div class="bg-white overflow-hidden">
+          <img
+            src="https://www.solara.in/cdn/shop/files/1J3A5043k_1_1_1_1_1_1.jpg?v=1710758611&width=1075"
+            alt="UrbanTrek Bottle"
+            class="w-full h-80 object-cover"
+          />
+          <div class="p-4">
+            <h3 class="text-lg font-bold">UrbanTrek Bottle</h3>
+            <p class="text-gray-600 text-sm">Compact Travel Companion</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 py-12">
+      <!-- Hero Section -->
+      <div
+        class="relative bg-cover bg-center h-[600px] rounded-xl overflow-hidden parallax"
+        style="
+          background-image: url('https://www.solara.in/cdn/shop/files/banner_3_copy.jpg?v=1747027428&width=2000');
+        "
+      >
+        <div
+          class="absolute inset-0 bg-black bg-opacity-40 flex flex-col justify-center items-center text-center text-white px-6"
+        >
+          <p
+            class="text-sm font-semibold tracking-wider uppercase text-yellow-300"
+          >
+            Massey Collection 2025
+          </p>
+          <h2 class="text-4xl md:text-5xl font-extrabold mt-4 leading-tight">
+            New Decoration For Your Living Spaces
+          </h2>
+          <p class="mt-6 max-w-md text-gray-200">
+            Praesent faucibus, lorem et sollicitudin dapibus, quam ligula
+            pretium magna, eu congue ex quam at neque.
+          </p>
+          <!-- Countdown Timer -->
+          <div class="mt-8 flex space-x-4 text-center">
+            <div
+              class="bg-white bg-opacity-20 backdrop-blur-md px-6 py-3 rounded-lg"
+            >
+              <p id="days" class="text-2xl font-bold">00</p>
+              <p class="text-sm">Days</p>
+            </div>
+            <div
+              class="bg-white bg-opacity-20 backdrop-blur-md px-6 py-3 rounded-lg"
+            >
+              <p id="hours" class="text-2xl font-bold">00</p>
+              <p class="text-sm">Hours</p>
+            </div>
+            <div
+              class="bg-white bg-opacity-20 backdrop-blur-md px-6 py-3 rounded-lg"
+            >
+              <p id="minutes" class="text-2xl font-bold">00</p>
+              <p class="text-sm">Minutes</p>
+            </div>
+            <div
+              class="bg-white bg-opacity-20 backdrop-blur-md px-6 py-3 rounded-lg"
+            >
+              <p id="seconds" class="text-2xl font-bold">00</p>
+              <p class="text-sm">Seconds</p>
+            </div>
+          </div>
+          <p class="mt-4 text-sm font-medium">
+            It’ll be worth the wait very soon!
+          </p>
+        </div>
+      </div>
+
+      <!-- Collections Section -->
+      <div class="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Deluxe Venezie Collection -->
+        <div class="card relative rounded-xl overflow-hidden">
+          <img
+            src="https://m.media-amazon.com/images/I/71x-nc5DLqL.jpg"
+            alt="Sofa Collection"
+            class="w-full h-[300px] object-cover"
+          />
+          <div class="gradient-overlay"></div>
+          <div
+            class="absolute top-4 left-4 bg-white bg-opacity-90 text-gray-700 px-3 py-1 text-sm rounded shadow-md"
+          >
+            Designed by <span class="font-semibold">Clint Dunham - France</span>
+          </div>
+          <div class="absolute bottom-4 left-4 text-white">
+            <h3 class="text-xl font-semibold">Deluxe Venezie Collection</h3>
+            <a
+              href="products.html"
+              class="text-yellow-300 font-medium text-sm hover:underline"
+              >Shop Collection →</a
+            >
+          </div>
+        </div>
+
+        <!-- Le'Bologna Collection -->
+        <div class="card relative rounded-xl overflow-hidden">
+          <img
+            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSbxR818t1pG82dPDGD3srVOMWJARsfc1sTjA&s"
+            alt="Table Collection"
+            class="w-full h-[300px] object-cover"
+          />
+          <div class="gradient-overlay"></div>
+          <div class="absolute bottom-4 left-4 text-white">
+            <h3 class="text-xl font-semibold">Le’Bologna Collection</h3>
+            <a
+              href="products.html"
+              class="text-yellow-300 font-medium text-sm hover:underline"
+              >Shop Collection →</a
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- Featured Section -->
+      <!-- <div class="mt-12 bg-white rounded-xl p-8 shadow-lg">
+      <h3 class="text-2xl font-bold text-gray-900">Featured Design</h3>
+      <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-8">
+        <img src="https://klbtheme.com/furnob/wp-content/uploads/2022/01/image-02.jpg" alt="Yellow Chair" class="w-full h-[300px] object-cover rounded-lg shadow-md">
+        <div>
+          <p class="font-semibold text-gray-800">– Great Design For Home and Decoration</p>
+          <p class="mt-4 text-gray-600">Praesent faucibus, lorem et sollicitudin dapibus, quam ligula pretium magna, eu congue ex quam at neque.</p>
+          <p class="text-yellow-600 font-semibold mt-4">Gligora Darby</p>
+        </div>
+      </div>
+    </div> -->
+    </div>
+    <!-- Testimonials Section -->
+    <section class="py-8 px-6">
+      <!-- Customer Review Section -->
+      <div class="mt-12 text-center mb-4">
+        <h3 class="text-xl md:text-2xl font-semibold">
+          What do our customers think about our bottles?
+        </h3>
+        <p class="text-gray-600 mt-2 max-w-2xl mx-auto">
+          Our customers love the durability, style, and eco-conscious design of
+          our bottles, making hydration a breeze wherever they go.
+        </p>
+      </div>
+
+      <div class="swiper-container">
+        <div class="swiper-wrapper">
+          <!-- Testimonial 1 -->
+          <div class="swiper-slide">
+            <div class="bg-white rounded-lg p-6 max-w-sm text-center shadow">
+              <img
+                src="https://randomuser.me/api/portraits/women/1.jpg"
+                class="w-20 h-20 rounded-full mx-auto"
+              />
+              <h3 class="text-lg font-semibold mt-4">Allen Smith</h3>
+              <div class="text-yellow-500 text-lg">★★★★★</div>
+              <p class="text-gray-600 mt-2">Amazing product quality!</p>
+            </div>
+          </div>
+
+          <!-- Testimonial 2 -->
+          <div class="swiper-slide">
+            <div class="bg-white rounded-lg p-6 max-w-sm text-center shadow">
+              <img
+                src="https://randomuser.me/api/portraits/men/2.jpg"
+                class="w-20 h-20 rounded-full mx-auto"
+              />
+              <h3 class="text-lg font-semibold mt-4">Teresa Holland</h3>
+              <div class="text-yellow-500 text-lg">★★★★★</div>
+              <p class="text-gray-600 mt-2">Fast delivery. Love it!</p>
+            </div>
+          </div>
+
+          <!-- Testimonial 3 -->
+          <div class="swiper-slide">
+            <div class="bg-white rounded-lg p-6 max-w-sm text-center shadow">
+              <img
+                src="https://randomuser.me/api/portraits/men/3.jpg"
+                class="w-20 h-20 rounded-full mx-auto"
+              />
+              <h3 class="text-lg font-semibold mt-4">John Doe</h3>
+              <div class="text-yellow-500 text-lg">★★★★★</div>
+              <p class="text-gray-600 mt-2">Best purchase ever!</p>
+            </div>
+          </div>
+
+          <div class="swiper-slide">
+            <div class="bg-white rounded-lg p-6 max-w-sm text-center shadow">
+              <img
+                src="https://randomuser.me/api/portraits/men/3.jpg"
+                class="w-20 h-20 rounded-full mx-auto"
+              />
+              <h3 class="text-lg font-semibold mt-4">John Doe</h3>
+              <div class="text-yellow-500 text-lg">★★★★★</div>
+              <p class="text-gray-600 mt-2">Best purchase ever!</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <!-- <div class="swiper-button-prev"></div>
+        <div class="swiper-button-next"></div> -->
+
+        <!-- Pagination -->
+        <div class="swiper-pagination"></div>
+      </div>
+    </section>
+
+    <!-- <h1>Product List</h1>
+    <a href="add-product.html">Add New Product</a>
+    <div id="product-list"></div> -->
+    <!-- Footer section start -->
+    <special-footer></special-footer>
+
+    <!-- Swiper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
+    <script>
+      var swiper = new Swiper(".swiper-container", {
+        loop: true,
+        slidesPerView: 1,
+        spaceBetween: 20,
+        autoplay: {
+          delay: 3000,
+          disableOnInteraction: false,
+        },
+        pagination: {
+          el: ".swiper-pagination",
+          clickable: true,
+        },
+        navigation: {
+          nextEl: ".swiper-button-next",
+          prevEl: ".swiper-button-prev",
+        },
+        breakpoints: {
+          640: { slidesPerView: 1 },
+          768: { slidesPerView: 2 },
+          1024: { slidesPerView: 3 },
+        },
+      });
+    </script>
+
+    <!-- <script>
+    const countdown = () => {
+      const countDate = new Date('June 1, 2025 00:00:00').getTime();
+      const now = new Date().getTime();
+      const gap = countDate - now;
+
+      const second = 1000;
+      const minute = second * 60;
+      const hour = minute * 60;
+      const day = hour * 24;
+
+      const days = Math.floor(gap / day);
+      const hours = Math.floor((gap % day) / hour);
+      const minutes = Math.floor((gap % hour) / minute);
+      const seconds = Math.floor((gap % minute) / second);
+
+      document.getElementById('days').innerText = days.toString().padStart(2, '0');
+      document.getElementById('hours').innerText = hours.toString().padStart(2, '0');
+      document.getId('minutes').innerText = minutes.toString().padStart(2, '0');
+      document.getElementById('seconds').innerText = seconds.toString().padStart(2, '0');
+    };
+    setInterval(countdown, 1000);
+  </script> -->
+
+    <!-- <script>
+      async function fetchProducts() {
+        const response = await fetch("http://localhost:5000/products");
+        const products = await response.json();
+        const productList = document.getElementById("product-list");
+        productList.innerHTML = "";
+
+        products.forEach((product) => {
+          const productCard = document.createElement("div");
+          productCard.innerHTML = `
+                    <img src="${product.image}" alt="${product.name}">
+                    <h2>${product.name}</h2>
+                    <p>${product.price}</p>
+                    <p>${product.description}</p>
+                `;
+          productList.appendChild(productCard);
+        });
+      }
+
+      fetchProducts();
+    </script> -->
+  </body>
+</html>

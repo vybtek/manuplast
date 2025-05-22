@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Projects</title>
+    <link href="style.css" rel="stylesheet" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+
+  <body>
+    <!-- Header -->
+    <special-header></special-header>
+
+    <!-- banner section -->
+    <section
+      class="relative w-full h-[60vh] md:h-[80vh] flex items-center justify-center bg-cover bg-center"
+      style="
+        background-image: url('https://klbtheme.com/furnob/wp-content/uploads/2021/12/slider-image-05.jpg');
+      "
+    >
+      <div class="absolute inset-0 bg-black bg-opacity-30"></div>
+
+      <div class="relative text-center px-6 md:px-12">
+        <h3 class="text-white text-sm md:text-lg font-medium mb-2">
+          Our quality products
+        </h3>
+        <h1 class="text-white text-3xl md:text-6xl font-bold mb-4">
+          How Can We Help You?
+        </h1>
+        <p class="text-white text-sm md:text-lg max-w-2xl mx-auto">
+          Let us introduce the Furnob to you briefly, so you will have a better
+          understanding of quality.
+        </p>
+      </div>
+    </section>
+
+    <!-- Product categories section -->
+    <section class="max-w-7xl mx-auto px-6 py-12">
+      <div
+        id="project-grid"
+        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6"
+      >
+        <!-- Products will be dynamically added here -->
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <special-footer></special-footer>
+    <script src="headerFooter.js"></script>
+    <script src="projects.js"></script>
+  </body>
+</html>

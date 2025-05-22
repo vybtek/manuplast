@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Update Project</title>
+    <script src="sidebar.js" defer></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+  </head>
+  <body class="bg-gray-100 flex">
+    <!-- Sidebar -->
+    <special-sidebar class="w-1/4 h-screen"></special-sidebar>
+
+    <!-- Main Content -->
+    <div class="flex justify-center items-start w-3/4 pt-10 pl-4">
+      <div class="w-full max-w-4xl bg-white p-8 rounded-lg shadow-lg">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">
+          Update Project
+        </h1>
+
+        <form id="update-project-form" class="space-y-6">
+          <!-- Project ID -->
+          <div>
+            <label
+              for="project-id-display"
+              class="block text-gray-700 font-medium mb-1"
+              >Project ID</label
+            >
+            <input
+              type="text"
+              id="project-id-display"
+              class="w-full p-3 border border-gray-300 rounded-lg bg-gray-100 text-gray-600 cursor-not-allowed"
+              disabled
+            />
+          </div>
+
+          <!-- Project Title -->
+          <div>
+            <label for="title" class="block text-gray-700 font-medium mb-1"
+              >Project Title</label
+            >
+            <input
+              type="text"
+              id="title"
+              class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Enter Project Title"
+            />
+          </div>
+
+          <!-- Project Image -->
+          <div>
+            <label for="image" class="block text-gray-700 font-medium mb-1"
+              >Project Image URL</label
+            >
+            <input
+              type="url"
+              id="image"
+              class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Enter Project Image URL"
+            />
+          </div>
+
+          <!-- Project Description -->
+          <div>
+            <label
+              for="description"
+              class="block text-gray-700 font-medium mb-1"
+              >Project Description</label
+            >
+            <textarea
+              id="description"
+              rows="4"
+              class="w-full p-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Enter Project Description"
+            ></textarea>
+          </div>
+
+          <!-- Project Images Section -->
+          <div>
+            <h2 class="text-2xl font-semibold text-gray-800 mb-2">
+              Project Images
+            </h2>
+            <div id="imageInputs" class="space-y-6"></div>
+          </div>
+
+          <!-- Additional Content -->
+          <div>
+            <label
+              for="additionalContent"
+              class="block text-gray-700 font-medium mb-1"
+              >Additional Content</label
+            >
+            <textarea
+              id="additionalContent"
+              rows="4"
+              class="w-full p-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Enter Additional Content"
+            ></textarea>
+          </div>
+
+          <!-- Submit Button -->
+          <div class="text-center">
+            <button
+              type="submit"
+              class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-300 w-full sm:w-auto"
+            >
+              Update Project
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="projects.js"></script>
+  </body>
+</html>
