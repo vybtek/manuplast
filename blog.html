@@ -17,66 +17,100 @@
     <!-- Header area section start -->
     <special-header></special-header>
 
-    <!-- banner section -->
-    <div class="max-w-6xl mx-auto grid md:grid-cols-3 gap-8 mt-12 mb-8">
+    <div class="max-w-6xl mx-auto grid lg:grid-cols-3 gap-6 mt-16 mb-12">
       <!-- Left Section: Image -->
-      <div class="md:col-span-2">
-        <img
-          src="https://klbtheme.com/furnob/wp-content/uploads/2021/12/blog-post-01.jpg"
-          alt="Blog Image"
-          class="w-full rounded-lg shadow-md"
-        />
+      <div class="lg:col-span-2">
+        <div class="relative overflow-hidden rounded-2xl shadow-lg group">
+          <img
+            src="https://klbtheme.com/furnob/wp-content/uploads/2021/12/blog-post-01.jpg"
+            alt="Blog Image"
+            class="w-full h-[500px] object-cover transition-transform duration-300 group-hover:scale-105"
+          />
+          <div
+            class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+          ></div>
+        </div>
       </div>
 
       <!-- Right Section: Sidebar -->
-      <div class="bg-white p-6">
+      <div class="bg-gray-50 p-6 rounded-2xl shadow-md">
         <!-- Categories -->
-        <div class="mb-6">
-          <h3 class="font-semibold text-lg mb-2">Categories</h3>
-          <ul class="text-gray-700">
-            <li class="mb-1">> Decoration</li>
-            <li class="mb-1">> Home Living</li>
-            <li>> Interior Design</li>
+        <div class="mb-8">
+          <h3 class="font-bold text-xl text-gray-900 mb-4">Categories</h3>
+          <ul class="text-gray-600 space-y-2">
+            <li
+              class="flex items-center space-x-2 hover:text-red-600 transition-colors duration-200"
+            >
+              <span class="text-indigo-600">›</span>
+              <span>Decoration</span>
+            </li>
+            <li
+              class="flex items-center space-x-2 hover:text-red-600 transition-colors duration-200"
+            >
+              <span class="text-indigo-600">›</span>
+              <span>Home Living</span>
+            </li>
+            <li
+              class="flex items-center space-x-2 hover:text-red-600 transition-colors duration-200"
+            >
+              <span class="text-indigo-600">›</span>
+              <span>Interior Design</span>
+            </li>
           </ul>
         </div>
 
         <!-- Popular Posts -->
         <div>
-          <h3 class="font-semibold text-lg mb-2">Popular Posts</h3>
-          <div class="space-y-4">
-            <div class="flex items-center space-x-4">
+          <h3 class="font-bold text-xl text-gray-900 mb-4">Popular Posts</h3>
+          <div class="space-y-6">
+            <div class="flex items-center space-x-4 group">
               <img
                 src="https://klbtheme.com/furnob/wp-content/uploads/2021/12/blog-post-02-100x100.jpg"
-                class="w-16 h-16 object-cover"
+                alt="Popular Post"
+                class="w-16 h-16 object-cover rounded-lg transition-transform duration-300 group-hover:scale-110"
               />
               <div>
-                <p class="text-sm text-gray-500">December 19, 2024</p>
-                <h4 class="font-medium text-gray-900">
+                <p class="text-xs text-gray-500 uppercase tracking-wide">
+                  December 19, 2024
+                </p>
+                <h4
+                  class="font-semibold text-gray-900 group-hover:text-red-600 transition-colors duration-200"
+                >
                   My House Designed In Wood
                 </h4>
               </div>
             </div>
-            <div class="flex items-center space-x-4">
+            <div class="flex items-center space-x-4 group">
               <img
                 src="https://klbtheme.com/furnob/wp-content/uploads/2021/12/blog-post-01-100x100.jpg"
-                class="w-16 h-16 object-cover"
+                alt="Popular Post"
+                class="w-16 h-16 object-cover rounded-lg transition-transform duration-300 group-hover:scale-110"
               />
               <div>
-                <p class="text-sm text-gray-500">December 23, 2024</p>
-                <h4 class="font-medium text-gray-900">
+                <p class="text-xs text-gray-500 uppercase tracking-wide">
+                  December 23, 2024
+                </p>
+                <h4
+                  class="font-semibold text-gray-900 group-hover:text-red-600 transition-colors duration-200"
+                >
                   Decorating a Rustic Home
                 </h4>
               </div>
             </div>
-            <div class="flex items-center space-x-4">
+            <div class="flex items-center space-x-4 group">
               <img
                 src="https://klbtheme.com/furnob/wp-content/uploads/2021/12/blog-post-03-100x100.jpg"
-                class="w-16 h-16 object-cover"
+                alt="Popular Post"
+                class="w-16 h-16 object-cover rounded-lg transition-transform duration-300 group-hover:scale-110"
               />
               <div>
-                <p class="text-sm text-gray-500">December 29, 2024</p>
-                <h4 class="font-medium text-gray-900">
-                  When four walls get too small
+                <p class="text-xs text-gray-500 uppercase tracking-wide">
+                  December 29, 2024
+                </p>
+                <h4
+                  class="font-semibold text-gray-900 group-hover:text-red-600 transition-colors duration-200"
+                >
+                  When Four Walls Get Too Small
                 </h4>
               </div>
             </div>

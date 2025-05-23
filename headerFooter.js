@@ -14,7 +14,7 @@ class SpecialHeader extends HTMLElement {
               <li><a href="products.html" class="nav-link relative text-gray-700 hover:text-blue-600 transition-colors duration-200">Products</a></li>
              <!-- <li><a href="services.html" class="nav-link relative text-gray-700 hover:text-blue-600 transition-colors duration-200">Services</a></li>  -->
              <!-- <li><a href="projects.html" class="nav-link relative text-gray-700 hover:text-blue-600 transition-colors duration-200">Projects</a></li> --> 
-              <!-- <li><a href="blog.html" class="nav-link relative text-gray-700 hover:text-blue-600 transition-colors duration-200">Blog</a></li> --> 
+               <li><a href="blog.html" class="nav-link relative text-gray-700 hover:text-blue-600 transition-colors duration-200">Blog</a></li>
               <li><a href="contact.html" class="nav-link relative text-gray-700 hover:text-blue-600 transition-colors duration-200">Contact</a></li>
             </ul>
 
@@ -27,7 +27,8 @@ class SpecialHeader extends HTMLElement {
           <!-- Mobile Menu -->
           <div id="mobile-menu" class="hidden md:hidden bg-gradient-to-b from-white to-gray-50 shadow-xl p-6 space-y-4 transform translate-y-[-100%] transition-transform duration-300">
             <a href="about.html" class="nav-link block text-gray-800 hover:bg-blue-50 hover:text-blue-600 py-3 px-4 rounded-lg transition-colors duration-200">About</a>
-            <a href="projects.html" class="nav-link block text-gray-800 hover:bg-blue-50 hover:text-blue-600 py-3 px-4 rounded-lg transition-colors duration-200">Projects</a>
+            <a href="products.html" class="nav-link block text-gray-800 hover:bg-blue-50 hover:text-blue-600 py-3 px-4 rounded-lg transition-colors duration-200">Products</a>
+            <a href="blog.html" class="nav-link block text-gray-800 hover:bg-blue-50 hover:text-blue-600 py-3 px-4 rounded-lg transition-colors duration-200">Blog</a>
             <a href="contact.html" class="nav-link block text-gray-800 hover:bg-blue-50 hover:text-blue-600 py-3 px-4 rounded-lg transition-colors duration-200">Contact</a>
           </div>
         </nav>

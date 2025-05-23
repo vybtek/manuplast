@@ -14,5 +14,13 @@
     "author": "Furnituref",
     "image": "https://klbtheme.com/furnob/wp-content/uploads/2021/12/blog-post-04.jpg",
     "content": "Donec rhoncus quis diam sit amet faucibus. Vivamus pellentesque, sem sed convallis ultricies, ante eros laoreet libero, vitae suscipit lorem turpis sit amet lectus. Quisque egestas lorem ut mauris ultricies, vitae sollicitudin quam facilisis. Vivamus rutrum urna non ligula tempor aliquet. Fusce tincidunt est magna, id malesuada massa imperdiet ut. Nunc non nisi urna. Nam."
+  },
+  {
+    "id": "533389ec-c804-4ad1-a238-b974b6fc0b3d",
+    "title": "testing",
+    "author": "arpit",
+    "image": "https://ievo.in/wp-content/uploads/2020/07/millwork.png",
+    "content": "testing",
+    "active": false
   }
 ]

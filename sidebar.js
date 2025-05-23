@@ -18,17 +18,7 @@ class SpecialSidebar extends HTMLElement {
             </div>
           </li>
 
-          <li class="mb-3" id="project-item">
-            <div class="block p-2 bg-gray-700 rounded w-full cursor-pointer" id="project-toggle"><i class="fa-solid fa-building-shield mr-2 text-lg"></i>Project</div>
-            <div class="hidden" id="project-menu">
-              <a href="add-project.html" class="block px-4 py-2 bg-gray-600 hover:bg-gray-500">
-                <i class="fa-solid fa-plus mr-2"></i>Add Project
-              </a>
-              <a href="project-list.html" class="block px-4 py-2 bg-gray-600  hover:bg-gray-500">
-                <i class="fa-solid fa-eye mr-2"></i>View Projects
-              </a>
-            </div>
-          </li>
+
 
           <li class="mb-3" id="blog-item">
             <div class="block p-2 bg-gray-700 rounded w-full cursor-pointer" id="blog-toggle"><i class="fa-solid fa-cubes mr-2 text-lg"></i>Blog</div>
@@ -69,19 +59,12 @@ class SpecialSidebar extends HTMLElement {
   setupDropdownToggles() {
     const productToggle = this.querySelector("#product-toggle");
     const productMenu = this.querySelector("#product-menu");
-    const projectToggle = this.querySelector("#project-toggle");
-    const projectMenu = this.querySelector("#project-menu");
     const blogToggle = this.querySelector("#blog-toggle");
     const blogMenu = this.querySelector("#blog-menu");
 
     productToggle.addEventListener("click", () => {
       productMenu.classList.toggle("hidden");
     });
-
-    projectToggle.addEventListener("click", () => {
-      projectMenu.classList.toggle("hidden");
-    });
-
     blogToggle.addEventListener("click", () => {
       blogMenu.classList.toggle("hidden");
     });

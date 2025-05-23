@@ -18,46 +18,54 @@
           extend: {
             colors: {
               primary: {
-                50: '#f5f3f2',
-                100: '#e8e4e1',
-                200: '#d8d0ca',
-                300: '#c0b3aa',
-                400: '#a58f81',
-                500: '#8d7060',
-                600: '#745a4c',
-                700: '#5e493e',
-                800: '#4d3c33',
-                900: '#40312a',
+                50: "#f5f3f2",
+                100: "#e8e4e1",
+                200: "#d8d0ca",
+                300: "#c0b3aa",
+                400: "#a58f81",
+                500: "#8d7060",
+                600: "#745a4c",
+                700: "#5e493e",
+                800: "#4d3c33",
+                900: "#40312a",
               },
               accent: {
-                500: '#b38b59',
-                600: '#9a7345',
-              }
+                500: "#b38b59",
+                600: "#9a7345",
+              },
             },
             keyframes: {
               fadeIn: {
-                '0%': { opacity: '0', transform: 'translateY(10px)' },
-                '100%': { opacity: '1', transform: 'translateY(0)' },
-              }
+                "0%": { opacity: "0", transform: "translateY(10px)" },
+                "100%": { opacity: "1", transform: "translateY(0)" },
+              },
             },
             animation: {
-              fadeIn: 'fadeIn 0.5s ease-out forwards',
-            }
-          }
-        }
-      }
+              fadeIn: "fadeIn 0.5s ease-out forwards",
+            },
+          },
+        },
+      };
     </script>
     <style>
       .animate-stagger > * {
         opacity: 0;
         animation: fadeIn 0.5s ease-out forwards;
       }
-      
-      .animate-stagger > *:nth-child(1) { animation-delay: 0.1s; }
-      .animate-stagger > *:nth-child(2) { animation-delay: 0.2s; }
-      .animate-stagger > *:nth-child(3) { animation-delay: 0.3s; }
-      .animate-stagger > *:nth-child(4) { animation-delay: 0.4s; }
-      
+
+      .animate-stagger > *:nth-child(1) {
+        animation-delay: 0.1s;
+      }
+      .animate-stagger > *:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      .animate-stagger > *:nth-child(3) {
+        animation-delay: 0.3s;
+      }
+      .animate-stagger > *:nth-child(4) {
+        animation-delay: 0.4s;
+      }
+
       .bg-pattern {
         background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
       }
@@ -75,27 +83,35 @@
       "
     >
       <div class="absolute inset-0 bg-black bg-opacity-60"></div>
-      
+
       <!-- Decorative elements -->
       <div class="absolute inset-0 bg-pattern opacity-30"></div>
-      <div class="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-t from-black to-transparent opacity-40"></div>
-      
+      <div
+        class="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-t from-black to-transparent opacity-40"
+      ></div>
+
       <div class="relative text-center px-6 md:px-12 animate-stagger">
-        <span class="inline-block py-1 px-4 rounded-full bg-accent-500 bg-opacity-90 text-white text-xs md:text-sm font-medium mb-4 transform transition-transform hover:scale-105">WE'RE HERE FOR YOU</span>
-        
+        <span
+          class="inline-block py-1 px-4 rounded-full bg-accent-500 bg-opacity-90 text-white text-xs md:text-sm font-medium mb-4 transform transition-transform hover:scale-105"
+          >WE'RE HERE FOR YOU</span
+        >
+
         <h3 class="text-white text-sm md:text-lg font-medium mb-2">
           Contact Us For Furnob Furniture
         </h3>
-        
-        <h1 class="text-white text-3xl md:text-6xl font-bold mb-6 tracking-tight">
+
+        <h1
+          class="text-white text-3xl md:text-6xl font-bold mb-6 tracking-tight"
+        >
           How Can We <span class="text-accent-500">Help You?</span>
         </h1>
-        
+
         <p class="text-white text-sm md:text-lg max-w-2xl mx-auto opacity-90">
           Let us introduce the Furnob to you briefly, so you will have a better
-          understanding of our quality craftsmanship and premium furniture options.
+          understanding of our quality craftsmanship and premium furniture
+          options.
         </p>
-        
+
         <!-- <div class="mt-8">
           <a href="#contact-section" class="inline-block py-3 px-6 bg-accent-500 text-white rounded-lg shadow-lg hover:bg-accent-600 transition-all duration-300 transform hover:-translate-y-1">
             Get In Touch
@@ -105,36 +121,53 @@
     </section>
 
     <!-- contact section -->
-    <section id="contact-section" class="max-w-6xl mx-auto px-6 md:px-12 -mt-16 md:-mt-24 mb-20 relative z-10">
-      <div class="grid grid-cols-1 md:grid-cols-12 gap-8 bg-white rounded-xl shadow-xl overflow-hidden">
+    <section
+      id="contact-section"
+      class="max-w-6xl mx-auto px-6 md:px-12 -mt-16 md:-mt-24 mb-20 relative z-10"
+    >
+      <div
+        class="grid grid-cols-1 md:grid-cols-12 gap-8 bg-white rounded-xl shadow-xl overflow-hidden"
+      >
         <!-- Showroom & Store Information -->
-        <div class="md:col-span-5 p-8 md:p-12 bg-primary-800 text-white relative">
-          <div class="absolute top-0 right-0 w-32 h-32 -mr-16 -mt-16 rounded-full bg-accent-500 opacity-20"></div>
+        <div
+          class="md:col-span-5 p-8 md:p-12 bg-primary-800 text-white relative"
+        >
+          <div
+            class="absolute top-0 right-0 w-32 h-32 -mr-16 -mt-16 rounded-full bg-accent-500 opacity-20"
+          ></div>
           <div class="relative z-10">
             <h2 class="text-2xl font-bold mb-6 flex items-center">
               <span class="inline-block w-8 h-1 bg-accent-500 mr-3"></span>
               Showroom & Store
             </h2>
-            
+
             <p class="text-primary-100 mb-8 leading-relaxed">
-              Our showroom features carefully curated furniture pieces that represent the pinnacle of design, comfort, and craftsmanship. Visit us to experience our collections firsthand.
+              Our showroom features carefully curated furniture pieces that
+              represent the pinnacle of design, comfort, and craftsmanship.
+              Visit us to experience our collections firsthand.
             </p>
 
             <div class="space-y-6">
               <div class="flex items-start">
-                <div class="flex-shrink-0 bg-accent-500 bg-opacity-20 p-3 rounded-lg mr-4">
+                <div
+                  class="flex-shrink-0 bg-accent-500 bg-opacity-20 p-3 rounded-lg mr-4"
+                >
                   <i class="far fa-clock text-accent-500"></i>
                 </div>
                 <div>
-                  <h3 class="text-lg font-semibold text-white mb-1">Opening Hours</h3>
+                  <h3 class="text-lg font-semibold text-white mb-1">
+                    Opening Hours
+                  </h3>
                   <p class="text-primary-100">
                     Monday - Friday: 9am - 5pm<br />Weekend: Closed
                   </p>
                 </div>
               </div>
-              
+
               <div class="flex items-start">
-                <div class="flex-shrink-0 bg-accent-500 bg-opacity-20 p-3 rounded-lg mr-4">
+                <div
+                  class="flex-shrink-0 bg-accent-500 bg-opacity-20 p-3 rounded-lg mr-4"
+                >
                   <i class="fas fa-map-marker-alt text-accent-500"></i>
                 </div>
                 <div>
@@ -145,19 +178,25 @@
                   </p>
                 </div>
               </div>
-              
+
               <div class="flex items-start">
-                <div class="flex-shrink-0 bg-accent-500 bg-opacity-20 p-3 rounded-lg mr-4">
+                <div
+                  class="flex-shrink-0 bg-accent-500 bg-opacity-20 p-3 rounded-lg mr-4"
+                >
                   <i class="fas fa-phone-alt text-accent-500"></i>
                 </div>
                 <div>
-                  <h3 class="text-lg font-semibold text-white mb-1">Phone Number</h3>
+                  <h3 class="text-lg font-semibold text-white mb-1">
+                    Phone Number
+                  </h3>
                   <p class="text-primary-100">+91 0000000000</p>
                 </div>
               </div>
-              
+
               <div class="flex items-start">
-                <div class="flex-shrink-0 bg-accent-500 bg-opacity-20 p-3 rounded-lg mr-4">
+                <div
+                  class="flex-shrink-0 bg-accent-500 bg-opacity-20 p-3 rounded-lg mr-4"
+                >
                   <i class="far fa-envelope text-accent-500"></i>
                 </div>
                 <div>
@@ -169,16 +208,28 @@
 
             <!-- Social Media Icons -->
             <div class="flex space-x-4 mt-10">
-              <a href="#" class="bg-primary-700 hover:bg-accent-500 h-10 w-10 rounded-full flex items-center justify-center transition-colors duration-300">
+              <a
+                href="#"
+                class="bg-primary-700 hover:bg-accent-500 h-10 w-10 rounded-full flex items-center justify-center transition-colors duration-300"
+              >
                 <i class="fab fa-facebook-f text-white"></i>
               </a>
-              <a href="#" class="bg-primary-700 hover:bg-accent-500 h-10 w-10 rounded-full flex items-center justify-center transition-colors duration-300">
+              <a
+                href="#"
+                class="bg-primary-700 hover:bg-accent-500 h-10 w-10 rounded-full flex items-center justify-center transition-colors duration-300"
+              >
                 <i class="fab fa-twitter text-white"></i>
               </a>
-              <a href="#" class="bg-primary-700 hover:bg-accent-500 h-10 w-10 rounded-full flex items-center justify-center transition-colors duration-300">
+              <a
+                href="#"
+                class="bg-primary-700 hover:bg-accent-500 h-10 w-10 rounded-full flex items-center justify-center transition-colors duration-300"
+              >
                 <i class="fab fa-linkedin-in text-white"></i>
               </a>
-              <a href="#" class="bg-primary-700 hover:bg-accent-500 h-10 w-10 rounded-full flex items-center justify-center transition-colors duration-300">
+              <a
+                href="#"
+                class="bg-primary-700 hover:bg-accent-500 h-10 w-10 rounded-full flex items-center justify-center transition-colors duration-300"
+              >
                 <i class="fab fa-instagram text-white"></i>
               </a>
             </div>
@@ -188,20 +239,30 @@
         <!-- Contact Form -->
         <div class="md:col-span-7 p-8 md:p-12">
           <div class="max-w-lg">
-            <h2 class="text-3xl font-bold mb-2 text-primary-800">Get in Touch</h2>
+            <h2 class="text-3xl font-bold mb-2 text-primary-800">
+              Get in Touch
+            </h2>
             <div class="w-12 h-1 bg-accent-500 mb-6"></div>
             <p class="text-gray-600 mb-8">
-              We'd love to hear from you! Complete the form below and our team will respond promptly to your inquiry about our premium furniture collections.
+              We'd love to hear from you! Complete the form below and our team
+              will respond promptly to your inquiry about our premium furniture
+              collections.
             </p>
 
             <form id="contact-form" class="space-y-6">
               <input type="hidden" name="access_key" />
               <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="group">
-                  <label class="text-gray-700 font-medium block mb-2">Your name <span class="text-red-500">*</span></label>
+                  <label class="text-gray-700 font-medium block mb-2"
+                    >Your name <span class="text-red-500">*</span></label
+                  >
                   <div class="relative">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <i class="far fa-user text-gray-400 group-focus-within:text-accent-500"></i>
+                    <div
+                      class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+                    >
+                      <i
+                        class="far fa-user text-gray-400 group-focus-within:text-accent-500"
+                      ></i>
                     </div>
                     <input
                       type="text"
@@ -214,9 +275,13 @@
                   </div>
                 </div>
                 <div class="group">
-                  <label class="text-gray-700 font-medium block mb-2">Your email <span class="text-red-500">*</span></label>
+                  <label class="text-gray-700 font-medium block mb-2"
+                    >Your email <span class="text-red-500">*</span></label
+                  >
                   <div class="relative">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <div
+                      class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+                    >
                       <i class="far fa-envelope text-gray-400"></i>
                     </div>
                     <input
@@ -232,9 +297,13 @@
               </div>
 
               <div class="group">
-                <label class="text-gray-700 font-medium block mb-2">Subject <span class="text-red-500">*</span></label>
+                <label class="text-gray-700 font-medium block mb-2"
+                  >Subject <span class="text-red-500">*</span></label
+                >
                 <div class="relative">
-                  <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <div
+                    class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+                  >
                     <i class="fas fa-tag text-gray-400"></i>
                   </div>
                   <input
@@ -249,9 +318,13 @@
               </div>
 
               <div class="group">
-                <label class="text-gray-700 font-medium block mb-2">Your message <span class="text-red-500">*</span></label>
+                <label class="text-gray-700 font-medium block mb-2"
+                  >Your message <span class="text-red-500">*</span></label
+                >
                 <div class="relative">
-                  <div class="absolute top-3 left-0 pl-3 flex items-center pointer-events-none">
+                  <div
+                    class="absolute top-3 left-0 pl-3 flex items-center pointer-events-none"
+                  >
                     <i class="far fa-comment-alt text-gray-400"></i>
                   </div>
                   <textarea
@@ -273,7 +346,7 @@
                 >
                   Send Message
                 </button>
-                
+
                 <button
                   class="flex items-center justify-center bg-accent-500 text-white py-3 px-4 rounded-lg hover:bg-accent-600 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg"
                   type="button"
@@ -298,15 +371,16 @@
         </div>
         <div class="h-96 relative overflow-hidden">
           <!-- Google Maps Embed -->
-          <iframe 
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d241317.11609823277!2d72.74110193967773!3d19.082197839061875!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7c6306644edc1%3A0x5da4ed8f8d648c69!2sMumbai%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1715874536985!5m2!1sen!2sin" 
-            width="100%" 
-            height="100%" 
-            style="border:0;" 
-            allowfullscreen="" 
-            loading="lazy" 
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d241317.11609823277!2d72.74110193967773!3d19.082197839061875!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7c6306644edc1%3A0x5da4ed8f8d648c69!2sMumbai%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1715874536985!5m2!1sen!2sin"
+            width="100%"
+            height="100%"
+            style="border: 0"
+            allowfullscreen=""
+            loading="lazy"
             referrerpolicy="no-referrer-when-downgrade"
-            class="absolute inset-0">
+            class="absolute inset-0"
+          >
           </iframe>
         </div>
       </div>
@@ -336,7 +410,9 @@
             })
             .catch((error) => {
               console.error("Error:", error);
-              alert("There was an error sending your message. Please try again.");
+              alert(
+                "There was an error sending your message. Please try again."
+              );
             });
 
           // Redirect to the home page
@@ -378,32 +454,35 @@
 
         window.open(url, "_blank").focus();
       }
-      
+
       // Smooth scroll for anchor links
-      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
+      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener("click", function (e) {
           e.preventDefault();
-          
-          const targetId = this.getAttribute('href');
+
+          const targetId = this.getAttribute("href");
           document.querySelector(targetId).scrollIntoView({
-            behavior: 'smooth'
+            behavior: "smooth",
           });
         });
       });
-      
+
       // Add animation to elements when they come into view
-      document.addEventListener('DOMContentLoaded', function() {
-        const observer = new IntersectionObserver((entries) => {
-          entries.forEach(entry => {
-            if (entry.isIntersecting) {
-              entry.target.classList.add('animate-fadeIn');
-            }
-          });
-        }, {
-          threshold: 0.1
-        });
-        
-        document.querySelectorAll('section > div').forEach(section => {
+      document.addEventListener("DOMContentLoaded", function () {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("animate-fadeIn");
+              }
+            });
+          },
+          {
+            threshold: 0.1,
+          }
+        );
+
+        document.querySelectorAll("section > div").forEach((section) => {
           observer.observe(section);
         });
       });

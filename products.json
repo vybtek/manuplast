@@ -73,5 +73,21 @@
     "image": "https://ievo.in/wp-content/uploads/2020/07/decor-luminaries.jpg",
     "description": "A minimalist wooden wall shelf designed to hold books, decor pieces, or small plants.",
     "active": true
+  },
+  {
+    "id": "7b35f465-4814-4955-8612-bc4d13899046",
+    "name": "Arpit",
+    "image": "https://ievo.in/wp-content/uploads/2020/07/furniture.png",
+    "description": "hello",
+    "active": false,
+    "types": []
+  },
+  {
+    "id": "aaa741e2-af00-45fe-b55e-87becc16c13e",
+    "name": "Arpit",
+    "image": "https://ievo.in/wp-content/uploads/2020/07/furniture.png",
+    "description": "hello",
+    "active": true,
+    "types": []
   }
 ]
