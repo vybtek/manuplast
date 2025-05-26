@@ -67,3 +67,26 @@ html {
     .card:hover .gradient-overlay {
       height: 100%;
     }
+
+
+    /* products page css */
+    .animate-spin-slow {
+        animation: spin 12s linear infinite;
+      }
+      @keyframes spin {
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .animate-width-expand {
+        animation: widthGrow 2s ease-out forwards;
+      }
+      @keyframes widthGrow {
+        0% {
+          width: 0;
+        }
+        100% {
+          width: 80px;
+        }
+      }

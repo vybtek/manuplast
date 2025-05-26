@@ -10,37 +10,13 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     />
     <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- CSS Animations -->
-    <style>
-      .animate-spin-slow {
-        animation: spin 12s linear infinite;
-      }
-      @keyframes spin {
-        100% {
-          transform: rotate(360deg);
-        }
-      }
-
-      .animate-width-expand {
-        animation: widthGrow 2s ease-out forwards;
-      }
-      @keyframes widthGrow {
-        0% {
-          width: 0;
-        }
-        100% {
-          width: 80px;
-        }
-      }
-    </style>
   </head>
 
   <body>
     <!-- Header -->
     <special-header></special-header>
 
-    <!-- Minimal Monochrome + Red Accent Banner -->
+    <!-- Banner -->
     <section
       class="relative w-full h-[80vh] flex items-center bg-black overflow-hidden"
     >
@@ -59,9 +35,8 @@
         class="absolute bottom-1/4 right-16 w-6 h-6 border-2 border-red-600 animate-spin-slow"
       ></div>
 
-      <!-- Main Content with Bold Typography -->
+      <!-- Main Content -->
       <div class="relative z-10 text-center px-6 mx-auto max-w-4xl">
-        <!-- Striking Text Layout -->
         <div class="overflow-hidden">
           <h1
             class="text-white text-5xl md:text-6xl font-bold mb-6 leading-tight"
@@ -126,3 +101,5 @@
     <script src="products.js"></script>
   </body>
 </html>
+
+

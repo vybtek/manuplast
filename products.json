@@ -1,93 +1,73 @@
 [
   {
     "id": "0447d71a-3813-425a-addc-5889f69d768a",
-    "name": "Elegant Wooden Chair",
-    "image": "https://ievo.in/wp-content/uploads/2020/07/furniture.png",
-    "description": "A beautifully crafted wooden chair with a sleek design, perfect for modern and classic interiors A beautifully crafted wooden chair with a sleek design, perfect for modern and classic interiors A beautifully crafted wooden chair with a sleek design, perfect for modern and classic interiors A beautifully crafted wooden chair with a sleek design, perfect for modern and classic interiors",
+    "name": "Elegant Bottle",
+    "image": "./images/products/pd1.jpg",
+    "description": "A beautifully crafted wooden chair with a sleek design, perfect for modern and classic interiors.",
     "active": true,
     "types": [
       {
         "name": "Classic Black",
-        "description": "A timeless black leather jacket for any occasion.",
-        "price": "",
-        "image": "https://ievo.in/wp-content/uploads/2020/07/metal-and-stone.png"
+        "description": "A sleek black chair with a timeless design, ideal for any setting.",
+        "price": "4999",
+        "image": "./images/products/DSC00554 copy.jpg"
       },
       {
         "name": "Brown Vintage",
-        "description": "A stylish brown leather jacket with a vintage touch.",
-        "price": "",
-        "image": "https://ievo.in/wp-content/uploads/2020/07/metal-and-stone.png"
+        "description": "A stylish brown chair with a vintage finish, adding warmth to your space.",
+        "price": "5499",
+        "image": "./images/products/DSC00554 copy.jpg"
       },
       {
         "name": "Modern Grey",
-        "description": "A sleek grey leather jacket for a modern look.",
-        "price": "",
-        "image": "https://ievo.in/wp-content/uploads/2020/07/metal-and-stone.png"
-      },
-      {
-        "name": "Classic",
-        "description": "A timeless black leather jacket for any occasion.",
-        "price": "4",
-        "image": "https://ievo.in/wp-content/uploads/2020/07/metal-and-stone.png"
-      },
-      {
-        "name": "Vintage",
-        "description": "A stylish brown leather jacket with a vintage touch.",
-        "price": "",
-        "image": "https://ievo.in/wp-content/uploads/2020/07/metal-and-stone.png"
-      },
-      {
-        "name": " Grey",
-        "description": "A sleek grey leather jacket for a modern look.",
-        "price": "556",
-        "image": "https://ievo.in/wp-content/uploads/2020/07/metal-and-stone.png"
+        "description": "A contemporary grey chair, perfect for modern minimalist interiors.",
+        "price": "5299",
+        "image": "./images/products/DSC00554 copy.jpg"
       }
     ]
   },
   {
     "id": "0447d71a-3813-425a-addc-5889f99d764a",
-    "name": "Luxury Oak Dining Table",
-    "image": "https://ievo.in/wp-content/uploads/2020/07/millwork.png",
+    "name": "Luxury Oak",
+    "image": "./images/products/pd3.jpg",
     "description": "A high-quality oak dining table with a polished finish, ideal for family gatherings and dinner parties.",
     "active": true
   },
   {
     "id": "0447d71a-3813-425a-addc-5889f69d764a",
     "name": "Modern Marble Table",
-    "image": "https://ievo.in/wp-content/uploads/2020/07/metal-and-stone.png",
+    "image": "https://plus.unsplash.com/premium_photo-1681408059522-b83aa9c0a0be?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTd8fGJvdHRsZXxlbnwwfHwwfHx8MA%3D%3D",
     "description": "A premium marble coffee table with a stylish metal frame, adding elegance to any living space.",
-    "active": true,
+    "active": false,
     "types": []
   },
   {
     "id": "0447d71a-3813-425a-addc-5889f69e764a",
     "name": "Outdoor Lounge Set",
-    "image": "https://ievo.in/wp-content/uploads/2020/07/outdoor.png",
+    "image": "https://plus.unsplash.com/premium_photo-1681408059522-b83aa9c0a0be?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTd8fGJvdHRsZXxlbnwwfHwwfHx8MA%3D%3D",
     "description": "A comfortable and durable outdoor lounge set, perfect for relaxing in your garden or patio.",
-    "active": true,
-    "types": []
-  },
-  {
-    "id": "0447d71a-3813-425a-addc-5889f69d744a",
-    "name": "Decorative Wooden Wall Shelf",
-    "image": "https://ievo.in/wp-content/uploads/2020/07/decor-luminaries.jpg",
-    "description": "A minimalist wooden wall shelf designed to hold books, decor pieces, or small plants.",
-    "active": true
-  },
-  {
-    "id": "7b35f465-4814-4955-8612-bc4d13899046",
-    "name": "Arpit",
-    "image": "https://ievo.in/wp-content/uploads/2020/07/furniture.png",
-    "description": "hello",
     "active": false,
     "types": []
   },
   {
-    "id": "aaa741e2-af00-45fe-b55e-87becc16c13e",
-    "name": "Arpit",
-    "image": "https://ievo.in/wp-content/uploads/2020/07/furniture.png",
-    "description": "hello",
+    "id": "ea4042ef-aaf4-487d-bbb5-fb2c44e52750",
+    "name": "New Arrivals",
+    "image": "./images/products/pd2.jpg",
+    "description": "testing",
     "active": true,
-    "types": []
+    "types": [
+      {
+        "name": "test",
+        "description": "testdfdf",
+        "price": "900",
+        "image": "./images/products/pd2.jpg"
+      },
+      {
+        "name": "test",
+        "description": "test",
+        "price": "8845",
+        "image": "https://plus.unsplash.com/premium_photo-1681408059522-b83aa9c0a0be?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTd8fGJvdHRsZXxlbnwwfHwwfHx8MA%3D%3D"
+      }
+    ]
   }
 ]
