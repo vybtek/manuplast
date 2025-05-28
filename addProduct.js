@@ -24,7 +24,7 @@ document.getElementById("add-type-btn").addEventListener("click", () => {
   });
 });
 
-// Handle Product Form Submission
+// Product Form Submission
 document
   .getElementById("product-form")
   .addEventListener("submit", async (e) => {
