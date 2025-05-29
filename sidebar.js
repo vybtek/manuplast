@@ -68,7 +68,7 @@ class SpecialSidebar extends HTMLElement {
     blogToggle.addEventListener("click", () => {
       blogMenu.classList.toggle("hidden");
     });
-  } 
+  }
 }
 
 customElements.define("special-sidebar", SpecialSidebar);

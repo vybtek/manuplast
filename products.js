@@ -147,7 +147,7 @@ async function fetchProductDetail() {
                 <img src="${type.image}" class="w-full h-52 object-cover rounded-md">
                 <h3 class="text-2xl font-semibold text-gray-800 mt-4">${type.name}</h3>
                 <p class="text-gray-600 mt-3 text-sm leading-relaxed">${type.description}</p>
-                <p class="text-lg font-semibold text-gray-900 mt-2">Price: ₹${type.price}</p>
+               <!--   <p class="text-lg font-semibold text-gray-900 mt-2">Price: ₹${type.price}</p> -->
                 <p class="text-center text-gray-600 hover:text-red-500 mt-2 rounded-lg">
                   View Details <i class="fa-solid fa-arrow-right ml-1"></i>
                 </p>
@@ -248,9 +248,9 @@ async function fetchTypeDetail() {
         </p>
         
         <!-- Price with a subtle highlight -->
-        <p class="text-2xl font-semibold text-indigo-700 text-center bg-indigo-50 inline-block px-6 py-2 rounded-full mb-8">
+       <!--  <p class="text-2xl font-semibold text-indigo-700 text-center bg-indigo-50 inline-block px-6 py-2 rounded-full mb-8">
           Price: ₹${type.price}
-        </p>
+        </p> -->
 
         <!-- Back Button with gradient and hover animation -->
         <div class="flex justify-center space-x-4">

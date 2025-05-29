@@ -3,15 +3,25 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Add Product</title>
+    <title>Add Product | Manu Plast Admin</title>
+    <meta
+      name="description"
+      content="Admin interface for adding new products to the Manu Plast website, specializing in sustainable drinkware and eco-friendly bottles."
+    />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="author" content="Manu Plast" />
+    <link rel="canonical" href="https://www.manuplast.com/admin/add-product" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+      integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
     />
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="addProduct.js" defer></script>
-    <script src="sidebar.js" defer></script>
-    <script>
+    <script defer src="addProduct.js"></script>
+    <script defer src="sidebar.js"></script>
+    <script defer>
       // Redirect if not logged in
       if (localStorage.getItem("isLoggedIn") !== "true") {
         window.location.href = "login.html";
@@ -19,61 +29,133 @@
     </script>
   </head>
   <body class="bg-gray-100 flex">
-    <special-sidebar class="w-1/4 h-screen"></special-sidebar>
+    <!-- Sidebar -->
+    <aside role="navigation" aria-label="Admin Sidebar">
+      <special-sidebar></special-sidebar>
+    </aside>
 
     <!-- Main Content -->
-    <div class="flex justify-center items-start w-3/4 pl-4">
-      <div class="bg-white shadow-lg rounded-lg p-6 w-full max-w-2xl">
-        <h1 class="text-2xl font-bold text-center text-gray-700 mb-4">
-          ADD NEW PRODUCT
+    <main role="main" class="flex justify-center w-full pl-80">
+      <div class="bg-white shadow-lg rounded-lg p-6 w-full max-w-3xl">
+        <h1
+          class="text-2xl font-bold text-center text-gray-700 mb-4"
+          id="add-product-heading"
+        >
+          ADD NEW CATEGORY
         </h1>
-        <form id="product-form" class="space-y-4">
-          <input
-            type="text"
-            id="name"
-            placeholder="Product Name"
-            required
-            class="w-full p-2 border rounded-lg"
-          />
-          <input
-            type="text"
-            id="image"
-            placeholder="Image URL"
-            required
-            class="w-full p-2 border rounded-lg"
-          />
-          <textarea
-            id="description"
-            placeholder="Description"
-            required
-            class="w-full p-2 border rounded-lg"
-          ></textarea>
+        <form
+          id="product-form"
+          class="space-y-4"
+          aria-labelledby="add-product-heading"
+        >
+          <div>
+            <label for="name" class="block text-gray-700 font-medium mb-2"
+              >Name</label
+            >
+            <input
+              type="text"
+              id="name"
+              name="name"
+              placeholder="Category Name"
+              required
+              aria-required="true"
+              class="w-full p-2 border rounded-lg"
+            />
+          </div>
+          <div>
+            <label for="image" class="block text-gray-700 font-medium mb-2"
+              >Image URL</label
+            >
+            <input
+              type="url"
+              id="image"
+              name="image"
+              placeholder="Image URL"
+              required
+              aria-required="true"
+              class="w-full p-2 border rounded-lg"
+            />
+          </div>
+          <div>
+            <label
+              for="description"
+              class="block text-gray-700 font-medium mb-2"
+              >Description</label
+            >
+            <textarea
+              id="description"
+              name="description"
+              placeholder="Description"
+              required
+              aria-required="true"
+              class="w-full p-2 border rounded-lg"
+            ></textarea>
+          </div>
 
           <div id="types-container" class="space-y-4">
-            <h2 class="text-lg font-semibold text-gray-700">
+            <h2
+              class="text-lg font-semibold text-gray-700"
+              id="product-types-heading"
+            >
               Add Product Types
             </h2>
-            <div class="type-item space-y-2 border p-4 rounded-lg">
-              <input
-                type="text"
-                class="type-name w-full p-2 border rounded"
-                placeholder="Type Name"
-              />
-              <input
-                type="text"
-                class="type-image w-full p-2 border rounded"
-                placeholder="Type Image URL"
-              />
-              <textarea
-                class="type-description w-full p-2 border rounded"
-                placeholder="Type Description"
-              ></textarea>
-              <input
-                type="number"
-                step="0.01"
-                class="type-price w-full p-2 border rounded"
-                placeholder="Type Price"
-              />
+            <div
+              class="type-item space-y-2 border p-4 rounded-lg"
+              role="group"
+              aria-labelledby="product-types-heading"
+            >
+              <div>
+                <label
+                  for="type-name-0"
+                  class="block text-gray-700 font-medium mb-2"
+                  >Type Name</label
+                >
+                <input
+                  type="text"
+                  id="type-name-0"
+                  class="type-name w-full p-2 border rounded"
+                  placeholder="Type Name"
+                />
+              </div>
+              <div>
+                <label
+                  for="type-image-0"
+                  class="block text-gray-700 font-medium mb-2"
+                  >Type Image URL</label
+                >
+                <input
+                  type="text"
+                  id="type-image-0"
+                  class="type-image w-full p-2 border rounded"
+                  placeholder="Type Image URL"
+                />
+              </div>
+              <div>
+                <label
+                  for="type-description-0"
+                  class="block text-gray-700 font-medium mb-2"
+                  >Type Description</label
+                >
+                <textarea
+                  id="type-description-0"
+                  class="type-description w-full p-2 border rounded"
+                  placeholder="Type Description"
+                ></textarea>
+              </div>
+              <div>
+                <label
+                  for="type-price-0"
+                  class="block text-gray-700 font-medium mb-2"
+                  >Type Price</label
+                >
+                <input
+                  type="number"
+                  step="0.01"
+                  id="type-price-0"
+                  class="type-price w-full p-2 border rounded"
+                  placeholder="Type Price"
+                />
+              </div>
             </div>
           </div>
 
@@ -81,6 +163,7 @@
             type="button"
             id="add-type-btn"
             class="bg-gray-200 px-4 py-2 rounded hover:bg-gray-300"
+            aria-label="Add Another Product Type"
           >
             + Add More Type
           </button>
@@ -88,14 +171,15 @@
           <button
             type="submit"
             class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600"
+            aria-label="Add New Product"
           >
             Add Product
           </button>
         </form>
       </div>
-    </div>
+    </main>
 
-    <script>
+    <script defer>
       function logout() {
         localStorage.removeItem("isLoggedIn");
         window.location.href = "login.html";

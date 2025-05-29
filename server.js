@@ -147,8 +147,6 @@ app.put("/products/:id", (req, res) => {
   });
 });
 
-
-
 // BLOG PAGE APIS
 // POST: Add New Blog
 app.post("/add-blog", (req, res) => {
@@ -286,10 +284,6 @@ app.put("/blogs/:id", (req, res) => {
     });
   });
 });
-
-
-
-
 
 app.listen(5000, () => {
   console.log("Server is running on port 5000");

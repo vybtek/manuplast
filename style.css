@@ -41,69 +41,83 @@ html {
 }
 
 /* Parallax Effect */
-    .parallax {
-      background-attachment: fixed;
-      background-size: cover;
-      background-position: center;
-    }
-    /* Card Hover Effect */
-    .card {
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .card:hover {
-      transform: translateY(-10px);
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-    }
-    /* Gradient Overlay */
-    .gradient-overlay {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 50%;
-      background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
-      transition: height 0.3s ease;
-    }
-    .card:hover .gradient-overlay {
-      height: 100%;
-    }
+.parallax {
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center;
+}
+/* Card Hover Effect */
+.card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+/* Gradient Overlay */
+.gradient-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+  transition: height 0.3s ease;
+}
+.card:hover .gradient-overlay {
+  height: 100%;
+}
 
-
-    /* products page css */
-    .animate-spin-slow {
-        animation: spin 12s linear infinite;
-      }
-      @keyframes spin {
-        100% {
-          transform: rotate(360deg);
-        }
-      }
-
-      .animate-width-expand {
-        animation: widthGrow 2s ease-out forwards;
-      }
-      @keyframes widthGrow {
-        0% {
-          width: 0;
-        }
-        100% {
-          width: 80px;
-        }
-      }
-
-
-      /* About Page css */
-
-       @keyframes fade-in {
-    from { opacity: 0; }
-    to { opacity: 1; }
+/* products page css */
+.animate-spin-slow {
+  animation: spin 12s linear infinite;
+}
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
   }
-  @keyframes slide-up {
-    from { transform: translateY(20px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
+}
+
+.animate-width-expand {
+  animation: widthGrow 2s ease-out forwards;
+}
+@keyframes widthGrow {
+  0% {
+    width: 0;
   }
-  @keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.2); }
-    100% { transform: scale(1); }
+  100% {
+    width: 80px;
   }
+}
+
+/* About Page css */
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes slide-up {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}

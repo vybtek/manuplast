@@ -3,91 +3,134 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Admin Dashboard | Manu Plast</title>
+    <meta
+      name="description"
+      content="Admin dashboard for managing products, sales, and activities on the Manu Plast website, specializing in sustainable drinkware and eco-friendly bottles."
+    />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="author" content="Manu Plast" />
+    <link rel="canonical" href="https://www.manuplast.com/admin/dashboard" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+      integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
     />
-    <script src="sidebar.js" defer></script>
-    <script>
-      // Redirect if not logged in
-      if (localStorage.getItem("isLoggedIn") !== "true") {
-        window.location.href = "login.html";
-      }
-    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="sidebar.js"></script>
   </head>
   <body class="bg-gray-100">
     <!-- Sidebar -->
     <div class="flex h-screen">
-      <special-sidebar></special-sidebar>
+      <aside role="navigation" aria-label="Admin Sidebar">
+        <special-sidebar></special-sidebar>
+      </aside>
 
       <!-- Main content -->
-      <div class="flex-1 p-6 bg-gray-100 min-h-screen ml-64">
-        <!-- Added margin-left for sidebar -->
-        <h1 class="text-4xl font-extrabold mb-8 text-gray-800">
+      <main
+        role="main"
+        class="flex-1 p-6 bg-gray-100 min-h-screen ml-64"
+        aria-labelledby="dashboard-heading"
+      >
+        <h1
+          class="text-4xl font-extrabold mb-8 text-gray-800"
+          id="dashboard-heading"
+        >
           Welcome to the Dashboard
         </h1>
 
         <!-- Stats Overview -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <section
+          class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8"
+          aria-labelledby="stats-heading"
+        >
+          <h2 class="sr-only" id="stats-heading">Statistics Overview</h2>
           <div
             class="bg-white p-6 rounded-2xl shadow hover:shadow-lg transition"
+            role="region"
+            aria-label="Total Sales"
           >
-            <h2 class="text-lg font-semibold text-gray-600">Total Sales</h2>
+            <h3 class="text-lg font-semibold text-gray-600">Total Sales</h3>
             <p class="text-3xl font-bold text-green-600 mt-2">$15,230</p>
           </div>
           <div
             class="bg-white p-6 rounded-2xl shadow hover:shadow-lg transition"
+            role="region"
+            aria-label="Active Projects"
           >
-            <h2 class="text-lg font-semibold text-gray-600">Active Projects</h2>
+            <h3 class="text-lg font-semibold text-gray-600">Active Projects</h3>
             <p class="text-3xl font-bold text-blue-600 mt-2">8</p>
           </div>
           <div
             class="bg-white p-6 rounded-2xl shadow hover:shadow-lg transition"
+            role="region"
+            aria-label="New Clients"
           >
-            <h2 class="text-lg font-semibold text-gray-600">New Clients</h2>
+            <h3 class="text-lg font-semibold text-gray-600">New Clients</h3>
             <p class="text-3xl font-bold text-purple-600 mt-2">23</p>
           </div>
-        </div>
+        </section>
 
         <!-- Quick Actions -->
-        <div class="bg-white p-6 rounded-2xl shadow mb-8">
-          <h2 class="text-2xl font-bold mb-4 text-gray-800">Quick Actions</h2>
+        <section
+          class="bg-white p-6 rounded-2xl shadow mb-8"
+          aria-labelledby="actions-heading"
+        >
+          <h2
+            class="text-2xl font-bold mb-4 text-gray-800"
+            id="actions-heading"
+          >
+            Quick Actions
+          </h2>
           <div class="flex flex-wrap gap-4">
-            <button
+            <a
+              href="/admin/add-product"
               class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-xl transition"
+              aria-label="Add New Product"
+              >➕ Add New Product</a
             >
-              ➕ Add New Product
-            </button>
-            <button
+            <a
+              href="/admin/reports"
               class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-xl transition"
+              aria-label="View Reports"
+              >📈 View Reports</a
             >
-              📈 View Reports
-            </button>
-            <button
+            <a
+              href="/admin/settings"
               class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded-xl transition"
+              aria-label="Manage Settings"
+              >🔧 Manage Settings</a
             >
-              🔧 Manage Settings
-            </button>
           </div>
-        </div>
+        </section>
 
         <!-- Recent Activities -->
-        <div class="bg-white p-6 rounded-2xl shadow mb-8">
-          <h2 class="text-2xl font-bold mb-4 text-gray-800">
+        <section
+          class="bg-white p-6 rounded-2xl shadow mb-8"
+          aria-labelledby="activities-heading"
+        >
+          <h2
+            class="text-2xl font-bold mb-4 text-gray-800"
+            id="activities-heading"
+          >
             Recent Activities
           </h2>
-          <ul class="space-y-3 text-gray-700">
+          <ul
+            class="space-y-3 text-gray-700"
+            role="list"
+            aria-label="Recent Activities List"
+          >
             <li>📌 Project <strong>Website</strong> updated</li>
             <li>💼 New client <strong>Arpit</strong> registered</li>
             <li>🛠 Maintenance scheduled for <strong>Server A</strong></li>
           </ul>
-        </div>
-      </div>
+        </section>
+      </main>
     </div>
 
-    <script>
+    <script defer>
       function logout() {
         localStorage.removeItem("isLoggedIn");
         window.location.href = "login.html";

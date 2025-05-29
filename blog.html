@@ -3,27 +3,94 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Blog</title>
+    <title>Blog | Manu Plast - Sustainable Drinkware Insights</title>
+    <meta
+      name="description"
+      content="Explore the Manu Plast blog for insights on sustainable drinkware, eco-friendly living, and innovative hydration solutions."
+    />
+    <meta
+      name="keywords"
+      content="sustainable drinkware, eco-friendly bottles, Manu Plast blog, green living, reusable water bottles"
+    />
+    <meta name="robots" content="index, follow" />
+    <meta name="author" content="Manu Plast" />
+    <link rel="canonical" href="https://www.manuplast.com/blog" />
+    <!-- Open Graph Tags -->
+    <meta
+      property="og:title"
+      content="Blog | Manu Plast - Sustainable Drinkware Insights"
+    />
+    <meta
+      property="og:description"
+      content="Explore the Manu Plast blog for insights on sustainable drinkware, eco-friendly living, and innovative hydration solutions."
+    />
+    <meta
+      property="og:image"
+      content="https://www.manuplast.com/images/blog-og-image.jpg"
+    />
+    <meta property="og:url" content="https://www.manuplast.com/blog" />
+    <meta property="og:type" content="website" />
+    <!-- Twitter Card Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Blog | Manu Plast - Sustainable Drinkware Insights"
+    />
+    <meta
+      name="twitter:description"
+      content="Explore the Manu Plast blog for insights on sustainable drinkware, eco-friendly living, and innovative hydration solutions."
+    />
+    <meta
+      name="twitter:image"
+      content="https://www.manuplast.com/images/blog-og-image.jpg"
+    />
+    <!-- Schema Markup -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Blog",
+        "name": "Manu Plast Blog",
+        "description": "Explore articles on sustainable drinkware, eco-friendly living, and innovative hydration solutions from Manu Plast.",
+        "url": "https://www.manuplast.com/blog",
+        "publisher": {
+          "@type": "Organization",
+          "name": "Manu Plast",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "./images/logo.png"
+          }
+        }
+      }
+    </script>
     <link href="style.css" rel="stylesheet" />
-
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+      integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
     />
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="headerFooter.js"></script>
+    <script defer src="headerFooter.js"></script>
+    <script defer src="blogs.js"></script>
   </head>
   <body>
     <!-- Header -->
-    <special-header></special-header>
+    <header role="banner">
+      <special-header></special-header>
+    </header>
 
-    <div class="max-w-6xl mx-auto grid lg:grid-cols-3 gap-6 mt-16 mb-12">
+    <main
+      role="main"
+      class="max-w-6xl mx-auto grid lg:grid-cols-3 gap-6 mt-16 mb-12"
+    >
       <!-- Left Section: Image -->
       <div class="lg:col-span-2">
         <div class="relative overflow-hidden rounded-2xl shadow-lg group">
           <img
             src="https://klbtheme.com/furnob/wp-content/uploads/2021/12/blog-post-01.jpg"
-            alt="Blog Image"
+            alt="Manu Plast eco-friendly drinkware blog feature"
+            loading="lazy"
             class="w-full h-[500px] object-cover transition-transform duration-300 group-hover:scale-105"
           />
           <div
@@ -33,99 +100,137 @@
       </div>
 
       <!-- Right Section: Sidebar -->
-      <div class="bg-gray-50 p-6 rounded-2xl shadow-md">
+      <aside
+        class="bg-gray-50 p-6 rounded-2xl shadow-md"
+        role="complementary"
+        aria-label="Blog Sidebar"
+      >
         <!-- Categories -->
         <div class="mb-8">
-          <h3 class="font-bold text-xl text-gray-900 mb-4">Categories</h3>
-          <ul class="text-gray-600 space-y-2">
+          <h2
+            class="font-bold text-xl text-gray-900 mb-4"
+            id="categories-heading"
+          >
+            Categories
+          </h2>
+          <ul
+            class="text-gray-600 space-y-2"
+            aria-labelledby="categories-heading"
+          >
             <li
               class="flex items-center space-x-2 hover:text-red-600 transition-colors duration-200"
             >
               <span class="text-indigo-600">›</span>
-              <span>Decoration</span>
+              <a href="#" aria-label="View Decoration category">Decoration</a>
             </li>
             <li
               class="flex items-center space-x-2 hover:text-red-600 transition-colors duration-200"
             >
               <span class="text-indigo-600">›</span>
-              <span>Home Living</span>
+              <a href="#" aria-label="View Home Living category">Home Living</a>
             </li>
             <li
               class="flex items-center space-x-2 hover:text-red-600 transition-colors duration-200"
             >
               <span class="text-indigo-600">›</span>
-              <span>Interior Design</span>
+              <a href="#" aria-label="View Interior Design category"
+                >Interior Design</a
+              >
             </li>
           </ul>
         </div>
 
         <!-- Popular Posts -->
         <div>
-          <h3 class="font-bold text-xl text-gray-900 mb-4">Popular Posts</h3>
-          <div class="space-y-6">
+          <h2
+            class="font-bold text-xl text-gray-900 mb-4"
+            id="popular-posts-heading"
+          >
+            Popular Posts
+          </h2>
+          <div class="space-y-6" aria-labelledby="popular-posts-heading">
             <div class="flex items-center space-x-4 group">
               <img
                 src="https://klbtheme.com/furnob/wp-content/uploads/2021/12/blog-post-02-100x100.jpg"
-                alt="Popular Post"
+                alt="My House Designed In Wood blog post thumbnail"
+                loading="lazy"
                 class="w-16 h-16 object-cover rounded-lg transition-transform duration-300 group-hover:scale-110"
               />
               <div>
                 <p class="text-xs text-gray-500 uppercase tracking-wide">
                   December 19, 2024
                 </p>
-                <h4
+                <h3
                   class="font-semibold text-gray-900 group-hover:text-red-600 transition-colors duration-200"
                 >
-                  My House Designed In Wood
-                </h4>
+                  <a
+                    href="#"
+                    aria-label="Read My House Designed In Wood blog post"
+                    >My House Designed In Wood</a
+                  >
+                </h3>
               </div>
             </div>
             <div class="flex items-center space-x-4 group">
               <img
                 src="https://klbtheme.com/furnob/wp-content/uploads/2021/12/blog-post-01-100x100.jpg"
-                alt="Popular Post"
+                alt="Decorating a Rustic Home blog post thumbnail"
+                loading="lazy"
                 class="w-16 h-16 object-cover rounded-lg transition-transform duration-300 group-hover:scale-110"
               />
               <div>
                 <p class="text-xs text-gray-500 uppercase tracking-wide">
                   December 23, 2024
                 </p>
-                <h4
+                <h3
                   class="font-semibold text-gray-900 group-hover:text-red-600 transition-colors duration-200"
                 >
-                  Decorating a Rustic Home
-                </h4>
+                  <a
+                    href="#"
+                    aria-label="Read Decorating a Rustic Home blog post"
+                    >Decorating a Rustic Home</a
+                  >
+                </h3>
               </div>
             </div>
             <div class="flex items-center space-x-4 group">
               <img
                 src="https://klbtheme.com/furnob/wp-content/uploads/2021/12/blog-post-03-100x100.jpg"
-                alt="Popular Post"
+                alt="When Four Walls Get Too Small blog post thumbnail"
+                loading="lazy"
                 class="w-16 h-16 object-cover rounded-lg transition-transform duration-300 group-hover:scale-110"
               />
               <div>
                 <p class="text-xs text-gray-500 uppercase tracking-wide">
                   December 29, 2024
                 </p>
-                <h4
+                <h3
                   class="font-semibold text-gray-900 group-hover:text-red-600 transition-colors duration-200"
                 >
-                  When Four Walls Get Too Small
-                </h4>
+                  <a
+                    href="#"
+                    aria-label="Read When Four Walls Get Too Small blog post"
+                    >When Four Walls Get Too Small</a
+                  >
+                </h3>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
-    <!-- blogs are coming from backend -->
-    <div
+      </aside>
+    </main>
+    <!-- Blogs are coming from backend -->
+    <section
       class="max-w-6xl mx-auto grid md:grid-cols-1 gap-8 mt-12 mb-8"
       id="blog-grid"
+      role="region"
+      aria-live="polite"
+      aria-label="Blog Posts"
     >
       <!-- Blogs will be dynamically inserted here -->
-    </div>
-    <script src="blogs.js"></script>
-    <special-footer></special-footer>
+    </section>
+    <footer role="contentinfo">
+      <special-footer></special-footer>
+    </footer>
   </body>
 </html>
