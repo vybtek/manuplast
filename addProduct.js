@@ -58,7 +58,6 @@ document
         alert(data.error || "Error adding product");
       }
     } catch (err) {
-      console.error(err);
       alert("Server error");
     }
   });

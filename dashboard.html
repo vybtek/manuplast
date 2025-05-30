@@ -10,7 +10,9 @@
     />
     <meta name="robots" content="noindex, nofollow" />
     <meta name="author" content="Manu Plast" />
+    <link rel="icon" type="image/png" href="./images/logo.png" />
     <link rel="canonical" href="https://www.manuplast.com/admin/dashboard" />
+    <link href="style.css" rel="stylesheet" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
@@ -21,21 +23,21 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="sidebar.js"></script>
   </head>
-  <body class="bg-gray-100">
+  <body class="bg-gradient-to-br from-gray-50 to-gray-200 font-sans">
     <!-- Sidebar -->
     <div class="flex h-screen">
-      <aside role="navigation" aria-label="Admin Sidebar">
+      <aside role="navigation" aria-label="Admin Sidebar" class="shadow-lg">
         <special-sidebar></special-sidebar>
       </aside>
 
       <!-- Main content -->
       <main
         role="main"
-        class="flex-1 p-6 bg-gray-100 min-h-screen ml-64"
+        class="flex-1 p-8 bg-transparent min-h-screen ml-64 overflow-y-auto"
         aria-labelledby="dashboard-heading"
       >
         <h1
-          class="text-4xl font-extrabold mb-8 text-gray-800"
+          class="text-4xl font-extrabold mb-10 text-gray-900 tracking-tight animate-fadeIn"
           id="dashboard-heading"
         >
           Welcome to the Dashboard
@@ -43,88 +45,110 @@
 
         <!-- Stats Overview -->
         <section
-          class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8"
+          class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10"
           aria-labelledby="stats-heading"
         >
           <h2 class="sr-only" id="stats-heading">Statistics Overview</h2>
           <div
-            class="bg-white p-6 rounded-2xl shadow hover:shadow-lg transition"
+            class="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 animate-fadeIn"
             role="region"
             aria-label="Total Sales"
+            style="animation-delay: 0.1s"
           >
-            <h3 class="text-lg font-semibold text-gray-600">Total Sales</h3>
-            <p class="text-3xl font-bold text-green-600 mt-2">$15,230</p>
+            <h3 class="text-lg font-medium text-gray-600 flex items-center">
+              <i class="fas fa-dollar-sign mr-2 text-green-500"></i> Total Sales
+            </h3>
+            <p class="text-3xl font-bold text-green-600 mt-3">$15,230</p>
           </div>
           <div
-            class="bg-white p-6 rounded-2xl shadow hover:shadow-lg transition"
+            class="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 animate-fadeIn"
             role="region"
             aria-label="Active Projects"
+            style="animation-delay: 0.2s"
           >
-            <h3 class="text-lg font-semibold text-gray-600">Active Projects</h3>
-            <p class="text-3xl font-bold text-blue-600 mt-2">8</p>
+            <h3 class="text-lg font-medium text-gray-600 flex items-center">
+              <i class="fas fa-project-diagram mr-2 text-blue-500"></i> Active
+              Projects
+            </h3>
+            <p class="text-3xl font-bold text-blue-600 mt-3">8</p>
           </div>
           <div
-            class="bg-white p-6 rounded-2xl shadow hover:shadow-lg transition"
+            class="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 animate-fadeIn"
             role="region"
             aria-label="New Clients"
+            style="animation-delay: 0.3s"
           >
-            <h3 class="text-lg font-semibold text-gray-600">New Clients</h3>
-            <p class="text-3xl font-bold text-purple-600 mt-2">23</p>
+            <h3 class="text-lg font-medium text-gray-600 flex items-center">
+              <i class="fas fa-users mr-2 text-purple-500"></i> New Clients
+            </h3>
+            <p class="text-3xl font-bold text-purple-600 mt-3">23</p>
           </div>
         </section>
 
         <!-- Quick Actions -->
         <section
-          class="bg-white p-6 rounded-2xl shadow mb-8"
+          class="bg-white p-6 rounded-xl shadow-md mb-10 animate-fadeIn"
           aria-labelledby="actions-heading"
         >
           <h2
-            class="text-2xl font-bold mb-4 text-gray-800"
+            class="text-2xl font-bold mb-6 text-gray-900 tracking-tight"
             id="actions-heading"
           >
             Quick Actions
           </h2>
           <div class="flex flex-wrap gap-4">
             <a
-              href="/admin/add-product"
-              class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-xl transition"
+              href="file:///E:/Arpit/Arpit_Projects/Internship_Projects/manu-plast/add-product.html"
+              class="gradient-btn text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center"
               aria-label="Add New Product"
-              >➕ Add New Product</a
             >
+              <i class="fas fa-plus mr-2"></i> Add New Product
+            </a>
             <a
-              href="/admin/reports"
-              class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-xl transition"
+              href="file:///E:/Arpit/Arpit_Projects/Internship_Projects/manu-plast/product-list.html"
+              class="gradient-btn text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center"
               aria-label="View Reports"
-              >📈 View Reports</a
             >
+              <i class="fas fa-chart-line mr-2"></i> View Products
+            </a>
             <a
-              href="/admin/settings"
-              class="bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded-xl transition"
+              href="file:///E:/Arpit/Arpit_Projects/Internship_Projects/manu-plast/dashboard.html"
+              class="gradient-btn text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 flex items-center"
               aria-label="Manage Settings"
-              >🔧 Manage Settings</a
             >
+              <i class="fas fa-cog mr-2"></i> Manage Settings
+            </a>
           </div>
         </section>
 
         <!-- Recent Activities -->
         <section
-          class="bg-white p-6 rounded-2xl shadow mb-8"
+          class="bg-white p-6 rounded-xl shadow-md mb-10 animate-fadeIn"
           aria-labelledby="activities-heading"
         >
           <h2
-            class="text-2xl font-bold mb-4 text-gray-800"
+            class="text-2xl font-bold mb-6 text-gray-900 tracking-tight"
             id="activities-heading"
           >
             Recent Activities
           </h2>
           <ul
-            class="space-y-3 text-gray-700"
+            class="space-y-4 text-gray-700"
             role="list"
             aria-label="Recent Activities List"
           >
-            <li>📌 Project <strong>Website</strong> updated</li>
-            <li>💼 New client <strong>Arpit</strong> registered</li>
-            <li>🛠 Maintenance scheduled for <strong>Server A</strong></li>
+            <li class="flex items-center">
+              <i class="fas fa-thumbtack mr-3 text-blue-500"></i> Project
+              <strong class="ml-1">Website</strong> updated
+            </li>
+            <li class="flex items-center">
+              <i class="fas fa-briefcase mr-3 text-green-500"></i> New client
+              <strong class="ml-1">Arpit</strong> registered
+            </li>
+            <li class="flex items-center">
+              <i class="fas fa-tools mr-3 text-yellow-500"></i> Maintenance
+              scheduled for <strong class="ml-1">Server A</strong>
+            </li>
           </ul>
         </section>
       </main>

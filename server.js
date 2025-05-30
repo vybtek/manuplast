@@ -148,6 +148,7 @@ app.put("/products/:id", (req, res) => {
 });
 
 // BLOG PAGE APIS
+
 // POST: Add New Blog
 app.post("/add-blog", (req, res) => {
   const { title, author, image, content } = req.body;
@@ -168,7 +169,6 @@ app.post("/add-blog", (req, res) => {
   // Read existing blogs
   fs.readFile(BLOGS_FILE, "utf-8", (err, data) => {
     if (err) {
-      console.error("Error reading blogs file:", err); // Log error for debugging
       return res.status(500).json({ error: "Error reading blogs file" });
     }
 
@@ -176,7 +176,6 @@ app.post("/add-blog", (req, res) => {
     try {
       blogs = JSON.parse(data);
     } catch (parseErr) {
-      console.error("Error parsing existing blogs:", parseErr); // Log error for debugging
       return res.status(500).json({ error: "Error parsing existing blogs" });
     }
 
@@ -185,7 +184,6 @@ app.post("/add-blog", (req, res) => {
     // Save updated blogs
     fs.writeFile(BLOGS_FILE, JSON.stringify(blogs, null, 2), (err) => {
       if (err) {
-        console.error("Error saving blog:", err); // Log error for debugging
         return res.status(500).json({ error: "Error saving blog" });
       }
 

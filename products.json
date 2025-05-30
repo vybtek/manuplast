@@ -69,5 +69,13 @@
         "image": "https://plus.unsplash.com/premium_photo-1681408059522-b83aa9c0a0be?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTd8fGJvdHRsZXxlbnwwfHwwfHx8MA%3D%3D"
       }
     ]
+  },
+  {
+    "id": "e0d3383c-a493-4307-bcba-73a631bbb7c6",
+    "name": "Elegant Wooden Chair",
+    "image": "",
+    "description": "test",
+    "active": false,
+    "types": []
   }
 ]

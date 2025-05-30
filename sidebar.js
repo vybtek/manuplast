@@ -18,8 +18,6 @@ class SpecialSidebar extends HTMLElement {
             </div>
           </li>
 
-
-
           <li class="mb-3" id="blog-item">
             <div class="block p-2 bg-gray-700 rounded w-full cursor-pointer" id="blog-toggle"><i class="fa-solid fa-cubes mr-2 text-lg"></i>Blog</div>
             <div class="hidden" id="blog-menu">

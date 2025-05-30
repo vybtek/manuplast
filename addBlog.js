@@ -22,7 +22,6 @@ document.getElementById("blog-form").addEventListener("submit", async (e) => {
     const result = await response.json();
     alert(result.message || "Blog added successfully!");
   } catch (error) {
-    console.error("Error:", error);
     alert("Failed to submit blog.");
   }
 });

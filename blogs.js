@@ -43,28 +43,35 @@ async function fetchBlogs(containerId = "blog-grid", view = "default") {
         blogCard.innerHTML = `
           <div class="bg-white p-4 rounded-lg shadow flex flex-col gap-2 sm:flex-row sm:items-center justify-between">
             <div class="flex items-center space-x-4">
-              <img src="${blog.image}" alt="${blog.title
-          }" class="w-20 h-20 object-cover rounded" />
+              <img src="${blog.image}" alt="${
+          blog.title
+        }" class="w-20 h-20 object-cover rounded" />
               <div>
                 <h4 class="font-semibold text-gray-800">${blog.title}</h4>
-                <p class="text-sm text-gray-500 truncate max-w-xs">${blog.content?.slice(0, 80) || ""
-          }</p>
+                <p class="text-sm text-gray-500 truncate max-w-xs">${
+                  blog.content?.slice(0, 80) || ""
+                }</p>
               </div>
             </div>
             <div class="flex gap-2 mt-2 sm:mt-0">
-              <a href="update-blog.html?id=${blog.id
-          }" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm">Edit</a>
-              <button onclick="confirmDelete('${blog.id
-          }')" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm">Delete</button>
-              <button onclick="confirmToggleActive('${blog.id
-          }', ${isActive})" class="${isActive
+              <a href="update-blog.html?id=${
+                blog.id
+              }" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm">Edit</a>
+              <button onclick="confirmDelete('${
+                blog.id
+              }')" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm">Delete</button>
+              <button onclick="confirmToggleActive('${
+                blog.id
+              }', ${isActive})" class="${
+          isActive
             ? "bg-yellow-500 hover:bg-yellow-600"
             : "bg-green-500 hover:bg-green-600"
-          } text-white px-3 py-1 rounded text-sm">
+        } text-white px-3 py-1 rounded text-sm">
                 ${isActive ? "Deactivate" : "Activate"}
               </button>
-             <a href="blog-detail.html?id=${blog.id
-          }&source=dashboard" class="bg-gray-200 text-black px-3 py-1 rounded text-sm">View</a>
+             <a href="blog-detail.html?id=${
+               blog.id
+             }&source=dashboard" class="bg-gray-200 text-black px-3 py-1 rounded text-sm">View</a>
             </div>
           </div>
         `;
@@ -72,8 +79,9 @@ async function fetchBlogs(containerId = "blog-grid", view = "default") {
         // Public-facing card
         blogCard.innerHTML = `
   <div class="rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 bg-white">
-    <img src="${blog.image}" alt="${blog.title
-          }" class="w-full h-60 object-cover hover:scale-105 transition-transform duration-300">
+    <img src="${blog.image}" alt="${
+          blog.title
+        }" class="w-full h-60 object-cover hover:scale-105 transition-transform duration-300">
     <div class="p-5 space-y-3">
       <div class="text-gray-400 text-xs uppercase tracking-wider flex items-center gap-1">
         <span class="text-yellow-500 font-semibold">•</span> ${blog.author}
@@ -84,8 +92,9 @@ async function fetchBlogs(containerId = "blog-grid", view = "default") {
       <p class="text-gray-600 text-sm leading-relaxed">
         ${blog.content.substring(0, 150)}...
       </p>
-      <a href="blog-detail.html?id=${blog.id
-          }" class="inline-block text-blue-500 hover:text-blue-700 text-sm font-medium transition-colors duration-200 hover:underline">
+      <a href="blog-detail.html?id=${
+        blog.id
+      }" class="inline-block text-blue-500 hover:text-blue-700 text-sm font-medium transition-colors duration-200 hover:underline">
         Read More →
       </a>
     </div>
@@ -175,7 +184,6 @@ async function deleteBlog(blogId) {
       // Optionally reload or re-fetch
       fetchBlogs("dashboard-blog-list", "dashboard");
     } catch (error) {
-      console.error("Delete error:", error);
       alert("Failed to delete blog.");
     }
   }
@@ -192,7 +200,6 @@ async function toggleBlogActive(blogId, currentState) {
 
     fetchBlogs("dashboard-blog-list", "dashboard");
   } catch (error) {
-    console.error("Toggle error:", error);
     alert("Failed to toggle blog status.");
   }
 }
@@ -216,7 +223,6 @@ async function fetchBlogForUpdate() {
     document.getElementById("image").value = blog.image;
     document.getElementById("content").value = blog.content;
   } catch (error) {
-    console.error("Fetch error:", error);
     alert("Failed to load blog data.");
   }
 }
@@ -247,7 +253,6 @@ document
       alert("Blog updated successfully!");
       window.location.href = "blog-list.html"; // Redirect to dashboard
     } catch (error) {
-      console.error("Update error:", error);
       alert("Failed to update blog.");
     }
   });

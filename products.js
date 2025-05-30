@@ -95,7 +95,7 @@ async function fetchProducts(containerId = "product-grid", view = "default") {
       });
     }
   } catch (error) {
-    console.error("Error fetching products:", error);
+    alert(`Error fetching products:: ${error}`);
   }
 }
 
@@ -182,7 +182,6 @@ async function fetchProductDetail() {
       </div>
     `;
   } catch (error) {
-    console.error("Error loading product:", error);
     productDetail.innerHTML =
       "<p class='text-red-500 text-lg text-center font-semibold'>Error loading product details.</p>";
   }
@@ -262,7 +261,6 @@ async function fetchTypeDetail() {
       </div>
     `;
   } catch (error) {
-    console.error("Error loading product type:", error);
     typeDetail.innerHTML =
       "<p class='text-red-500 text-lg text-center font-semibold'>Error loading product type details.</p>";
   }
@@ -285,7 +283,6 @@ async function deleteProduct(id) {
       fetchProducts("dashboard-product-list", "dashboard");
       alert("Product deleted successfully!");
     } catch (error) {
-      console.error("Delete error:", error.message);
       alert(`Failed to delete product: ${error.message}`);
     }
   }
@@ -316,7 +313,6 @@ async function toggleActive(productId, currentStatus) {
       `Product ${currentStatus ? "deactivated" : "activated"} successfully!`
     );
   } catch (error) {
-    console.error("Error toggling product active status:", error.message);
     alert(`Failed to update product status: ${error.message}`);
   }
 }
@@ -337,7 +333,6 @@ async function fetchProductForUpdate() {
     const product = await response.json();
     populateForm(product);
   } catch (error) {
-    console.error("Error fetching product:", error);
     alert("Failed to load product data.");
   }
 }
@@ -434,7 +429,6 @@ document
       alert("Product updated successfully!");
       window.location.href = "product-list.html";
     } catch (error) {
-      console.error("Error updating product:", error);
       alert("Failed to update product.");
     }
   });
