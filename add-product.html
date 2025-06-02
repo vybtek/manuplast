@@ -105,6 +105,16 @@
               role="group"
               aria-labelledby="product-types-heading"
             >
+              <div class="flex justify-between items-center">
+                <h4 class="font-semibold">Product Type</h4>
+                <button
+                  type="button"
+                  class="remove-type text-red-500 text-3xl"
+                  aria-label="Remove Product Type"
+                >
+                  ×
+                </button>
+              </div>
               <div>
                 <label
                   for="type-name-0"
@@ -119,17 +129,33 @@
                 />
               </div>
               <div>
-                <label
-                  for="type-image-0"
-                  class="block text-gray-700 font-medium mb-2"
-                  >Type Image URL</label
+                <label class="block text-gray-700 font-medium mb-2"
+                  >Type Images</label
                 >
-                <input
-                  type="text"
-                  id="type-image-0"
-                  class="type-image w-full p-2 border rounded"
-                  placeholder="Type Image URL"
-                />
+                <div class="type-images-container space-y-2" data-type-index="0">
+                  <div class="flex items-center space-x-2">
+                    <input
+                      type="url"
+                      class="type-image w-full p-2 border rounded"
+                      placeholder="Type Image URL"
+                    />
+                    <button
+                      type="button"
+                      class="remove-image text-red-500"
+                      aria-label="Remove Image"
+                    >
+                      ×
+                    </button>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  class="add-image-btn bg-gray-200 px-3 py-1 mt-2 rounded hover:bg-gray-300"
+                  data-type-index="0"
+                  aria-label="Add Another Image"
+                >
+                  + Add Image
+                </button>
               </div>
               <div>
                 <label
@@ -156,6 +182,64 @@
                   class="type-price w-full p-2 border rounded"
                   placeholder="Type Price"
                 />
+              </div>
+              <div>
+                <label class="block text-gray-700 font-medium mb-2"
+                  >Sizes</label
+                >
+                <div class="type-sizes-container space-y-2" data-type-index="0">
+                  <div class="flex items-center space-x-2">
+                    <input
+                      type="text"
+                      class="type-size w-full p-2 border rounded"
+                      placeholder="Size (e.g., S, M, L)"
+                    />
+                    <button
+                      type="button"
+                      class="remove-size text-red-500"
+                      aria-label="Remove Size"
+                    >
+                      ×
+                    </button>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  class="add-size-btn bg-gray-200 px-3 py-1 mt-2 rounded hover:bg-gray-300"
+                  data-type-index="0"
+                  aria-label="Add Another Size"
+                >
+                  + Add Size
+                </button>
+              </div>
+              <div>
+                <label class="block text-gray-700 font-medium mb-2"
+                  >Colors</label
+                >
+                <div class="type-colors-container space-y-2" data-type-index="0">
+                  <div class="flex items-center space-x-2">
+                    <input
+                      type="text"
+                      class="type-color w-full p-2 border rounded"
+                      placeholder="Color (e.g., Red, Blue)"
+                    />
+                    <button
+                      type="button"
+                      class="remove-color text-red-500"
+                      aria-label="Remove Color"
+                    >
+                      ×
+                    </button>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  class="add-color-btn bg-gray-200 px-3 py-1 mt-2 rounded hover:bg-gray-300"
+                  data-type-index="0"
+                  aria-label="Add Another Color"
+                >
+                  + Add Color
+                </button>
               </div>
             </div>
           </div>

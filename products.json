@@ -9,20 +9,57 @@
       {
         "name": "Classic Black",
         "description": "A sleek black chair with a timeless design, ideal for any setting.",
-        "price": "4999",
-        "image": "./images/products/DSC00554 copy.jpg"
+        "price": 4999,
+        "images": [
+          "./images/products/DSC00554 copy.jpg",
+          "./images/products/DSC00554 copy.jpg",
+          "./images/products/DSC00554 copy.jpg"
+        ],
+        "sizes": [
+          "S",
+          "M",
+          "L"
+        ],
+        "colors": [
+          "Black",
+          "Dark Grey"
+        ]
       },
       {
         "name": "Brown Vintage",
         "description": "A stylish brown chair with a vintage finish, adding warmth to your space.",
-        "price": "5499",
-        "image": "./images/products/DSC00554 copy.jpg"
+        "price": 5499,
+        "images": [
+          "./images/products/DSC00554 copy.jpg",
+          "./images/products/brown-chair-2.jpg",
+          "./images/products/brown-chair-3.jpg"
+        ],
+        "sizes": [
+          "M",
+          "L"
+        ],
+        "colors": [
+          "Brown",
+          "Tan"
+        ]
       },
       {
         "name": "Modern Grey",
         "description": "A contemporary grey chair, perfect for modern minimalist interiors.",
-        "price": "5299",
-        "image": "./images/products/DSC00554 copy.jpg"
+        "price": 5299,
+        "images": [
+          "./images/products/DSC00554 copy.jpg",
+          "./images/products/grey-chair-2.jpg",
+          "./images/products/grey-chair-3.jpg"
+        ],
+        "sizes": [
+          "S",
+          "M"
+        ],
+        "colors": [
+          "Grey",
+          "Light Grey"
+        ]
       }
     ]
   },
@@ -38,14 +75,6 @@
     "name": "Modern Marble Table",
     "image": "https://plus.unsplash.com/premium_photo-1681408059522-b83aa9c0a0be?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTd8fGJvdHRsZXxlbnwwfHwwfHx8MA%3D%3D",
     "description": "A premium marble coffee table with a stylish metal frame, adding elegance to any living space.",
-    "active": false,
-    "types": []
-  },
-  {
-    "id": "0447d71a-3813-425a-addc-5889f69e764a",
-    "name": "Outdoor Lounge Set",
-    "image": "https://plus.unsplash.com/premium_photo-1681408059522-b83aa9c0a0be?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTd8fGJvdHRsZXxlbnwwfHwwfHx8MA%3D%3D",
-    "description": "A comfortable and durable outdoor lounge set, perfect for relaxing in your garden or patio.",
     "active": false,
     "types": []
   },
@@ -71,11 +100,35 @@
     ]
   },
   {
-    "id": "e0d3383c-a493-4307-bcba-73a631bbb7c6",
-    "name": "Elegant Wooden Chair",
-    "image": "",
+    "id": "158156be-2384-4f4d-9108-1029421a29e9",
+    "name": "Testing",
+    "image": "https://plus.unsplash.com/premium_photo-1681408059522-b83aa9c0a0be?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTd8fGJvdHRsZXxlbnwwfHwwfHx8MA%3D%3D",
     "description": "test",
-    "active": false,
-    "types": []
+    "active": true,
+    "types": [
+      {
+        "name": "test",
+        "images": [
+          "https://plus.unsplash.com/premium_photo-1681408059522-b83aa9c0a0be?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTd8fGJvdHRsZXxlbnwwfHwwfHx8MA%3D%3D",
+          "./images/products/pd2.jpg",
+          "./images/products/pd1.jpg",
+          "./images/products/pd3.jpg"
+        ],
+        "description": "test",
+        "price": 800,
+        "sizes": [
+          "800ml",
+          "750ml",
+          "1000ml",
+          "1ltr"
+        ],
+        "colors": [
+          "Blue ",
+          "Red",
+          "hello",
+          "test"
+        ]
+      }
+    ]
   }
 ]

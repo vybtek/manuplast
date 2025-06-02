@@ -33,13 +33,25 @@ function readFile(file, callback) {
 app.post("/add-product", (req, res) => {
   const { name, image, description, types } = req.body;
 
+  // Validate input
+  if (!name || !image || !description || !Array.isArray(types) || types.length === 0) {
+    return res.status(400).json({ error: "Missing required fields or invalid types" });
+  }
+
   const newProduct = {
     id: uuidv4(),
     name,
     image,
     description,
     active: false,
-    types: types || [],
+    types: types.map((type) => ({
+      name: type.name || "",
+      images: Array.isArray(type.images) ? type.images : [],
+      description: type.description || "",
+      price: parseFloat(type.price) || 0,
+      sizes: Array.isArray(type.sizes) ? type.sizes : [],
+      colors: Array.isArray(type.colors) ? type.colors : [],
+    })),
   };
 
   readFile(PRODUCTS_FILE, (err, products) => {
@@ -97,21 +109,27 @@ app.delete("/products/:id", (req, res) => {
   });
 });
 
-//Toggle active inactive API
+// Toggle active/inactive API
 app.patch("/products/:id", (req, res) => {
   const { id } = req.params;
   const { active } = req.body;
 
-  const products = JSON.parse(fs.readFileSync("products.json", "utf-8"));
-  const productIndex = products.findIndex((p) => p.id === id);
+  readFile(PRODUCTS_FILE, (err, products) => {
+    if (err)
+      return res.status(500).json({ error: "Error reading products file" });
 
-  if (productIndex === -1) {
-    return res.status(404).json({ error: "Product not found" });
-  }
+    const productIndex = products.findIndex((p) => p.id === id);
+    if (productIndex === -1) {
+      return res.status(404).json({ error: "Product not found" });
+    }
 
-  products[productIndex].active = active;
-  fs.writeFileSync("products.json", JSON.stringify(products, null, 2));
-  res.json(products[productIndex]);
+    products[productIndex].active = active;
+    fs.writeFile(PRODUCTS_FILE, JSON.stringify(products, null, 2), (err) => {
+      if (err)
+        return res.status(500).json({ error: "Error saving updated product" });
+      res.json(products[productIndex]);
+    });
+  });
 });
 
 // PUT: Edit a Product by ID
@@ -135,7 +153,16 @@ app.put("/products/:id", (req, res) => {
       name: name || products[productIndex].name,
       image: image || products[productIndex].image,
       description: description || products[productIndex].description,
-      types: types || products[productIndex].types,
+      types: types
+        ? types.map((type) => ({
+            name: type.name || "",
+            images: Array.isArray(type.images) ? type.images : [],
+            description: type.description || "",
+            price: parseFloat(type.price) || 0,
+            sizes: Array.isArray(type.sizes) ? type.sizes : [],
+            colors: Array.isArray(type.colors) ? type.colors : [],
+          }))
+        : products[productIndex].types,
     };
 
     // Write the updated products back to the file
@@ -146,7 +173,6 @@ app.put("/products/:id", (req, res) => {
     });
   });
 });
-
 // BLOG PAGE APIS
 
 // POST: Add New Blog

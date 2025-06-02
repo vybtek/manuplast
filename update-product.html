@@ -51,7 +51,6 @@
           id="update-product-form"
           class="space-y-6"
           method="POST"
-          action="/api/update-product"
           novalidate
         >
           <input type="hidden" id="csrf-token" name="_csrf" value="" />
@@ -148,7 +147,9 @@
               id="types-container"
               class="space-y-6"
               aria-labelledby="product-types-heading"
-            ></div>
+            >
+              <!-- Initial Type (populated dynamically) -->
+            </div>
             <button
               type="button"
               id="add-type-button"
