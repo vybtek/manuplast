@@ -145,9 +145,9 @@ class SpecialFooter extends HTMLElement {
                 </a>
               </li>
               <li>
-                <a href="mailto:support@manuplast.com" class="flex items-center space-x-3 hover:text-blue-400 transition-all duration-200">
+                <a href="mailto:manuplast901@gmail.com" class="flex items-center space-x-3 hover:text-blue-400 transition-all duration-200">
                   <i class="fas fa-envelope text-blue-500 text-lg"></i>
-                  <span>support@manuplast.com</span>
+                  <span>manuplast901@gmail.com</span>
                 </a>
               </li>
               <li class="flex items-center space-x-3">

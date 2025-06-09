@@ -211,7 +211,8 @@ async function fetchTypeDetail() {
 
   try {
     const response = await fetch(`http://localhost:5000/products/${productId}`);
-    if (!response.ok) throw new Error(`Failed to fetch product details: ${response.status}`);
+    if (!response.ok)
+      throw new Error(`Failed to fetch product details: ${response.status}`);
     const product = await response.json();
 
     if (!product.active && !document.referrer.includes("dashboard")) {
@@ -260,7 +261,9 @@ async function fetchTypeDetail() {
               .map(
                 (color) =>
                   `<div class="color-card bg-white border border-gray-200 rounded-lg p-4 text-center text-gray-800 font-medium shadow-sm hover:shadow-lg hover:-translate-y-1 transform transition-all duration-300 cursor-pointer" style="background-color: ${color.toLowerCase()}; color: ${
-                    ["white", "yellow", "lightgray"].includes(color.toLowerCase())
+                    ["white", "yellow", "lightgray"].includes(
+                      color.toLowerCase()
+                    )
                       ? "black"
                       : "white"
                   }">
@@ -353,7 +356,7 @@ async function fetchTypeDetail() {
           margin-right: 0;
         }
         .gallery-nav {
-          display: ${type.images.length > 1 ? 'block' : 'none'};
+          display: ${type.images.length > 1 ? "block" : "none"};
         }
         .thumbnail.active {
           opacity: 100 !important;
@@ -496,7 +499,9 @@ async function fetchTypeDetail() {
                 lightboxImg.src = document.querySelectorAll(".gallery-item img")[currentIndex].src;
                 updateActiveThumbnail(currentIndex);
                 console.log("Keyboard left, new index:", currentIndex);
-              } else if (e.key === "ArrowRight" && currentIndex < ${type.images.length - 1}) {
+              } else if (e.key === "ArrowRight" && currentIndex < ${
+                type.images.length - 1
+              }) {
                 currentIndex++;
                 lightboxImg.src = document.querySelectorAll(".gallery-item img")[currentIndex].src;
                 updateActiveThumbnail(currentIndex);

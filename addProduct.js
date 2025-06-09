@@ -252,19 +252,33 @@ document
     const types = Array.from(typeDivs)
       .map((div, index) => ({
         name: div.querySelector(`#type-name-${index}`)?.value,
-        images: Array.from(div.querySelectorAll(`.type-images-container[data-type-index="${index}"] .type-image`))
+        images: Array.from(
+          div.querySelectorAll(
+            `.type-images-container[data-type-index="${index}"] .type-image`
+          )
+        )
           .map((input) => input.value)
           .filter((url) => url),
         description: div.querySelector(`#type-description-${index}`)?.value,
         price: parseFloat(div.querySelector(`#type-price-${index}`)?.value),
-        sizes: Array.from(div.querySelectorAll(`.type-sizes-container[data-type-index="${index}"] .type-size`))
+        sizes: Array.from(
+          div.querySelectorAll(
+            `.type-sizes-container[data-type-index="${index}"] .type-size`
+          )
+        )
           .map((input) => input.value)
           .filter((size) => size),
-        colors: Array.from(div.querySelectorAll(`.type-colors-container[data-type-index="${index}"] .type-color`))
+        colors: Array.from(
+          div.querySelectorAll(
+            `.type-colors-container[data-type-index="${index}"] .type-color`
+          )
+        )
           .map((input) => input.value)
           .filter((color) => color),
       }))
-      .filter((t) => t.name && t.images?.length && t.description && !isNaN(t.price));
+      .filter(
+        (t) => t.name && t.images?.length && t.description && !isNaN(t.price)
+      );
 
     try {
       const response = await fetch("http://localhost:5000/add-product", {

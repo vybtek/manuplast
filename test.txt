@@ -1,0 +1,279 @@
+
+const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
+const { v4: uuidv4 } = require("uuid");
+
+const app = express();
+app.use(express.json());
+app.use(cors());
+
+// MongoDB connection
+mongoose
+  .connect(
+    "mongodb+srv://arpit562005:banna420@cluster0.qaa02dh.mongodb.net/?retryWrites=true&w=majority&appName=Manu-Plast",
+    {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    }
+  )
+  .then(() => console.log("Connected to MongoDB"))
+  .catch((err) => console.error("MongoDB connection error:", err));
+
+// Product Schema
+const productSchema = new mongoose.Schema({
+  id: { type: String, default: uuidv4, unique: true },
+  name: { type: String, required: true },
+  image: { type: String, required: true },
+  description: { type: String, required: true },
+  active: { type: Boolean, default: false },
+  types: [
+    {
+      name: { type: String, required: true },
+      images: [String],
+      description: String,
+      price: { type: Number, default: 0 },
+      sizes: [String],
+      colors: [String],
+    },
+  ],
+});
+
+// Blog Schema
+const blogSchema = new mongoose.Schema({
+  id: { type: String, default: uuidv4, unique: true },
+  title: { type: String, required: true },
+  author: { type: String, required: true },
+  image: { type: String, required: true },
+  content: { type: String, required: true },
+  active: { type: Boolean, default: false },
+});
+
+// Create Mongoose Models
+const Product = mongoose.model("Product", productSchema);
+const Blog = mongoose.model("Blog", blogSchema);
+
+// PRODUCT PAGE API
+
+// POST: Add New Product
+app.post("/add-product", async (req, res) => {
+  const { name, image, description, types } = req.body;
+
+  // Validate input
+  if (
+    !name ||
+    !image ||
+    !description ||
+    !Array.isArray(types) ||
+    types.length === 0
+  ) {
+    return res
+      .status(400)
+      .json({ error: "Missing required fields or invalid types" });
+  }
+
+  const newProduct = new Product({
+    id: uuidv4(),
+    name,
+    image,
+    description,
+    active: false,
+    types: types.map((type) => ({
+      name: type.name || "",
+      images: Array.isArray(type.images) ? type.images : [],
+      description: type.description || "",
+      price: parseFloat(type.price) || 0,
+      sizes: Array.isArray(type.sizes) ? type.sizes : [],
+      colors: Array.isArray(type.colors) ? type.colors : [],
+    })),
+  });
+
+  try {
+    const savedProduct = await newProduct.save();
+    res.status(201).json(savedProduct);
+  } catch (err) {
+    res.status(500).json({ error: "Error saving product" });
+  }
+});
+
+// GET: Fetch All Products
+app.get("/products", async (req, res) => {
+  try {
+    const products = await Product.find();
+    res.json(products);
+  } catch (err) {
+    res.status(500).json({ error: "Error fetching products" });
+  }
+});
+
+// GET: Fetch Single Product by ID
+app.get("/products/:id", async (req, res) => {
+  try {
+    const product = await Product.findOne({ id: req.params.id });
+    if (!product) return res.status(404).json({ error: "Product not found" });
+    res.json(product);
+  } catch (err) {
+    res.status(500).json({ error: "Error fetching product" });
+  }
+});
+
+// DELETE: Remove Product by ID
+app.delete("/products/:id", async (req, res) => {
+  try {
+    const result = await Product.deleteOne({ id: req.params.id });
+    if (result.deletedCount === 0)
+      return res.status(404).json({ error: "Product not found" });
+    res.json({ message: "Product deleted successfully!" });
+  } catch (err) {
+    res.status(500).json({ error: "Error deleting product" });
+  }
+});
+
+// PATCH: Toggle active/inactive Product
+app.patch("/products/:id", async (req, res) => {
+  const { id } = req.params;
+  const { active } = req.body;
+
+  try {
+    const product = await Product.findOneAndUpdate(
+      { id },
+      { active },
+      { new: true }
+    );
+    if (!product) return res.status(404).json({ error: "Product not found" });
+    res.json(product);
+  } catch (err) {
+    res.status(500).json({ error: "Error updating product" });
+  }
+});
+
+// PUT: Edit a Product by ID
+app.put("/products/:id", async (req, res) => {
+  const { id } = req.params;
+  const { name, image, description, types } = req.body;
+
+  try {
+    const product = await Product.findOne({ id });
+    if (!product) return res.status(404).json({ error: "Product not found" });
+
+    product.name = name || product.name;
+    product.image = image || product.image;
+    product.description = description || product.description;
+    product.types = types
+      ? types.map((type) => ({
+          name: type.name || "",
+          images: Array.isArray(type.images) ? type.images : [],
+          description: type.description || "",
+          price: parseFloat(type.price) || 0,
+          sizes: Array.isArray(type.sizes) ? type.sizes : [],
+          colors: Array.isArray(type.colors) ? type.colors : [],
+        }))
+      : product.types;
+
+    const updatedProduct = await product.save();
+    res.json(updatedProduct);
+  } catch (err) {
+    res.status(500).json({ error: "Error updating product" });
+  }
+});
+
+// BLOG PAGE APIS
+
+// POST: Add New Blog
+app.post("/add-blog", async (req, res) => {
+  const { title, author, image, content } = req.body;
+
+  // Validate required fields
+  if (!title || !author || !image || !content) {
+    return res.status(400).json({ error: "All fields are required." });
+  }
+
+  const newBlog = new Blog({
+    id: uuidv4(),
+    title,
+    author,
+    image,
+    content,
+  });
+
+  try {
+    const savedBlog = await newBlog.save();
+    res
+      .status(201)
+      .json({ message: "Blog added successfully", blog: savedBlog });
+  } catch (err) {
+    res.status(500).json({ error: "Error saving blog" });
+  }
+});
+
+// GET: Fetch All Blogs
+app.get("/blogs", async (req, res) => {
+  try {
+    const blogs = await Blog.find();
+    res.json(blogs);
+  } catch (err) {
+    res.status(500).json({ error: "Error fetching blogs" });
+  }
+});
+
+// GET: Fetch Single Blog by ID
+app.get("/blogs/:id", async (req, res) => {
+  try {
+    const blog = await Blog.findOne({ id: req.params.id });
+    if (!blog) return res.status(404).json({ error: "Blog not found" });
+    res.json(blog);
+  } catch (err) {
+    res.status(500).json({ error: "Error fetching blog" });
+  }
+});
+
+// DELETE: Remove Blog by ID
+app.delete("/blogs/:id", async (req, res) => {
+  try {
+    const result = await Blog.deleteOne({ id: req.params.id });
+    if (result.deletedCount === 0)
+      return res.status(404).json({ error: "Blog not found" });
+    res.json({ message: "Blog deleted successfully!" });
+  } catch (err) {
+    res.status(500).json({ error: "Error deleting blog" });
+  }
+});
+
+// PATCH: Toggle active/inactive Blog
+app.patch("/blogs/:id", async (req, res) => {
+  const { id } = req.params;
+  const { active } = req.body;
+
+  try {
+    const blog = await Blog.findOneAndUpdate({ id }, { active }, { new: true });
+    if (!blog) return res.status(404).json({ error: "Blog not found" });
+    res.json(blog);
+  } catch (err) {
+    res.status(500).json({ error: "Error updating blog" });
+  }
+});
+
+// PUT: Update Blog by ID
+app.put("/blogs/:id", async (req, res) => {
+  const { title, author, image, content } = req.body;
+
+  try {
+    const blog = await Blog.findOne({ id: req.params.id });
+    if (!blog) return res.status(404).json({ error: "Blog not found" });
+
+    blog.title = title || blog.title;
+    blog.author = author || blog.author;
+    blog.image = image || blog.image;
+    blog.content = content || blog.content;
+
+    const updatedBlog = await blog.save();
+    res.json({ message: "Blog updated successfully", blog: updatedBlog });
+  } catch (err) {
+    res.status(500).json({ error: "Error updating blog" });
+  }
+});
+
+// Start the server
+app.listen(5000, () => {
+  console.log("Server is running on port 5000");
+});

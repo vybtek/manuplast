@@ -34,8 +34,16 @@ app.post("/add-product", (req, res) => {
   const { name, image, description, types } = req.body;
 
   // Validate input
-  if (!name || !image || !description || !Array.isArray(types) || types.length === 0) {
-    return res.status(400).json({ error: "Missing required fields or invalid types" });
+  if (
+    !name ||
+    !image ||
+    !description ||
+    !Array.isArray(types) ||
+    types.length === 0
+  ) {
+    return res
+      .status(400)
+      .json({ error: "Missing required fields or invalid types" });
   }
 
   const newProduct = {
