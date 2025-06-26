@@ -8,17 +8,18 @@
     "types": [
       {
         "name": "Classic Black",
-        "description": "A sleek black chair with a timeless design, ideal for any setting.",
-        "price": 4999,
         "images": [
           "./images/products/10.jpg",
           "./images/products/9.jpg",
           "./images/products/8.jpg"
         ],
+        "description": "A sleek black chair with a timeless design, ideal for any setting.",
+        "price": 4999,
         "sizes": [
           "S",
           "M",
-          "L"
+          "L",
+          "XL"
         ],
         "colors": [
           "Black",
@@ -27,13 +28,13 @@
       },
       {
         "name": "Brown Vintage",
-        "description": "A stylish brown chair with a vintage finish, adding warmth to your space.",
-        "price": 5499,
         "images": [
           "./images/products/4.jpg",
           "./images/products/4.jpg",
           "./images/products/4.jpg"
         ],
+        "description": "A stylish brown chair with a vintage finish, adding warmth to your space.",
+        "price": 5499,
         "sizes": [
           "M",
           "L"
@@ -45,13 +46,13 @@
       },
       {
         "name": "Modern Grey",
-        "description": "A contemporary grey chair, perfect for modern minimalist interiors.",
-        "price": 5299,
         "images": [
           "./images/products/6.jpg",
           "./images/products/6.jpg",
           "./images/products/6.jpg"
         ],
+        "description": "A contemporary grey chair, perfect for modern minimalist interiors.",
+        "price": 5299,
         "sizes": [
           "S",
           "M"

@@ -135,7 +135,7 @@ class SpecialFooter extends HTMLElement {
               <li>
                 <a href="#" target="_blank" class="flex items-center space-x-3 hover:text-blue-400 transition-all duration-200">
                   <i class="fas fa-map-marker-alt text-blue-500 text-lg"></i>
-                  <span>Udaipur, Rajasthan 313001</span>
+                  <span>District: Palghar, Maharashtra – 401208, India</span>
                 </a>
               </li>
               <li>
