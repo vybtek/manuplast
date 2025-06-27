@@ -6,7 +6,7 @@
     <title>Add Product | Manu Plast Admin</title>
     <meta
       name="description"
-      content="Admin interface for adding new products to the Manu Plast website, specializing in sustainable drinkware and eco-friendly bottles."
+      content="Admin interface for adding new products to a selected category on the Manu Plast website."
     />
     <meta name="robots" content="noindex, nofollow" />
     <meta name="author" content="Manu Plast" />
@@ -23,27 +23,22 @@
     <script defer src="addProduct.js"></script>
     <script defer src="sidebar.js"></script>
     <script defer>
-      // Redirect if not logged in
       if (localStorage.getItem("isLoggedIn") !== "true") {
         window.location.href = "login.html";
       }
     </script>
   </head>
-
   <body class="bg-gray-100 flex">
-    <!-- Sidebar -->
     <aside role="navigation" aria-label="Admin Sidebar">
       <special-sidebar></special-sidebar>
     </aside>
-
-    <!-- Main Content -->
-    <main role="main" class="flex justify-center w-full pl-80">
+    <main role="main" class="flex justify-center w-full md:pl-80 py-12">
       <div class="bg-white shadow-lg rounded-lg p-6 w-full max-w-3xl">
         <h1
           class="text-2xl font-bold text-center text-gray-700 mb-4"
           id="add-product-heading"
         >
-          ADD NEW CATEGORY
+          ADD NEW PRODUCT
         </h1>
         <form
           id="product-form"
@@ -51,49 +46,19 @@
           aria-labelledby="add-product-heading"
         >
           <div>
-            <label for="name" class="block text-gray-700 font-medium mb-2"
-              >Name</label
+            <label for="category" class="block text-gray-700 font-medium mb-2"
+              >Category</label
             >
-            <input
-              type="text"
-              id="name"
-              name="name"
-              placeholder="Category Name"
+            <select
+              id="category"
+              name="category"
               required
               aria-required="true"
               class="w-full p-2 border rounded-lg"
-            />
-          </div>
-          <div>
-            <label for="image" class="block text-gray-700 font-medium mb-2"
-              >Image URL</label
             >
-            <input
-              type="url"
-              id="image"
-              name="image"
-              placeholder="Image URL"
-              required
-              aria-required="true"
-              class="w-full p-2 border rounded-lg"
-            />
+              <option value="" disabled selected>Select a Category</option>
+            </select>
           </div>
-          <div>
-            <label
-              for="description"
-              class="block text-gray-700 font-medium mb-2"
-              >Description</label
-            >
-            <textarea
-              id="description"
-              name="description"
-              placeholder="Description"
-              required
-              aria-required="true"
-              class="w-full p-2 border rounded-lg"
-            ></textarea>
-          </div>
-
           <div id="types-container" class="space-y-4">
             <h2
               class="text-lg font-semibold text-gray-700"
@@ -139,7 +104,7 @@
                 >
                   <div class="flex items-center space-x-2">
                     <input
-                      type="url"
+                      type="file"
                       class="type-image w-full p-2 border rounded"
                       placeholder="Type Image URL"
                     />
@@ -258,18 +223,16 @@
           >
             + Add More Type
           </button>
-
           <button
             type="submit"
             class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600"
-            aria-label="Add New Product"
+            aria-label="Add Product"
           >
             Add Product
           </button>
         </form>
       </div>
     </main>
-
     <script defer>
       function logout() {
         localStorage.removeItem("isLoggedIn");

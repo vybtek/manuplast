@@ -1,44 +1,49 @@
 class SpecialSidebar extends HTMLElement {
   connectedCallback() {
     this.innerHTML = `
-      <div class="w-64 bg-gray-800 text-white p-5 fixed h-full">
-        <h2 class="text-2xl font-bold mb-5 cursor-pointer" onclick="window.location.href='dashboard.html'">
+      <div class="w-64 bg-gradient-to-b from-gray-900 to-gray-800 text-white p-6 fixed h-full transform transition-transform duration-300 ease-in-out md:translate-x-0 -translate-x-full md:flex flex-col z-20 shadow-xl">
+        <h2 class="text-2xl font-bold mb-8 cursor-pointer flex items-center gap-3 hover:text-indigo-300 transition-colors" onclick="window.location.href='dashboard.html'">
           <i class="fa-solid fa-house"></i> Dashboard
         </h2>
-        <ul class="justify-center items-center">
-          <li class="mb-3" id="product-item">
-            <div class="block p-2 bg-gray-700 rounded w-full cursor-pointer" id="product-toggle"><i class="fa-solid fa-chair mr-2 text-lg"></i>Product</div>
-            <div class="hidden" id="product-menu">
-              <a href="add-product.html" class="block px-4 py-2 bg-gray-600 rounded hover:bg-gray-500">
+        <ul class="flex-1">
+          <li class="mb-4" id="product-item">
+            <div class="block p-3 bg-gray-700/50 rounded-lg w-full cursor-pointer hover:bg-indigo-600/50 transition-colors" id="product-toggle">
+              <i class="fa-solid fa-chair mr-2 text-lg"></i>Product
+            </div>
+            <div class="hidden mt-2 space-y-2 pl-4" id="product-menu">
+            <a href="add-product-category.html" class="block px-4 py-2 bg-gray-600/50 rounded-lg hover:bg-indigo-500/50 transition-colors">
+              <i class="fa-solid fa-plus mr-2"></i>Add Category
+            </a>
+             <a href="add-product.html" class="block px-4 py-2 bg-gray-600/50 rounded-lg hover:bg-indigo-500/50 transition-colors">
                 <i class="fa-solid fa-plus mr-2"></i>Add Product
               </a>
-              <a href="product-list.html" class="block px-4 py-2 bg-gray-600 rounded hover:bg-gray-500">
-                <i class="fa-solid fa-eye mr-2"></i>View Products
+              <a href="product-list.html" class="block px-4 py-2 bg-gray-600/50 rounded-lg hover:bg-indigo-500/50 transition-colors">
+                <i class="fa-solid fa-eye mr-2"></i>View Category
               </a>
             </div>
           </li>
 
-          <li class="mb-3" id="blog-item">
-            <div class="block p-2 bg-gray-700 rounded w-full cursor-pointer" id="blog-toggle"><i class="fa-solid fa-cubes mr-2 text-lg"></i>Blog</div>
-            <div class="hidden" id="blog-menu">
-              <a href="add-blog.html" class="block px-4 py-2 bg-gray-600  hover:bg-gray-500">
+          <li class="mb-4" id="blog-item">
+            <div class="block p-3 bg-gray-700/50 rounded-lg w-full cursor-pointer hover:bg-indigo-600/50 transition-colors" id="blog-toggle">
+              <i class="fa-solid fa-cubes mr-2 text-lg"></i>Blog
+            </div>
+            <div class="hidden mt-2 space-y-2 pl-4" id="blog-menu">
+              <a href="add-blog.html" class="block px-4 py-2 bg-gray-600/50 rounded-lg hover:bg-indigo-500/50 transition-colors">
                 <i class="fa-solid fa-plus mr-2"></i>Add Blog
               </a>
-              <a href="blog-list.html" class="block px-4 py-2 bg-gray-600 hover:bg-gray-500">
+              <a href="blog-list.html" class="block px-4 py-2 bg-gray-600/50 rounded-lg hover:bg-indigo-500/50 transition-colors">
                 <i class="fa-solid fa-eye mr-2"></i>View Blogs
               </a>
             </div>
           </li>
-
-          <li>
-            <button onclick="logout()" class="w-full mt-4 bg-red-500 p-2 rounded hover:bg-red-600">
-              <i class="fa-solid fa-right-from-bracket"></i> Logout
-            </button>
-          </li>
         </ul>
+
+        <button onclick="logout()" class="w-full mt-4 bg-red-500 p-3 rounded-lg hover:bg-red-600 transition-colors flex items-center justify-center gap-2">
+          <i class="fa-solid fa-right-from-bracket"></i> Logout
+        </button>
       </div>
 
-      <button id="menu-toggle" class="p-4 text-white bg-gray-800 md:hidden absolute top-4 left-4 z-10">
+      <button id="menu-toggle" class="p-3 text-white bg-indigo-600 md:hidden fixed top-4 left-4 z-30 rounded-full shadow-lg hover:bg-indigo-700 transition-colors">
         <i class="fa-solid fa-bars"></i>
       </button>
     `;
@@ -50,7 +55,9 @@ class SpecialSidebar extends HTMLElement {
 
   setupMobileMenu() {
     this.querySelector("#menu-toggle")?.addEventListener("click", () => {
-      this.querySelector(".w-64").classList.toggle("hidden");
+      const sidebar = this.querySelector(".w-64");
+      sidebar.classList.toggle("-translate-x-full");
+      sidebar.classList.toggle("translate-x-0");
     });
   }
 

@@ -21,35 +21,30 @@ async function fetchProducts(containerId = "product-grid", view = "default") {
         productCard.innerHTML = `
           <div class="bg-white p-4 rounded-lg shadow flex items-center justify-between">
             <div class="flex items-center space-x-4">
-              <img src="${product.image}" alt="${
-          product.name
-        }" class="w-16 h-16 object-cover rounded" />
+              <img src="${product.image}" alt="${product.name
+          }" class="w-16 h-16 object-cover rounded" />
               <div class="text-left">
                 <h4 class="font-semibold text-gray-800">${product.name}</h4>
-                <p class="text-sm text-gray-500 truncate">${
-                  product.description?.slice(0, 60) || ""
-                }</p>
+                <p class="text-sm text-gray-500 truncate">${product.description?.slice(0, 60) || ""
+          }</p>
               </div>
             </div>
             <div class="flex items-center space-x-2">
-              <a href="update-product.html?id=${
-                product.id
-              }" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm">Edit</a>
-              <button data-id="${
-                product.id
-              }" class="delete-btn bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm">Delete</button>
-              <button data-id="${
-                product.id
-              }" data-active="${isActive}" class="toggle-btn ${
-          isActive
+             <a href="add-product.html?id=${product.id
+          }" class="bg-gray-500 hover:bg-gray-600 text-white px-3 py-1 rounded text-sm">Add</a>
+              <a href="update-product.html?id=${product.id
+          }" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm">Edit</a>
+              <button data-id="${product.id
+          }" class="delete-btn bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm">Delete</button>
+              <button data-id="${product.id
+          }" data-active="${isActive}" class="toggle-btn ${isActive
             ? "bg-yellow-500 hover:bg-yellow-600"
             : "bg-green-500 hover:bg-green-600"
-        } text-white px-3 py-1 rounded text-sm">
+          } text-white px-3 py-1 rounded text-sm">
                 ${isActive ? "Deactivate" : "Activate"}
               </button>
-              <a href="product-detail.html?id=${
-                product.id
-              }&source=dashboard" class="bg-gray-200 text-black px-3 py-1 rounded text-sm">View</a>
+              <a href="product-detail.html?id=${product.id
+          }&source=dashboard" class="bg-gray-200 text-black px-3 py-1 rounded text-sm">View</a>
             </div>
           </div>
         `;
@@ -140,27 +135,24 @@ async function fetchProductDetail() {
         <h2 class="text-3xl font-semibold text-gray-900 mt-10 text-center">Products List</h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-6">
           ${product.types
-            .map(
-              (type, index) => `
+          .map(
+            (type, index) => `
             <a href="type-detail.html?id=${productId}&typeIndex=${index}" class="block">
               <div class="p-6 rounded-xl transition duration-300 bg-white shadow hover:shadow-lg">
-                <img src="${
-                  type.images[0] || "./images/placeholder.jpg"
-                }" class="w-full h-52 object-cover rounded-md">
-                <h3 class="text-2xl font-semibold text-gray-800 mt-4">${
-                  type.name
-                }</h3>
-                <p class="text-gray-600 mt-3 text-sm leading-relaxed">${
-                  type.description
-                }</p>
+                <img src="${type.images[0] || "./images/placeholder.jpg"
+              }" class="w-full h-52 object-cover rounded-md">
+                <h3 class="text-2xl font-semibold text-gray-800 mt-4">${type.name
+              }</h3>
+                <p class="text-gray-600 mt-3 text-sm leading-relaxed">${type.description
+              }</p>
                 <p class="text-center text-gray-600 hover:text-red-500 mt-2 rounded-lg">
                   View Details <i class="fa-solid fa-arrow-right ml-1"></i>
                 </p>
               </div>
             </a>
           `
-            )
-            .join("")}
+          )
+          .join("")}
         </div>
       `
         : `<p class="text-gray-500 mt-8 text-center">No product types available.</p>`;
@@ -240,13 +232,13 @@ async function fetchTypeDetail() {
           <h3 class="text-xl font-semibold text-gray-800 mb-4">Available Sizes</h3>
           <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
             ${type.sizes
-              .map(
-                (size) =>
-                  `<div class="size-card bg-white border border-gray-200 rounded-lg p-4 text-center text-gray-800 font-medium shadow-sm hover:shadow-lg hover:-translate-y-1 transform transition-all duration-300 cursor-pointer">
+        .map(
+          (size) =>
+            `<div class="size-card bg-white border border-gray-200 rounded-lg p-4 text-center text-gray-800 font-medium shadow-sm hover:shadow-lg hover:-translate-y-1 transform transition-all duration-300 cursor-pointer">
                      ${size}
                    </div>`
-              )
-              .join("")}
+        )
+        .join("")}
           </div>
         </div>
       `
@@ -258,19 +250,18 @@ async function fetchTypeDetail() {
           <h3 class="text-xl font-semibold text-gray-800 mb-4">Available Colors</h3>
           <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
             ${type.colors
-              .map(
-                (color) =>
-                  `<div class="color-card bg-white border border-gray-200 rounded-lg p-4 text-center text-gray-800 font-medium shadow-sm hover:shadow-lg hover:-translate-y-1 transform transition-all duration-300 cursor-pointer" style="background-color: ${color.toLowerCase()}; color: ${
-                    ["white", "yellow", "lightgray"].includes(
-                      color.toLowerCase()
-                    )
-                      ? "black"
-                      : "white"
-                  }">
+        .map(
+          (color) =>
+            `<div class="color-card bg-white border border-gray-200 rounded-lg p-4 text-center text-gray-800 font-medium shadow-sm hover:shadow-lg hover:-translate-y-1 transform transition-all duration-300 cursor-pointer" style="background-color: ${color.toLowerCase()}; color: ${["white", "yellow", "lightgray"].includes(
+              color.toLowerCase()
+            )
+              ? "black"
+              : "white"
+            }">
                      ${color}
                    </div>`
-              )
-              .join("")}
+        )
+        .join("")}
           </div>
         </div>
       `
@@ -285,13 +276,13 @@ async function fetchTypeDetail() {
         <div class="image-gallery mb-8 relative">
           <div class="gallery-container flex overflow-x-auto scroll-smooth snap-x snap-mandatory hide-scrollbar">
             ${type.images
-              .map(
-                (img, index) =>
-                  `<div class="gallery-item flex-shrink-0 snap-center" data-tilt data-tilt-max="10" data-tilt-speed="400" data-tilt-perspective="1000">
+        .map(
+          (img, index) =>
+            `<div class="gallery-item flex-shrink-0 snap-center" data-tilt data-tilt-max="10" data-tilt-speed="400" data-tilt-perspective="1000">
                      <img src="${img}" class="w-80 h-80 object-cover rounded-xl cursor-pointer transition-transform duration-300 hover:shadow-2xl" data-index="${index}"/>
                    </div>`
-              )
-              .join("")}
+        )
+        .join("")}
           </div>
           <button class="gallery-nav prev absolute left-0 top-1/2 transform -translate-y-1/2 bg-gradient-to-r from-gray-800 to-gray-900 text-white p-3 rounded-full opacity-75 hover:opacity-100 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed">
             ←
@@ -301,11 +292,11 @@ async function fetchTypeDetail() {
           </button>
           <div class="thumbnail-strip flex justify-center gap-2 mt-4">
             ${type.images
-              .map(
-                (img, index) =>
-                  `<img src="${img}" class="w-16 h-16 object-cover rounded-lg cursor-pointer opacity-60 hover:opacity-100 transition-opacity duration-300 thumbnail" data-index="${index}"/>`
-              )
-              .join("")}
+        .map(
+          (img, index) =>
+            `<img src="${img}" class="w-16 h-16 object-cover rounded-lg cursor-pointer opacity-60 hover:opacity-100 transition-opacity duration-300 thumbnail" data-index="${index}"/>`
+        )
+        .join("")}
           </div>
         </div>
         
@@ -499,9 +490,8 @@ async function fetchTypeDetail() {
                 lightboxImg.src = document.querySelectorAll(".gallery-item img")[currentIndex].src;
                 updateActiveThumbnail(currentIndex);
                 console.log("Keyboard left, new index:", currentIndex);
-              } else if (e.key === "ArrowRight" && currentIndex < ${
-                type.images.length - 1
-              }) {
+              } else if (e.key === "ArrowRight" && currentIndex < ${type.images.length - 1
+      }) {
                 currentIndex++;
                 lightboxImg.src = document.querySelectorAll(".gallery-item img")[currentIndex].src;
                 updateActiveThumbnail(currentIndex);
@@ -626,39 +616,36 @@ function createTypeDiv(type, index) {
     "type-item space-y-4 border p-6 rounded-lg bg-gray-50 relative";
   typeDiv.innerHTML = `
     <div class="flex justify-between items-center">
-      <h4 class="font-semibold text-lg text-gray-700">Product Type ${
-        index + 1
-      }</h4>
+      <h4 class="font-semibold text-lg text-gray-700">Product Type ${index + 1
+    }</h4>
       <button type="button" class="remove-type text-red-500 text-2xl" aria-label="Remove Product Type">×</button>
     </div>
     <div>
       <label for="type-name-${index}" class="block text-gray-700 font-medium mb-1">Type Name</label>
-      <input type="text" id="type-name-${index}" class="type-name w-full p-3 border rounded-lg" value="${
-    type.name || ""
-  }" placeholder="Type Name">
+      <input type="text" id="type-name-${index}" class="type-name w-full p-3 border rounded-lg" value="${type.name || ""
+    }" placeholder="Type Name">
     </div>
     <div>
       <label class="block text-gray-700 font-medium mb-1">Type Images</label>
       <div class="type-images-container space-y-2" data-type-index="${index}">
-        ${
-          type.images?.length
-            ? type.images
-                .map(
-                  (img) => `
+        ${type.images?.length
+      ? type.images
+        .map(
+          (img) => `
               <div class="flex items-center space-x-2">
                 <input type="url" class="type-image w-full p-3 border rounded-lg" value="${img}" placeholder="Type Image URL">
                 <button type="button" class="remove-image text-red-500 text-xl" aria-label="Remove Image">×</button>
               </div>
             `
-                )
-                .join("")
-            : `
+        )
+        .join("")
+      : `
               <div class="flex items-center space-x-2">
                 <input type="url" class="type-image w-full p-3 border rounded-lg" placeholder="Type Image URL">
                 <button type="button" class="remove-image text-red-500 text-xl" aria-label="Remove Image">×</button>
               </div>
             `
-        }
+    }
       </div>
       <button type="button" class="add-image-btn bg-gray-200 px-3 py-1 mt-2 rounded hover:bg-gray-300" data-type-index="${index}" aria-label="Add Another Image">
         + Add Image
@@ -666,38 +653,35 @@ function createTypeDiv(type, index) {
     </div>
     <div>
       <label for="type-description-${index}" class="block text-gray-700 font-medium mb-1">Type Description</label>
-      <textarea id="type-description-${index}" class="type-description w-full p-3 border rounded-lg" placeholder="Type Description">${
-    type.description || ""
-  }</textarea>
+      <textarea id="type-description-${index}" class="type-description w-full p-3 border rounded-lg" placeholder="Type Description">${type.description || ""
+    }</textarea>
     </div>
     <div>
       <label for="type-price-${index}" class="block text-gray-700 font-medium mb-1">Type Price</label>
-      <input type="number" step="0.01" id="type-price-${index}" class="type-price w-full p-3 border rounded-lg" value="${
-    type.price || ""
-  }" placeholder="Type Price">
+      <input type="number" step="0.01" id="type-price-${index}" class="type-price w-full p-3 border rounded-lg" value="${type.price || ""
+    }" placeholder="Type Price">
     </div>
     <div>
       <label class="block text-gray-700 font-medium mb-1">Sizes</label>
       <div class="type-sizes-container space-y-2" data-type-index="${index}">
-        ${
-          type.sizes?.length
-            ? type.sizes
-                .map(
-                  (size) => `
+        ${type.sizes?.length
+      ? type.sizes
+        .map(
+          (size) => `
               <div class="flex items-center space-x-2">
                 <input type="text" class="type-size w-full p-3 border rounded-lg" value="${size}" placeholder="Size (e.g., S, M, L)">
                 <button type="button" class="remove-size text-red-500 text-xl" aria-label="Remove Size">×</button>
               </div>
             `
-                )
-                .join("")
-            : `
+        )
+        .join("")
+      : `
               <div class="flex items-center space-x-2">
                 <input type="text" class="type-size w-full p-3 border rounded-lg" placeholder="Size (e.g., S, M, L)">
                 <button type="button" class="remove-size text-red-500 text-xl" aria-label="Remove Size">×</button>
               </div>
             `
-        }
+    }
       </div>
       <button type="button" class="add-size-btn bg-gray-200 px-3 py-1 mt-2 rounded hover:bg-gray-300" data-type-index="${index}" aria-label="Add Another Size">
         + Add Size
@@ -706,25 +690,24 @@ function createTypeDiv(type, index) {
     <div>
       <label class="block text-gray-700 font-medium mb-1">Colors</label>
       <div class="type-colors-container space-y-2" data-type-index="${index}">
-        ${
-          type.colors?.length
-            ? type.colors
-                .map(
-                  (color) => `
+        ${type.colors?.length
+      ? type.colors
+        .map(
+          (color) => `
               <div class="flex items-center space-x-2">
                 <input type="text" class="type-color w-full p-3 border rounded-lg" value="${color}" placeholder="Color (e.g., Red, Blue)">
                 <button type="button" class="remove-color text-red-500 text-xl" aria-label="Remove Color">×</button>
               </div>
             `
-                )
-                .join("")
-            : `
+        )
+        .join("")
+      : `
               <div class="flex items-center space-x-2">
                 <input type="text" class="type-color w-full p-3 border rounded-lg" placeholder="Color (e.g., Red, Blue)">
                 <button type="button" class="remove-color text-red-500 text-xl" aria-label="Remove Color">×</button>
               </div>
             `
-        }
+    }
       </div>
       <button type="button" class="add-color-btn bg-gray-200 px-3 py-1 mt-2 rounded hover:bg-gray-300" data-type-index="${index}" aria-label="Add Another Color">
         + Add Color
