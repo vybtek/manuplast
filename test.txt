@@ -1,279 +1,1533 @@
+console.log("product-list.js loaded");
+console.log("Current pathname:", window.location.pathname);
 
-const express = require("express");
-const mongoose = require("mongoose");
-const cors = require("cors");
-const { v4: uuidv4 } = require("uuid");
+// Centralized function to get headers with token and CSRF
+function getHeaders() {
+  const token = localStorage.getItem("token");
+  const csrfToken = document.getElementById("csrf-token")?.value || "";
+  const headers = token ? { Authorization: `Bearer ${token}` } : {};
+  if (csrfToken && csrfToken !== "YOUR_CSRF_TOKEN_HERE") {
+    headers["X-CSRF-Token"] = csrfToken;
+  }
+  return headers;
+}
 
-const app = express();
-app.use(express.json());
-app.use(cors());
+// Validate image file types
+function isValidImage(file) {
+  const validTypes = ["image/jpeg", "image/png", "image/gif"];
+  return validTypes.includes(file.type);
+}
 
-// MongoDB connection
-mongoose
-  .connect(
-    "mongodb+srv://arpit562005:banna420@cluster0.qaa02dh.mongodb.net/?retryWrites=true&w=majority&appName=Manu-Plast",
+async function fetchProductsList(
+  containerId = "dashboard-products-list",
+  view = "dashboard"
+) {
+  const productsGrid = document.getElementById(containerId);
+  if (!productsGrid) {
+    console.error(`Container with ID ${containerId} not found`);
+    alert(
+      "Error: Products container not found. Please check the page structure."
+    );
+    return;
+  }
+
+  productsGrid.innerHTML =
+    '<p class="text-gray-500 text-center py-4">Loading products...</p>';
+
+  try {
+    const headers = getHeaders();
+    if (!headers.Authorization && view === "dashboard") {
+      console.warn("No authentication token found. Redirecting to login.");
+      alert("You are not authenticated. Please log in.");
+      window.location.href = "login.html";
+      return;
+    }
+
+    // Fetch products with cache-busting
+    const response = await fetch(
+      `http://192.168.0.102:5000/api/manuplast/producttypes/?t=${Date.now()}`,
+      { headers }
+    );
+    console.log("Product fetch response status:", response.status);
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(
+        `Failed to fetch products: ${response.status} ${response.statusText} - ${errorText}`
+      );
+    }
+
+    const products = await response.json();
+    console.log("Fetched products:", products);
+
+    if (!Array.isArray(products) || products.length === 0) {
+      console.log("No products found or invalid response format");
+      productsGrid.innerHTML =
+        '<p class="text-gray-500 text-center py-4">No products available.</p>';
+      return;
+    }
+
+    // Explicitly clear the grid before rendering
+    productsGrid.innerHTML = "";
+
+    // Fetch categories
+    const categoriesResponse = await fetch(
+      `http://192.168.0.102:5000/api/manuplast/categories?t=${Date.now()}`,
+      { headers }
+    );
+    const categories = categoriesResponse.ok
+      ? await categoriesResponse.json()
+      : [];
+    const categoryMap = Object.fromEntries(
+      categories.map((cat) => [cat.id, cat.name])
+    );
+    console.log("Category map:", categoryMap);
+
+    // Fetch sizes, colors, and images for each product
+    await Promise.all(
+      products.map(async (product) => {
+        const sizesResponse = await fetch(
+          `http://192.168.0.102:5000/api/manuplast/producttypesizes/product/${
+            product.id
+          }?t=${Date.now()}`,
+          { headers }
+        );
+        const colorsResponse = await fetch(
+          `http://192.168.0.102:5000/api/manuplast/producttypecolors/product/${
+            product.id
+          }?t=${Date.now()}`,
+          { headers }
+        );
+        const imagesResponse = await fetch(
+          `http://192.168.0.102:5000/api/manuplast/producttypeimages/product/${
+            product.id
+          }?t=${Date.now()}`,
+          { headers }
+        );
+        product.sizes = sizesResponse.ok
+          ? (await sizesResponse.json()).map((s) => ({
+              id: s.id,
+              size: s.size || "",
+            }))
+          : [];
+        product.colors = colorsResponse.ok
+          ? (await colorsResponse.json()).map((c) => ({
+              id: c.id,
+              color: c.color || "",
+            }))
+          : [];
+        product.images = imagesResponse.ok
+          ? (await imagesResponse.json()).map((i) => ({
+              id: i.id,
+              image_url: i.image_url || "",
+            }))
+          : [];
+        console.log(`Product ${product.id} data:`, {
+          sizes: product.sizes,
+          colors: product.colors,
+          images: product.images,
+        });
+      })
+    );
+
+    products.forEach((product) => {
+      if (!product.id || typeof product.id !== "string") {
+        console.warn(`Invalid product ID:`, product);
+        return;
+      }
+
+      const isActive = product.status?.toLowerCase() === "active";
+      if (view === "default" && !isActive) return;
+
+      const productCard = document.createElement("div");
+      productCard.classList.add("text-center");
+
+      const safeProduct = {
+        id: product.id,
+        name: product.name || "Unnamed",
+        description: product.description || "",
+        price: product.price || 0,
+        category_id: product.category_id || "",
+        images: Array.isArray(product.images) ? product.images : [],
+        status: product.status || "",
+        sizes: Array.isArray(product.sizes) ? product.sizes : [],
+        colors: Array.isArray(product.colors) ? product.colors : [],
+      };
+
+      productCard.innerHTML = `
+        <div class="bg-white p-4 rounded-lg shadow flex items-center justify-between">
+          <div class="flex items-center space-x-4">
+            <img src="${
+              safeProduct.images[0]?.image_url || "./images/placeholder.jpg"
+            }" alt="${
+        safeProduct.name
+      }" class="w-16 h-16 object-cover rounded" />
+            <div class="text-left">
+              <h4 class="font-semibold text-gray-800">${safeProduct.name}</h4>
+              <p class="text-sm text-gray-500">Category: ${
+                categoryMap[safeProduct.category_id] || "Unknown"
+              }</p>
+              <p class="text-sm text-gray-500">Price: ₹${safeProduct.price.toFixed(
+                2
+              )}</p>
+              <p class="text-sm text-gray-500">Sizes: ${
+                safeProduct.sizes.map((s) => s.size).join(", ") || "None"
+              }</p>
+              <p class="text-sm text-gray-500">Colors: ${
+                safeProduct.colors.map((c) => c.color).join(", ") || "None"
+              }</p>
+              <p class="text-sm text-gray-500 truncate">${
+                safeProduct.description.slice(0, 60) || "No description"
+              }</p>
+            </div>
+          </div>
+          <div class="flex items-center space-x-2">
+            <button onclick='openUpdateProductModal(${JSON.stringify(
+              safeProduct
+            ).replace(
+              /"/g,
+              '"'
+            )})' class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm">
+              Edit
+            </button>
+            <button data-id="${
+              safeProduct.id
+            }" class="delete-product-btn bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm">Delete</button>
+            <button data-id="${
+              safeProduct.id
+            }" data-active="${isActive}" class="toggle-product-btn ${
+        isActive
+          ? "bg-yellow-500 hover:bg-yellow-600"
+          : "bg-green-500 hover:bg-green-600"
+      } text-white px-3 py-1 rounded text-sm">
+              ${isActive ? "Deactivate" : "Activate"}
+            </button>
+          </div>
+        </div>
+      `;
+
+      productsGrid.appendChild(productCard);
+    });
+
+    // Remove and re-add event listener to prevent duplicates
+    productsGrid.removeEventListener("click", handleDashboardProductActions);
+    productsGrid.addEventListener("click", handleDashboardProductActions);
+    console.log("Product list rendered successfully");
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    productsGrid.innerHTML = `<p class="text-red-500 text-center py-4">Error loading products: ${error.message}</p>`;
+    alert(`Error fetching products: ${error.message}`);
+  }
+}
+
+function openAddProductModal() {
+  const modal = document.getElementById("add-product-modal");
+  if (!modal) {
+    console.error("Add product modal not found");
+    alert("Error: Add product modal not found.");
+    return;
+  }
+  modal.classList.remove("hidden");
+  document.getElementById("add-product-form")?.reset();
+  document.getElementById("add-product-images").value = "";
+  loadCategoriesForAddModal();
+  console.log("Add product modal opened");
+}
+
+function openUpdateProductModal(product) {
+  const modal = document.getElementById("update-product-modal");
+  if (!modal) {
+    console.error("Update product modal not found");
+    alert("Error: Update product modal not found.");
+    return;
+  }
+
+  console.log("Opening update modal for product:", product);
+
+  document.getElementById("update-product-id").value = product.id || "";
+  document.getElementById("update-product-name").value = product.name || "";
+  document.getElementById("update-product-description").value =
+    product.description || "";
+  document.getElementById("update-product-price").value = product.price || "";
+  document.getElementById("update-product-sizes").value = Array.isArray(
+    product.sizes
+  )
+    ? product.sizes.map((s) => s.size).join(", ")
+    : "";
+  document.getElementById("update-product-colors").value = Array.isArray(
+    product.colors
+  )
+    ? product.colors.map((c) => c.color).join(", ")
+    : "";
+  document.getElementById("update-product-images").value = "";
+
+  const sizeIdsInput = document.getElementById("update-product-size-ids");
+  const colorIdsInput = document.getElementById("update-product-color-ids");
+  const imageIdsInput = document.getElementById("update-product-image-ids");
+  if (sizeIdsInput)
+    sizeIdsInput.value = Array.isArray(product.sizes)
+      ? product.sizes.map((s) => s.id).join(",")
+      : "";
+  if (colorIdsInput)
+    colorIdsInput.value = Array.isArray(product.colors)
+      ? product.colors.map((c) => c.id).join(",")
+      : "";
+  if (imageIdsInput)
+    imageIdsInput.value = Array.isArray(product.images)
+      ? product.images.map((i) => i.id).join(",")
+      : "";
+
+  const categorySelect = document.getElementById("update-product-category");
+  if (categorySelect) {
+    categorySelect.value = product.category_id || "";
+  } else {
+    console.error("Update product category select not found");
+  }
+
+  const previewContainer = document.getElementById(
+    "current-product-image-preview"
+  );
+  previewContainer.innerHTML =
+    '<p class="text-sm text-gray-500 w-full text-center">Current Images:</p>';
+  if (Array.isArray(product.images) && product.images.length) {
+    product.images.forEach((img) => {
+      if (img.image_url) {
+        const imgElement = document.createElement("img");
+        imgElement.src = img.image_url;
+        imgElement.className = "w-16 h-16 object-cover rounded";
+        imgElement.dataset.imageId = img.id;
+        previewContainer.appendChild(imgElement);
+      }
+    });
+    previewContainer.classList.remove("hidden");
+  } else {
+    previewContainer.classList.add("hidden");
+  }
+
+  modal.classList.remove("hidden");
+  loadCategoriesForUpdateModal();
+  console.log("Update product modal opened for product:", product.id);
+}
+
+function handleDashboardProductActions(e) {
+  const deleteBtn = e.target.closest(".delete-product-btn");
+  const toggleBtn = e.target.closest(".toggle-product-btn");
+
+  if (deleteBtn) {
+    const productId = deleteBtn.getAttribute("data-id");
+    if (!productId) {
+      alert("Error: Product ID is missing.");
+      return;
+    }
+    if (confirm("Are you sure you want to delete this product?")) {
+      console.log(`Deleting product with ID: ${productId}`);
+      deleteProduct(productId);
+    }
+  }
+
+  if (toggleBtn) {
+    const productId = toggleBtn.getAttribute("data-id");
+    const isActive = toggleBtn.getAttribute("data-active") === "true";
+    if (!productId) {
+      alert("Error: Product ID is missing.");
+      return;
+    }
+    const action = isActive ? "deactivate" : "activate";
+    if (confirm(`Are you sure you want to ${action} this product?`)) {
+      console.log(
+        `Toggling product status for ID: ${productId}, new status: ${!isActive}`
+      );
+      toggleProductActive(productId, isActive);
+    }
+  }
+}
+
+async function deleteProduct(id) {
+  try {
+    const headers = getHeaders();
+    if (!headers.Authorization) {
+      console.warn("No authentication token found. Redirecting to login.");
+      alert("You are not authenticated. Please log in.");
+      window.location.href = "login.html";
+      return;
+    }
+
+    const response = await fetch(
+      `http://192.168.0.102:5000/api/manuplast/producttypes/${id}`,
+      {
+        method: "DELETE",
+        headers,
+      }
+    );
+
+    console.log("Delete product response status:", response.status);
+    if (!response.ok) {
+      const errorText = await response.json().catch(() => ({}));
+      const errorMessage =
+        errorText.message || response.statusText || "Unknown error";
+      throw new Error(
+        `Failed to delete product: ${response.status} - ${errorMessage}`
+      );
+    }
+
+    alert("Product deleted successfully!");
+    fetchProductsList();
+  } catch (error) {
+    console.error("Error deleting product:", error);
+    alert(`Failed to delete product: ${error.message}`);
+  }
+}
+
+async function toggleProductActive(productId, currentStatus) {
+  try {
+    const headers = getHeaders();
+    if (!headers.Authorization) {
+      console.warn("No authentication token found. Redirecting to login.");
+      alert("You are not authenticated. Please log in.");
+      window.location.href = "login.html";
+      return;
+    }
+
+    const isActive = currentStatus === true || currentStatus === "true";
+    const newStatus = !isActive;
+
+    const response = await fetch(
+      `http://192.168.0.102:5000/api/manuplast/producttypes/${productId}/status`,
+      {
+        method: "PATCH",
+        headers: { ...headers, "Content-Type": "application/json" },
+        body: JSON.stringify({ active: newStatus }),
+      }
+    );
+
+    console.log("Toggle product status response status:", response.status);
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      const errorMessage =
+        errorData.message || response.statusText || "Unknown error";
+      throw new Error(
+        `Failed to update product status: ${response.status} - ${errorMessage}`
+      );
+    }
+
+    alert(`Product ${newStatus ? "activated" : "deactivated"} successfully!`);
+    const toggleBtn = document.querySelector(
+      `.toggle-product-btn[data-id="${productId}"]`
+    );
+    if (toggleBtn) {
+      toggleBtn.setAttribute("data-active", newStatus);
+      toggleBtn.textContent = newStatus ? "Deactivate" : "Activate";
+      toggleBtn.className = `toggle-product-btn ${
+        newStatus
+          ? "bg-yellow-500 hover:bg-yellow-600"
+          : "bg-green-500 hover:bg-green-600"
+      } text-white px-3 py-1 rounded text-sm`;
+    }
+
+    fetchProductsList();
+  } catch (error) {
+    console.error("Error updating product status:", error);
+    alert(`Failed to update product status: ${error.message}`);
+  }
+}
+
+async function loadCategoriesForAddModal() {
+  try {
+    const headers = getHeaders();
+    const response = await fetch(
+      `http://192.168.0.102:5000/api/manuplast/categories?t=${Date.now()}`,
+      { headers }
+    );
+
+    console.log("Categories fetch for add modal status:", response.status);
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(
+        `Failed to fetch categories: ${response.status} - ${errorText}`
+      );
+    }
+
+    const categories = await response.json();
+    console.log("Fetched categories for add modal:", categories);
+    const select = document.getElementById("add-product-category");
+
+    if (select) {
+      select.innerHTML =
+        '<option value="" disabled selected>Select Category</option>' +
+        categories
+          .map((cat) => `<option value="${cat.id}">${cat.name}</option>`)
+          .join("");
+    } else {
+      console.error("Add product category select element not found");
+      alert("Error: Category select element not found.");
+    }
+  } catch (error) {
+    console.error("Error loading categories for add modal:", error);
+    alert(`Error loading categories: ${error.message}`);
+  }
+}
+
+async function loadCategoriesForUpdateModal() {
+  try {
+    const headers = getHeaders();
+    const response = await fetch(
+      `http://192.168.0.102:5000/api/manuplast/categories?t=${Date.now()}`,
+      { headers }
+    );
+
+    console.log("Categories fetch for update modal status:", response.status);
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(
+        `Failed to fetch categories: ${response.status} - ${errorText}`
+      );
+    }
+
+    const categories = await response.json();
+    console.log("Fetched categories for update modal:", categories);
+    const select = document.getElementById("update-product-category");
+
+    if (select) {
+      select.innerHTML =
+        '<option value="" disabled selected>Select Category</option>' +
+        categories
+          .map((cat) => `<option value="${cat.id}">${cat.name}</option>`)
+          .join("");
+    } else {
+      console.error("Update product category select element not found");
+      alert("Error: Category select element not found.");
+    }
+  } catch (error) {
+    console.error("Error loading categories for update modal:", error);
+    alert(`Error loading categories: ${error.message}`);
+  }
+}
+
+document
+  .getElementById("add-product-form")
+  ?.addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const headers = getHeaders();
+    if (!headers.Authorization) {
+      console.warn("No authentication token found. Redirecting to login.");
+      alert("You are not authenticated. Please log in.");
+      window.location.href = "login.html";
+      return;
+    }
+
+    const name = document.getElementById("add-product-name")?.value?.trim();
+    const description = document
+      .getElementById("add-product-description")
+      ?.value?.trim();
+    const price = document.getElementById("add-product-price")?.value;
+    const categoryId = document.getElementById("add-product-category")?.value;
+    const imageInput = document.getElementById("add-product-images");
+    const sizes = document
+      .getElementById("add-product-sizes")
+      ?.value.split(",")
+      .map((s) => s.trim())
+      .filter((s) => s);
+    const colors = document
+      .getElementById("add-product-colors")
+      ?.value.split(",")
+      .map((c) => c.trim())
+      .filter((c) => c);
+
+    if (!name || name.length < 2) {
+      alert("Product name is required and must be at least 2 characters long");
+      return;
+    }
+    if (!description || description.length < 10) {
+      alert("Description is required and must be at least 10 characters long");
+      return;
+    }
+    if (!price || isNaN(parseFloat(price)) || parseFloat(price) <= 0) {
+      alert("Price must be a valid positive number");
+      return;
+    }
+    if (!categoryId) {
+      alert("Category is required");
+      return;
+    }
+    if (!imageInput?.files?.length) {
+      alert("At least one image is required");
+      return;
+    }
+    for (let file of imageInput.files) {
+      if (!isValidImage(file)) {
+        alert("Invalid image type. Only JPEG, PNG, and GIF are allowed.");
+        return;
+      }
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("description", description);
+      formData.append("price", parseFloat(price));
+      formData.append("category_id", categoryId);
+
+      const submitBtn = document.querySelector(
+        "#add-product-form button[type=submit]"
+      );
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Adding...";
+
+      const productResponse = await fetch(
+        "http://192.168.0.102:5000/api/manuplast/producttypes",
+        {
+          method: "POST",
+          headers,
+          body: formData,
+        }
+      );
+
+      console.log("Add product response status:", productResponse.status);
+      if (!productResponse.ok) {
+        const errorData = await productResponse.json().catch(() => ({}));
+        throw new Error(
+          `Failed to add product: ${
+            errorData.message || productResponse.statusText
+          }`
+        );
+      }
+
+      const createdProduct = await productResponse.json();
+      const productId = createdProduct.id;
+
+      await Promise.all(
+        Array.from(imageInput.files).map(async (file, i) => {
+          const imageForm = new FormData();
+          imageForm.append("producttype_id", productId);
+          imageForm.append("image", file);
+          const imgResponse = await fetch(
+            "http://192.168.0.102:5000/api/manuplast/producttypeimages",
+            {
+              method: "POST",
+              headers,
+              body: imageForm,
+            }
+          );
+          if (!imgResponse.ok) console.warn(`Failed uploading image ${i + 1}`);
+        })
+      );
+
+      await Promise.all(
+        sizes.map(async (size) => {
+          if (size) {
+            await fetch(
+              "http://192.168.0.102:5000/api/manuplast/producttypesizes",
+              {
+                method: "POST",
+                headers: { ...headers, "Content-Type": "application/json" },
+                body: JSON.stringify({ producttype_id: productId, size }),
+              }
+            );
+          }
+        })
+      );
+
+      await Promise.all(
+        colors.map(async (color) => {
+          if (color) {
+            await fetch(
+              "http://192.168.0.102:5000/api/manuplast/producttypecolors",
+              {
+                method: "POST",
+                headers: { ...headers, "Content-Type": "application/json" },
+                body: JSON.stringify({ producttype_id: productId, color }),
+              }
+            );
+          }
+        })
+      );
+
+      alert("Product added successfully!");
+      document.getElementById("add-product-modal")?.classList.add("hidden");
+      fetchProductsList();
+    } catch (error) {
+      console.error("Error adding product:", error);
+      alert(`Failed to add product: ${error.message}`);
+    } finally {
+      const submitBtn = document.querySelector(
+        "#add-product-form button[type=submit]"
+      );
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Add Product";
+    }
+  });
+
+document
+  .getElementById("update-product-form")
+  ?.addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const headers = getHeaders();
+    if (!headers.Authorization) {
+      console.warn("No authentication token found. Redirecting to login.");
+      alert("You are not authenticated. Please log in.");
+      window.location.href = "login.html";
+      return;
+    }
+
+    const productId = document.getElementById("update-product-id")?.value;
+    const name = document.getElementById("update-product-name")?.value?.trim();
+    const description = document
+      .getElementById("update-product-description")
+      ?.value?.trim();
+    const price = document.getElementById("update-product-price")?.value;
+    const categoryId = document.getElementById(
+      "update-product-category"
+    )?.value;
+    const imageInput = document.getElementById("update-product-images");
+    const sizes = document
+      .getElementById("update-product-sizes")
+      ?.value.split(",")
+      .map((s) => s.trim())
+      .filter((s) => s);
+    const colors = document
+      .getElementById("update-product-colors")
+      ?.value.split(",")
+      .map((c) => c.trim())
+      .filter((c) => c);
+    const sizeIdsInput = document.getElementById("update-product-size-ids");
+    const colorIdsInput = document.getElementById("update-product-color-ids");
+    const imageIdsInput = document.getElementById("update-product-image-ids");
+    const sizeIds = sizeIdsInput?.value
+      ? sizeIdsInput.value
+          .split(",")
+          .map((id) => id.trim())
+          .filter((id) => id)
+      : [];
+    const colorIds = colorIdsInput?.value
+      ? colorIdsInput.value
+          .split(",")
+          .map((id) => id.trim())
+          .filter((id) => id)
+      : [];
+    const imageIds = imageIdsInput?.value
+      ? imageIdsInput.value
+          .split(",")
+          .map((id) => id.trim())
+          .filter((id) => id)
+      : [];
+
+    if (!productId || !name || name.length < 2) {
+      alert("Product name is required and must be at least 2 characters long");
+      return;
+    }
+    if (!description || description.length < 10) {
+      alert("Description is required and must be at least 10 characters long");
+      return;
+    }
+    if (!price || isNaN(parseFloat(price)) || parseFloat(price) <= 0) {
+      alert("Price must be a valid positive number");
+      return;
+    }
+    if (!categoryId) {
+      alert("Category is required");
+      return;
+    }
+    if (imageInput?.files?.length) {
+      for (let file of imageInput.files) {
+        if (!isValidImage(file)) {
+          alert("Invalid image type. Only JPEG, PNG, and GIF are allowed.");
+          return;
+        }
+      }
+    }
+
+    try {
+      const submitBtn = document.querySelector(
+        "#update-product-form button[type=submit]"
+      );
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Updating...";
+
+      // Update product details
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("description", description);
+      formData.append("price", parseFloat(price));
+      formData.append("category_id", categoryId);
+
+      const productResponse = await fetch(
+        `http://192.168.0.102:5000/api/manuplast/producttypes/${productId}`,
+        {
+          method: "PATCH",
+          headers,
+          body: formData,
+        }
+      );
+
+      console.log("Update product response status:", productResponse.status);
+      if (!productResponse.ok) {
+        const errorData = await productResponse.json().catch(() => ({}));
+        throw new Error(
+          `Failed to update product: ${
+            errorData.message || productResponse.statusText
+          }`
+        );
+      }
+
+      // Update sizes
+      const existingSizes = sizeIds.map((id, index) => ({
+        id,
+        size: sizes[index] || "",
+      }));
+      const newSizes = sizes.slice(sizeIds.length);
+      const sizesToDelete = sizeIds.slice(sizes.length);
+
+      await Promise.all(
+        existingSizes.map(async ({ id, size }) => {
+          if (size) {
+            const response = await fetch(
+              `http://192.168.0.102:5000/api/manuplast/producttypesizes/${id}`,
+              {
+                method: "PATCH",
+                headers: { ...headers, "Content-Type": "application/json" },
+                body: JSON.stringify({ size }),
+              }
+            );
+            if (!response.ok) console.warn(`Failed updating size ID ${id}`);
+          }
+        })
+      );
+
+      await Promise.all(
+        newSizes.map(async (size) => {
+          if (size) {
+            await fetch(
+              "http://192.168.0.102:5000/api/manuplast/producttypesizes",
+              {
+                method: "POST",
+                headers: { ...headers, "Content-Type": "application/json" },
+                body: JSON.stringify({ producttype_id: productId, size }),
+              }
+            );
+          }
+        })
+      );
+
+      await Promise.all(
+        sizesToDelete.map(async (id) => {
+          const response = await fetch(
+            `http://192.168.0.102:5000/api/manuplast/producttypesizes/${id}`,
+            {
+              method: "DELETE",
+              headers,
+            }
+          );
+          if (!response.ok) console.warn(`Failed deleting size ID ${id}`);
+        })
+      );
+
+      // Update colors
+      const existingColors = colorIds.map((id, index) => ({
+        id,
+        color: colors[index] || "",
+      }));
+      const newColors = colors.slice(colorIds.length);
+      const colorsToDelete = colorIds.slice(colors.length);
+
+      await Promise.all(
+        existingColors.map(async ({ id, color }) => {
+          if (color) {
+            const response = await fetch(
+              `http://192.168.0.102:5000/api/manuplast/producttypecolors/${id}`,
+              {
+                method: "PATCH",
+                headers: { ...headers, "Content-Type": "application/json" },
+                body: JSON.stringify({ color }),
+              }
+            );
+            if (!response.ok) console.warn(`Failed updating color ID ${id}`);
+          }
+        })
+      );
+
+      await Promise.all(
+        newColors.map(async (color) => {
+          if (color) {
+            await fetch(
+              "http://192.168.0.102:5000/api/manuplast/producttypecolors",
+              {
+                method: "POST",
+                headers: { ...headers, "Content-Type": "application/json" },
+                body: JSON.stringify({ producttype_id: productId, color }),
+              }
+            );
+          }
+        })
+      );
+
+      await Promise.all(
+        colorsToDelete.map(async (id) => {
+          const response = await fetch(
+            `http://192.168.0.102:5000/api/manuplast/producttypecolors/${id}`,
+            {
+              method: "DELETE",
+              headers,
+            }
+          );
+          if (!response.ok) console.warn(`Failed deleting color ID ${id}`);
+        })
+      );
+
+      // Update images
+      if (imageInput?.files.length && Array.isArray(imageIds)) {
+        const newUrls = await Promise.all(
+          Array.from(imageInput.files).map(async (file, i) => {
+            const imageForm = new FormData();
+            imageForm.append("producttype_id", productId);
+            imageForm.append("image", file);
+            const imgResponse = await fetch(
+              "http://192.168.0.102:5000/api/manuplast/producttypeimages",
+              {
+                method: "POST",
+                headers,
+                body: imageForm,
+              }
+            );
+            if (!imgResponse.ok) {
+              console.warn(`Failed uploading image ${i + 1}`);
+              return null;
+            }
+            const imgData = await imgResponse.json();
+            return imgData.image_url || null;
+          })
+        );
+
+        const validUrls = newUrls.filter((url) => url !== null);
+        console.log("New image URLs:", validUrls);
+
+        if (validUrls.length > 0) {
+          const imageUpdateResponse = await fetch(
+            `http://192.168.0.102:5000/api/manuplast/producttypeimages/product/${productId}`,
+            {
+              method: "PATCH",
+              headers: { ...headers, "Content-Type": "application/json" },
+              body: JSON.stringify({ newUrls: validUrls }),
+            }
+          );
+          if (!imageUpdateResponse.ok) {
+            const errorData = await imageUpdateResponse
+              .json()
+              .catch(() => ({}));
+            console.warn(
+              `Failed updating images for product ID ${productId}: ${
+                errorData.message || imageUpdateResponse.statusText
+              }`
+            );
+          }
+        }
+
+        if (validUrls.length > 0 && imageIds.length > 0) {
+          await Promise.all(
+            imageIds.map(async (imageId) => {
+              const response = await fetch(
+                `http://192.168.0.102:5000/api/manuplast/producttypeimages/${imageId}`,
+                {
+                  method: "DELETE",
+                  headers,
+                }
+              );
+              if (!response.ok)
+                console.warn(`Failed deleting image ID ${imageId}`);
+            })
+          );
+        }
+      }
+
+      alert("Product updated successfully!");
+
+      // Add slight delay to ensure backend syncs, then refresh product list
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      console.log(
+        `Refreshing product list after updating product ID: ${productId}`
+      );
+      await fetchProductsList();
+      document.getElementById("update-product-modal")?.classList.add("hidden");
+    } catch (error) {
+      console.error("Error updating product:", error);
+      alert(`Failed to update product: ${error.message}`);
+    } finally {
+      const submitBtn = document.querySelector(
+        "#update-product-form button[type=submit]"
+      );
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Update Product";
+    }
+  });
+
+// Initialize dashboard
+document.addEventListener("DOMContentLoaded", () => {
+  console.log("DOMContentLoaded fired");
+  console.log("Current pathname:", window.location.pathname);
+
+  const isDashboardPage =
+    window.location.pathname
+      .toLowerCase()
+      .includes("dashboard-products.html") ||
+    window.location.pathname.toLowerCase().includes("product-list.html") ||
+    window.location.pathname === "/" ||
+    window.location.pathname.toLowerCase().includes("dashboard") ||
+    window.location.pathname.toLowerCase().includes("manu-plast");
+
+  if (!isDashboardPage) {
+    console.log("Not on a dashboard page, skipping initialization");
+    return;
+  }
+
+  fetchProductsList("dashboard-products-list", "dashboard");
+  loadCategoriesForUpdateModal();
+
+  const closeAddModalBtn = document.getElementById("close-add-product-modal");
+  const addModal = document.getElementById("add-product-modal");
+  const closeUpdateModalBtn = document.getElementById(
+    "close-update-product-modal"
+  );
+  const updateModal = document.getElementById("update-product-modal");
+  const addProductBtn = document.getElementById("add-product-btn");
+
+  if (closeAddModalBtn && addModal) {
+    closeAddModalBtn.addEventListener("click", () => {
+      addModal.classList.add("hidden");
+      console.log("Add modal closed via button");
+    });
+    addModal.addEventListener("click", (e) => {
+      if (e.target === addModal) {
+        addModal.classList.add("hidden");
+        console.log("Add modal closed by clicking outside");
+      }
+    });
+  } else {
+    console.error("Add modal or close button not found");
+    alert("Error: Add product modal elements missing.");
+  }
+
+  if (closeUpdateModalBtn && updateModal) {
+    closeUpdateModalBtn.addEventListener("click", () => {
+      updateModal.classList.add("hidden");
+      console.log("Update modal closed via button");
+    });
+    updateModal.addEventListener("click", (e) => {
+      if (e.target === updateModal) {
+        updateModal.classList.add("hidden");
+        console.log("Update modal closed by clicking outside");
+      }
+    });
+  } else {
+    console.error("Update modal or close button not found");
+    alert("Error: Update product modal elements missing.");
+  }
+
+  if (addProductBtn) {
+    addProductBtn.addEventListener("click", () => {
+      openAddProductModal();
+      console.log("Add product button clicked");
+    });
+  } else {
+    console.error("Add product button not found");
+    alert("Error: Add product button missing.");
+  }
+});
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Products Dashboard - Manu Plast</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      .modal {
+        transition: opacity 0.3s ease;
+      }
+      .modal-content {
+        animation: modalFadeIn 0.3s ease;
+      }
+      @keyframes modalFadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      html,
+      body {
+        height: 100%;
+      }
+      .modal-content {
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      }
+      .form-field {
+        width: 100%;
+        max-width: 18rem;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-100 h-full">
+    <div class="flex h-full">
+      <!-- Sidebar -->
+      <div class="md:w-64 h-full bg-white shadow-md">
+        <special-sidebar class="h-full" aria-label="Product Filters"></special-sidebar>
+      </div>
+
+      <!-- Main Content Area -->
+      <div class="flex-1 flex flex-col overflow-auto">
+        <!-- Header -->
+        <header class="bg-white shadow-sm">
+          <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-gray-900">Products Management</h1>
+            <button id="add-product-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center">
+              <i class="fas fa-plus mr-2"></i> Add Product
+            </button>
+          </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-6 overflow-auto">
+          <div id="dashboard-products-list" class="space-y-4 max-w-7xl mx-auto">
+            <!-- Products will be loaded here -->
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <!-- Add Product Modal -->
+    <div id="add-product-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+      <div class="bg-white rounded-lg p-6 modal-content max-w-3xl mx-auto w-full">
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-xl font-bold text-gray-800">Add New Product</h3>
+          <button id="close-add-product-modal" class="text-gray-500 hover:text-gray-700">
+            <i class="fas fa-times text-lg"></i>
+          </button>
+        </div>
+        <form id="add-product-form" class="space-y-6">
+          <input type="hidden" id="csrf-token" value="YOUR_CSRF_TOKEN_HERE" />
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div class="form-field">
+              <label for="add-product-name" class="block text-gray-700 font-medium mb-2 text-center">Product Name*</label>
+              <input type="text" id="add-product-name" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required />
+            </div>
+            <div class="form-field">
+              <label for="add-product-category" class="block text-gray-700 font-medium mb-2 text-center">Category*</label>
+              <select id="add-product-category" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                <option value="" disabled selected>Select Category</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label for="add-product-price" class="block text-gray-700 font-medium mb-2 text-center">Price*</label>
+              <input type="number" step="0.01" id="add-product-price" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required />
+            </div>
+            <div class="form-field">
+              <label for="add-product-images" class="block text-gray-700 font-medium mb-2 text-center">Product Images*</label>
+              <input type="file" id="add-product-images" class="w-full p-3 border border-gray-300 rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:bg-blue-100 file:text-blue-700 hover:file:bg-blue-200" accept="image/*" multiple required />
+            </div>
+            <div class="form-field">
+              <label for="add-product-sizes" class="block text-gray-700 font-medium mb-2 text-center">Sizes (comma separated)</label>
+              <input type="text" id="add-product-sizes" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g., Small, Medium, Large" />
+            </div>
+            <div class="form-field">
+              <label for="add-product-colors" class="block text-gray-700 font-medium mb-2 text-center">Colors (comma separated)</label>
+              <input type="text" id="add-product-colors" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g., Red, Blue, Green" />
+            </div>
+            <div class="col-span-1 sm:col-span-2 form-field">
+              <label for="add-product-description" class="block text-gray-700 font-medium mb-2 text-center">Description*</label>
+              <textarea id="add-product-description" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" rows="4" required></textarea>
+            </div>
+          </div>
+          <div class="col-span-1 sm:col-span-2">
+            <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors">
+              Add Product
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Update Product Modal -->
+   <!-- Update Product Modal -->
+<div id="update-product-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+  <div class="bg-white rounded-lg p-6 modal-content max-w-3xl mx-auto w-full">
+    <div class="flex justify-between items-center mb-6">
+      <h3 class="text-xl font-bold text-gray-800">Update Product</h3>
+      <button id="close-update-product-modal" class="text-gray-500 hover:text-gray-700">
+        <i class="fas fa-times text-lg"></i>
+      </button>
+    </div>
+    <form id="update-product-form" class="space-y-6">
+      <input type="hidden" id="csrf-token" value="YOUR_CSRF_TOKEN_HERE" />
+      <input type="hidden" id="update-product-id" />
+      <!-- Add these hidden inputs -->
+      <input type="hidden" id="update-product-size-ids" name="sizeIds" />
+      <input type="hidden" id="update-product-color-ids" name="colorIds" />
+      <input type="hidden" id="update-product-image-ids" name="imageIds" />
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div class="form-field">
+          <label for="update-product-name" class="block text-gray-700 font-medium mb-2 text-center">Product Name*</label>
+          <input type="text" id="update-product-name" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required />
+        </div>
+        <div class="form-field">
+          <label for="update-product-category" class="block text-gray-700 font-medium mb-2 text-center">Category*</label>
+          <select id="update-product-category" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+            <option value="" disabled selected>Select Category</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label for="update-product-price" class="block text-gray-700 font-medium mb-2 text-center">Price*</label>
+          <input type="number" step="0.01" id="update-product-price" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required />
+        </div>
+        <div class="form-field">
+          <label for="update-product-images" class="block text-gray-700 font-medium mb-2 text-center">Product Images</label>
+          <input type="file" id="update-product-images" class="w-full p-3 border border-gray-300 rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:bg-blue-100 file:text-blue-700 hover:file:bg-blue-200" accept="image/*" multiple />
+          <div id="current-product-image-preview" class="mt-3 flex flex-wrap gap-2">
+            <p class="text-sm text-gray-500 w-full text-center">Current Images:</p>
+          </div>
+        </div>
+        <div class="form-field">
+          <label for="update-product-sizes" class="block text-gray-700 font-medium mb-2 text-center">Sizes (comma separated)</label>
+          <input type="text" id="update-product-sizes" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g., Small, Medium, Large" />
+        </div>
+        <div class="form-field">
+          <label for="update-product-colors" class="block text-gray-700 font-medium mb-2 text-center">Colors (comma separated)</label>
+          <input type="text" id="update-product-colors" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g., Red, Blue, Green" />
+        </div>
+        <div class="col-span-1 sm:col-span-2 form-field">
+          <label for="update-product-description" class="block text-gray-700 font-medium mb-2 text-center">Description*</label>
+          <textarea id="update-product-description" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" rows="4" required></textarea>
+        </div>
+      </div>
+      <div class="col-span-1 sm:col-span-2">
+        <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors">
+          Update Product
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+    <script src="sidebar.js"></script>
+    <script src="products-list.js"></script>
+  </body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function populateForm(category) {
+  const productIdInput = document.getElementById("product-id");
+  const nameInput = document.getElementById("name");
+  const imageInput = document.getElementById("image");
+  const descriptionInput = document.getElementById("description");
+
+  if (!productIdInput || !nameInput || !imageInput || !descriptionInput) {
+    console.error("Form elements not found");
+    alert("Error: Form elements are missing.");
+    return;
+  }
+
+  productIdInput.value = category.id || "";
+  nameInput.value = category.name || "";
+  // Note: Cannot set file input value for security reasons; user must re-select image
+  descriptionInput.value = category.description || "";
+
+  const typesContainer = document.getElementById("types-container");
+  if (!typesContainer) {
+    console.error("types-container not found");
+    alert("Error: Types container is missing.");
+    return;
+  }
+  typesContainer.innerHTML = "";
+
+  const token = localStorage.getItem("token");
+  fetch(
+    `http://192.168.0.102:5000/api/manuplast/producttypes?category_id=${category.id}`,
     {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     }
   )
-  .then(() => console.log("Connected to MongoDB"))
-  .catch((err) => console.error("MongoDB connection error:", err));
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(
+          `Failed to fetch product types: ${response.status} ${response.statusText}`
+        );
+      }
+      return response.json();
+    })
+    .then(async (productTypes) => {
+      // Validate that all product types belong to the correct category
+      const filteredProductTypes = Array.isArray(productTypes)
+        ? productTypes.filter((type) => type.category_id === category.id)
+        : [];
+      if (productTypes.length !== filteredProductTypes.length) {
+        console.warn(
+          `Found ${
+            productTypes.length - filteredProductTypes.length
+          } product types with mismatched category_id in update form`
+        );
+      }
 
-// Product Schema
-const productSchema = new mongoose.Schema({
-  id: { type: String, default: uuidv4, unique: true },
-  name: { type: String, required: true },
-  image: { type: String, required: true },
-  description: { type: String, required: true },
-  active: { type: Boolean, default: false },
-  types: [
-    {
-      name: { type: String, required: true },
-      images: [String],
-      description: String,
-      price: { type: Number, default: 0 },
-      sizes: [String],
-      colors: [String],
-    },
-  ],
-});
+      // Process images, sizes, and colors for each product type
+      for (const type of filteredProductTypes) {
+        if (!type.id) {
+          console.warn(`Product type missing ID:`, type);
+          type.images = ["./images/placeholder.jpg"];
+          type.sizes = [];
+          type.colors = [];
+          continue;
+        }
+        type.images = Array.isArray(type.images)
+          ? type.images
+              .filter((img) => img.producttype_id === type.id && img.image_url)
+              .map((img) => img.image_url)
+          : ["./images/placeholder.jpg"];
+        type.sizes = Array.isArray(type.sizes)
+          ? type.sizes
+              .filter(
+                (sizeObj) =>
+                  typeof sizeObj.size === "string" && sizeObj.size.trim() !== ""
+              )
+              .map((sizeObj) => sizeObj.size)
+          : [];
+        type.colors = Array.isArray(type.colors)
+          ? type.colors
+              .filter(
+                (colorObj) =>
+                  typeof colorObj.color === "string" &&
+                  colorObj.color.trim() !== ""
+              )
+              .map((colorObj) => colorObj.color)
+          : [];
+      }
 
-// Blog Schema
-const blogSchema = new mongoose.Schema({
-  id: { type: String, default: uuidv4, unique: true },
-  title: { type: String, required: true },
-  author: { type: String, required: true },
-  image: { type: String, required: true },
-  content: { type: String, required: true },
-  active: { type: Boolean, default: false },
-});
+      if (
+        Array.isArray(filteredProductTypes) &&
+        filteredProductTypes.length > 0
+      ) {
+        filteredProductTypes.forEach((type, index) => {
+          const typeDiv = createTypeDiv(type, index);
+          typesContainer.appendChild(typeDiv);
+          addDynamicFieldListeners(typeDiv, index);
+        });
+      } else {
+        const typeDiv = createTypeDiv({}, 0);
+        typesContainer.appendChild(typeDiv);
+        addDynamicFieldListeners(typeDiv, 0);
+      }
+    })
+    .catch((error) => {
+      console.error("Error fetching product types:", error);
+      alert(`Failed to load product types: ${error.message}`);
+    });
+}
 
-// Create Mongoose Models
-const Product = mongoose.model("Product", productSchema);
-const Blog = mongoose.model("Blog", blogSchema);
+function createTypeDiv(type, index) {
+  const typeDiv = document.createElement("div");
+  typeDiv.className =
+    "type-item space-y-4 border p-6 rounded-lg bg-gray-50 relative";
+  typeDiv.innerHTML = `
+    <div class="flex justify-between items-center">
+      <h4 class="font-semibold text-lg text-gray-700">Product Type ${
+        index + 1
+      }</h4>
+      <button type="button" class="remove-type text-red-500 text-2xl" aria-label="Remove Product Type">×</button>
+    </div>
+    <div>
+      <label for="type-name-${index}" class="block text-gray-700 font-medium mb-1">Type Name</label>
+      <input type="text" id="type-name-${index}" class="type-name w-full p-3 border rounded-lg" value="${
+    type.name || ""
+  }" placeholder="Type Name" required>
+    </div>
+    <div>
+      <label for="type-images-${index}" class="block text-gray-700 font-medium mb-1">Type Images (multiple allowed)</label>
+      <input type="file" id="type-images-${index}" class="type-images w-full p-3 border rounded-lg" multiple accept="image/*" required aria-describedby="type-images-info-${index}">
+      <p id="type-images-info-${index}" class="text-gray-500 text-sm mt-1">
+        Previously uploaded images: ${
+          Array.isArray(type.images) && type.images.length
+            ? type.images.join(", ")
+            : "None"
+        }
+      </p>
+    </div>
+    <div>
+      <label for="type-description-${index}" class="block text-gray-700 font-medium mb-1">Type Description</label>
+      <textarea id="type-description-${index}" class="type-description w-full p-3 border rounded-lg" placeholder="Type Description" required>${
+    type.description || ""
+  }</textarea>
+    </div>
+    <div>
+      <label for="type-price-${index}" class="block text-gray-700 font-medium mb-1">Type Price</label>
+      <input type="number" step="0.01" id="type-price-${index}" class="type-price w-full p-3 border rounded-lg" value="${
+    type.price || ""
+  }" placeholder="Type Price" required>
+    </div>
+    <div>
+      <label class="block text-gray-700 font-medium mb-1">Sizes (comma separated)</label>
+      <div class="type-sizes-container space-y-2" data-type-index="${index}">
+        ${
+          Array.isArray(type.sizes) && type.sizes.length
+            ? type.sizes
+                .map(
+                  (size) => `
+              <div class="flex items-center space-x-2">
+                <input type="text" class="type-size w-full p-3 border rounded-lg" value="${size}" placeholder="Size (e.g., S, M, L)">
+                <button type="button" class="remove-size text-red-500 text-xl" aria-label="Remove Size">×</button>
+              </div>
+            `
+                )
+                .join("")
+            : `
+              <div class="flex items-center space-x-2">
+                <input type="text" class="type-size w-full p-3 border rounded-lg" placeholder="Size (e.g., S, M, L)">
+                <button type="button" class="remove-size text-red-500 text-xl" aria-label="Remove Size">×</button>
+              </div>
+            `
+        }
+      </div>
+      <button type="button" class="add-size-btn bg-gray-200 px-3 py-1 mt-2 rounded hover:bg-gray-300" data-type-index="${index}" aria-label="Add Another Size">
+        + Add Size
+      </button>
+    </div>
+    <div>
+      <label class="block text-gray-700 font-medium mb-1">Colors (comma separated)</label>
+      <div class="type-colors-container space-y-2" data-type-index="${index}">
+        ${
+          Array.isArray(type.colors) && type.colors.length
+            ? type.colors
+                .map(
+                  (color) => `
+              <div class="flex items-center space-x-2">
+                <input type="text" class="type-color w-full p-3 border rounded-lg" value="${color}" placeholder="Color (e.g., Red, Blue)">
+                <button type="button" class="remove-color text-red-500 text-xl" aria-label="Remove Color">×</button>
+              </div>
+            `
+                )
+                .join("")
+            : `
+              <div class="flex items-center space-x-2">
+                <input type="text" class="type-color w-full p-3 border rounded-lg" placeholder="Color (e.g., Red, Blue)">
+                <button type="button" class="remove-color text-red-500 text-xl" aria-label="Remove Color">×</button>
+              </div>
+            `
+        }
+      </div>
+      <button type="button" class="add-color-btn bg-gray-200 px-3 py-1 mt-2 rounded hover:bg-gray-300" data-type-index="${index}" aria-label="Add Another Color">
+        + Add Color
+      </button>
+    </div>
+  `;
+  return typeDiv;
+}
 
-// PRODUCT PAGE API
-
-// POST: Add New Product
-app.post("/add-product", async (req, res) => {
-  const { name, image, description, types } = req.body;
-
-  // Validate input
-  if (
-    !name ||
-    !image ||
-    !description ||
-    !Array.isArray(types) ||
-    types.length === 0
-  ) {
-    return res
-      .status(400)
-      .json({ error: "Missing required fields or invalid types" });
+function addDynamicFieldListeners(typeDiv, typeIndex) {
+  const removeTypeBtn = typeDiv.querySelector(".remove-type");
+  if (removeTypeBtn) {
+    removeTypeBtn.addEventListener("click", () => {
+      typeDiv.remove();
+    });
   }
 
-  const newProduct = new Product({
-    id: uuidv4(),
-    name,
-    image,
-    description,
-    active: false,
-    types: types.map((type) => ({
-      name: type.name || "",
-      images: Array.isArray(type.images) ? type.images : [],
-      description: type.description || "",
-      price: parseFloat(type.price) || 0,
-      sizes: Array.isArray(type.sizes) ? type.sizes : [],
-      colors: Array.isArray(type.colors) ? type.colors : [],
-    })),
+  const addSizeBtn = typeDiv.querySelector(".add-size-btn");
+  if (addSizeBtn) {
+    addSizeBtn.addEventListener("click", () => {
+      const sizesContainer = typeDiv.querySelector(
+        `.type-sizes-container[data-type-index="${typeIndex}"]`
+      );
+      const sizeDiv = document.createElement("div");
+      sizeDiv.className = "flex items-center space-x-2";
+      sizeDiv.innerHTML = `
+        <input type="text" class="type-size w-full p-3 border rounded-lg" placeholder="Size (e.g., S, M, L)">
+        <button type="button" class="remove-size text-red-500 text-xl" aria-label="Remove Size">×</button>
+      `;
+      sizesContainer.appendChild(sizeDiv);
+      sizeDiv.querySelector(".remove-size").addEventListener("click", () => {
+        if (sizesContainer.children.length > 1) {
+          sizesContainer.removeChild(sizeDiv);
+        }
+      });
+    });
+  }
+
+  const addColorBtn = typeDiv.querySelector(".add-color-btn");
+  if (addColorBtn) {
+    addColorBtn.addEventListener("click", () => {
+      const colorsContainer = typeDiv.querySelector(
+        `.type-colors-container[data-type-index="${typeIndex}"]`
+      );
+      const colorDiv = document.createElement("div");
+      colorDiv.className = "flex items-center space-x-2";
+      colorDiv.innerHTML = `
+        <input type="text" class="type-color w-full p-3 border rounded-lg" placeholder="Color (e.g., Red, Blue)">
+        <button type="button" class="remove-color text-red-500 text-xl" aria-label="Remove Color">×</button>
+      `;
+      colorsContainer.appendChild(colorDiv);
+      colorDiv.querySelector(".remove-color").addEventListener("click", () => {
+        if (colorsContainer.children.length > 1) {
+          colorsContainer.removeChild(colorDiv);
+        }
+      });
+    });
+  }
+
+  typeDiv.querySelectorAll(".remove-size").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const container = btn.parentElement.parentElement;
+      if (container.children.length > 1) {
+        container.removeChild(btn.parentElement);
+      }
+    });
   });
 
-  try {
-    const savedProduct = await newProduct.save();
-    res.status(201).json(savedProduct);
-  } catch (err) {
-    res.status(500).json({ error: "Error saving product" });
-  }
-});
-
-// GET: Fetch All Products
-app.get("/products", async (req, res) => {
-  try {
-    const products = await Product.find();
-    res.json(products);
-  } catch (err) {
-    res.status(500).json({ error: "Error fetching products" });
-  }
-});
-
-// GET: Fetch Single Product by ID
-app.get("/products/:id", async (req, res) => {
-  try {
-    const product = await Product.findOne({ id: req.params.id });
-    if (!product) return res.status(404).json({ error: "Product not found" });
-    res.json(product);
-  } catch (err) {
-    res.status(500).json({ error: "Error fetching product" });
-  }
-});
-
-// DELETE: Remove Product by ID
-app.delete("/products/:id", async (req, res) => {
-  try {
-    const result = await Product.deleteOne({ id: req.params.id });
-    if (result.deletedCount === 0)
-      return res.status(404).json({ error: "Product not found" });
-    res.json({ message: "Product deleted successfully!" });
-  } catch (err) {
-    res.status(500).json({ error: "Error deleting product" });
-  }
-});
-
-// PATCH: Toggle active/inactive Product
-app.patch("/products/:id", async (req, res) => {
-  const { id } = req.params;
-  const { active } = req.body;
-
-  try {
-    const product = await Product.findOneAndUpdate(
-      { id },
-      { active },
-      { new: true }
-    );
-    if (!product) return res.status(404).json({ error: "Product not found" });
-    res.json(product);
-  } catch (err) {
-    res.status(500).json({ error: "Error updating product" });
-  }
-});
-
-// PUT: Edit a Product by ID
-app.put("/products/:id", async (req, res) => {
-  const { id } = req.params;
-  const { name, image, description, types } = req.body;
-
-  try {
-    const product = await Product.findOne({ id });
-    if (!product) return res.status(404).json({ error: "Product not found" });
-
-    product.name = name || product.name;
-    product.image = image || product.image;
-    product.description = description || product.description;
-    product.types = types
-      ? types.map((type) => ({
-          name: type.name || "",
-          images: Array.isArray(type.images) ? type.images : [],
-          description: type.description || "",
-          price: parseFloat(type.price) || 0,
-          sizes: Array.isArray(type.sizes) ? type.sizes : [],
-          colors: Array.isArray(type.colors) ? type.colors : [],
-        }))
-      : product.types;
-
-    const updatedProduct = await product.save();
-    res.json(updatedProduct);
-  } catch (err) {
-    res.status(500).json({ error: "Error updating product" });
-  }
-});
-
-// BLOG PAGE APIS
-
-// POST: Add New Blog
-app.post("/add-blog", async (req, res) => {
-  const { title, author, image, content } = req.body;
-
-  // Validate required fields
-  if (!title || !author || !image || !content) {
-    return res.status(400).json({ error: "All fields are required." });
-  }
-
-  const newBlog = new Blog({
-    id: uuidv4(),
-    title,
-    author,
-    image,
-    content,
+  typeDiv.querySelectorAll(".remove-color").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const container = btn.parentElement.parentElement;
+      if (container.children.length > 1) {
+        container.removeChild(btn.parentElement);
+      }
+    });
   });
+}
 
-  try {
-    const savedBlog = await newBlog.save();
-    res
-      .status(201)
-      .json({ message: "Blog added successfully", blog: savedBlog });
-  } catch (err) {
-    res.status(500).json({ error: "Error saving blog" });
+document.getElementById("add-type-button")?.addEventListener("click", () => {
+  const typesContainer = document.getElementById("types-container");
+  if (!typesContainer) {
+    console.error("types-container not found");
+    return;
   }
-});
-
-// GET: Fetch All Blogs
-app.get("/blogs", async (req, res) => {
-  try {
-    const blogs = await Blog.find();
-    res.json(blogs);
-  } catch (err) {
-    res.status(500).json({ error: "Error fetching blogs" });
-  }
-});
-
-// GET: Fetch Single Blog by ID
-app.get("/blogs/:id", async (req, res) => {
-  try {
-    const blog = await Blog.findOne({ id: req.params.id });
-    if (!blog) return res.status(404).json({ error: "Blog not found" });
-    res.json(blog);
-  } catch (err) {
-    res.status(500).json({ error: "Error fetching blog" });
-  }
-});
-
-// DELETE: Remove Blog by ID
-app.delete("/blogs/:id", async (req, res) => {
-  try {
-    const result = await Blog.deleteOne({ id: req.params.id });
-    if (result.deletedCount === 0)
-      return res.status(404).json({ error: "Blog not found" });
-    res.json({ message: "Blog deleted successfully!" });
-  } catch (err) {
-    res.status(500).json({ error: "Error deleting blog" });
-  }
-});
-
-// PATCH: Toggle active/inactive Blog
-app.patch("/blogs/:id", async (req, res) => {
-  const { id } = req.params;
-  const { active } = req.body;
-
-  try {
-    const blog = await Blog.findOneAndUpdate({ id }, { active }, { new: true });
-    if (!blog) return res.status(404).json({ error: "Blog not found" });
-    res.json(blog);
-  } catch (err) {
-    res.status(500).json({ error: "Error updating blog" });
-  }
-});
-
-// PUT: Update Blog by ID
-app.put("/blogs/:id", async (req, res) => {
-  const { title, author, image, content } = req.body;
-
-  try {
-    const blog = await Blog.findOne({ id: req.params.id });
-    if (!blog) return res.status(404).json({ error: "Blog not found" });
-
-    blog.title = title || blog.title;
-    blog.author = author || blog.author;
-    blog.image = image || blog.image;
-    blog.content = content || blog.content;
-
-    const updatedBlog = await blog.save();
-    res.json({ message: "Blog updated successfully", blog: updatedBlog });
-  } catch (err) {
-    res.status(500).json({ error: "Error updating blog" });
-  }
-});
-
-// Start the server
-app.listen(5000, () => {
-  console.log("Server is running on port 5000");
+  const typeCount = typesContainer.querySelectorAll(".type-item").length;
+  const typeDiv = createTypeDiv({}, typeCount);
+  typesContainer.appendChild(typeDiv);
+  addDynamicFieldListeners(typeDiv, typeCount);
 });

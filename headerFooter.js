@@ -3,17 +3,14 @@ class SpecialHeader extends HTMLElement {
     this.innerHTML = `
       <header class="fixed top-0 left-0 w-full bg-white shadow-lg z-50 transition-all duration-300">
         <nav class="border-b border-gray-200">
-          <div class="container mx-auto flex justify-between items-center px-6 py-1">
-            <a href="index.html" class="flex items-center space-x-3 group">
-              <img src="./images/logo.png" alt="Logo" class="w-20 h-20 transition-transform duration-300 group-hover:scale-105" />
-              <span class="text-2xl font-extrabold text-gray-900">MANU PLAST</span>
+          <div class="container mx-auto flex justify-between items-center px-2 py-0">
+            <a href="index.html" class="flex items-center space-x-0 font-serif italic group">
+              <img src="./images/logo1.png" alt="Logo" class="w-30 h-16 transition-transform duration-300 group-hover:scale-105" />
             </a>
 
             <ul id="nav-menu" class="hidden md:flex space-x-10 items-center">
             <li><a href="about.html" class="nav-link relative text-gray-700 hover:text-blue-600 transition-colors duration-200">About</a></li>
               <li><a href="products.html" class="nav-link relative text-gray-700 hover:text-blue-600 transition-colors duration-200">Products</a></li>
-             <!-- <li><a href="services.html" class="nav-link relative text-gray-700 hover:text-blue-600 transition-colors duration-200">Services</a></li>  -->
-             <!-- <li><a href="projects.html" class="nav-link relative text-gray-700 hover:text-blue-600 transition-colors duration-200">Projects</a></li> --> 
                <li><a href="blog.html" class="nav-link relative text-gray-700 hover:text-blue-600 transition-colors duration-200">Blog</a></li>
               <li><a href="contact.html" class="nav-link relative text-gray-700 hover:text-blue-600 transition-colors duration-200">Contact</a></li>
             </ul>
@@ -84,115 +81,144 @@ class SpecialHeader extends HTMLElement {
 }
 
 class SpecialFooter extends HTMLElement {
-  connectedCallback() {
+  constructor() {
+    super();
+    this.products = [];
+  }
+
+  async connectedCallback() {
+    await this.fetchProducts();
+    this.render();
+    this.activateCurrentFooterLink();
+  }
+
+  async fetchProducts() {
+    try {
+      // Replace with your actual API endpoint or database call
+      const response = await fetch('/api/products');
+      this.products = await response.json();
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+      // Fallback products in case of error
+      this.products = [
+        { name: 'Modern Collections', href: 'modern' },
+        { name: 'Classic Designs', href: 'classic' },
+        { name: 'Custom Pieces', href: 'custom' },
+        { name: 'Eco-Friendly Line', href: 'eco' },
+        { name: 'Bespoke Solutions', href: 'bespoke' }
+      ];
+    }
+  }
+
+  render() {
     this.innerHTML = `
-      <footer class="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700 py-12 px-6 md:px-16 text-gray-200 font-sans">
-        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12">
-          <!-- Branding Section -->
-          <div class="space-y-6">
-            <h2 class="text-4xl font-extrabold flex items-center gap-4 transform hover:scale-105 transition-transform duration-300">
-              <img src="./images/logo.png" alt="ManuPlast Logo" class="w-14 h-14 rounded-full shadow-xl border-2 border-white bg-white" /> 
-              <span class="text-white tracking-tight">MANU PLAST</span>
-            </h2>
-            <p class="text-gray-300 text-base leading-relaxed max-w-xs">
-              Crafting timeless furniture designs with innovation and sustainability at heart.
-            </p>
-            <div class="flex space-x-4 mt-4">
-              <a href="#" class="text-gray-300 hover:text-blue-400 transition-colors duration-200">
-                <i class="fab fa-instagram text-2xl"></i>
+      <footer class="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-700 text-gray-200 font-sans">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
+            <!-- Branding Section -->
+            <div class="space-y-6">
+              <a href="/" class="group flex items-center gap-0 transform transition-transform duration-300 hover:scale-105" aria-label="ManuPlast Home">
+                <img src="./images/logo1.png" alt="ManuPlast Logo" class="w-18 h-12 rounded-full shadow-lg object-cover">
+                <h2 class="text-2xl font-bold text-white tracking-tight text-serif">MANU PLAST</h2>
               </a>
-              <a href="#" class="text-gray-300 hover:text-blue-400 transition-colors duration-200">
-                <i class="fab fa-twitter text-2xl"></i>
-              </a>
-              <a href="#" class="text-gray-300 hover:text-blue-400 transition-colors duration-200">
-                <i class="fab fa-linkedin text-2xl"></i>
-              </a>
+              <p class="text-gray-300 text-sm leading-relaxed max-w-xs">
+               Crafting premium bottles and jars with innovation and sustainability.
+              </p>
+              <div class="flex space-x-4">
+                <a href="https://instagram.com" target="_blank" class="text-gray-300 hover:text-blue-400 transition-colors duration-200" aria-label="Instagram">
+                  <i class="fab fa-instagram text-xl"></i>
+                </a>
+                <a href="https://twitter.com" target="_blank" class="text-gray-300 hover:text-blue-400 transition-colors duration-200" aria-label="Twitter">
+                  <i class="fa-brands fa-x-twitter text-xl"></i>
+                </a>
+                <a href="https://linkedin.com" target="_blank" class="text-gray-300 hover:text-blue-400 transition-colors duration-200" aria-label="LinkedIn">
+                  <i class="fab fa-linkedin text-xl"></i>
+                </a>
+                <a href="#" target="_blank" class="text-gray-300 hover:text-blue-400 transition-colors duration-200" aria-label="LinkedIn">
+                  <i class="fab fa-facebook-f text-lg"></i>
+                </a>
+              </div>
+            </div>
+
+            <!-- Products Section -->
+            <div>
+              <h3 class="text-xl font-bold text-white mb-4 relative">
+                Products Category
+                <span class="absolute bottom-0 left-0 w-10 h-1 bg-blue-500 rounded"></span>
+              </h3>
+              <ul class="space-y-3 text-gray-300 text-sm">
+                ${this.products.map(product => `
+                  <li>
+                    <a href="${product.href}" class="footer-link hover:text-blue-400 hover:underline transition-all duration-200">
+                      ${product.name}
+                    </a>
+                  </li>
+                `).join('')}
+              </ul>
+            </div>
+
+            <!-- Contact Info Section -->
+            <div>
+              <h3 class="text-xl font-bold text-white mb-4 relative">
+                Contact Info
+                <span class="absolute bottom-0 left-0 w-10 h-1 bg-blue-500 rounded"></span>
+              </h3>
+              <ul class="space-y-3 text-gray-300 text-sm">
+                <li>
+                  <a href="https://maps.google.com" target="_blank" class="flex items-center space-x-2 hover:text-blue-400 transition-all duration-200" aria-label="Our Location">
+                    <i class="fas fa-map-marker-alt text-blue-500"></i>
+                    <span>Palghar, Maharashtra – 401208, India</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="tel:+910000000000" class="flex items-center space-x-2 hover:text-blue-400 transition-all duration-200" aria-label="Phone Number">
+                    <i class="fas fa-phone text-blue-500"></i>
+                    <span>+91 0000000000</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="mailto:manuplast901@gmail.com" class="flex items-center space-x-2 hover:text-blue-400 transition-all duration-200" aria-label="Email Address">
+                    <i class="fas fa-envelope text-blue-500"></i>
+                    <span>manuplast901@gmail.com</span>
+                  </a>
+                </li>
+                <li class="flex items-center space-x-2">
+                  <i class="fas fa-clock text-blue-500"></i>
+                  <span>Opening Hours: 10:00 - 18:00</span>
+                </li>
+              </ul>
             </div>
           </div>
 
-          <!-- Products Section -->
-          <div>
-            <h3 class="text-2xl font-bold text-white mb-6 relative">
-              Products
-              <span class="absolute bottom-0 left-0 w-12 h-1 bg-blue-500 rounded"></span>
-            </h3>
-            <ul class="space-y-4 text-gray-300 text-base">
-              <li><a href="design" class="footer-link hover:text-blue-400 hover:underline transition-all duration-200">Modern Collections</a></li>
-              <li><a href="marketing" class="footer-link hover:text-blue-400 hover:underline transition-all duration-200">Classic Designs</a></li>
-              <li><a href="techsupport" class="footer-link hover:text-blue-400 hover:underline transition-all duration-200">Custom Pieces</a></li>
-              <li><a href="outsourcing" class="footer-link hover:text-blue-400 hover:underline transition-all duration-200">Eco-Friendly Line</a></li>
-              <li><a href="consultation" class="footer-link hover:text-blue-400 hover:underline transition-all duration-200">Bespoke Solutions</a></li>
-            </ul>
-          </div>
-
-          <!-- Contact Info Section -->
-          <div>
-            <h3 class="text-2xl font-bold text-white mb-6 relative">
-              Contact Info
-              <span class="absolute bottom-0 left-0 w-12 h-1 bg-blue-500 rounded"></span>
-            </h3>
-            <ul class="space-y-4 text-gray-300 text-base">
-              <li>
-                <a href="#" target="_blank" class="flex items-center space-x-3 hover:text-blue-400 transition-all duration-200">
-                  <i class="fas fa-map-marker-alt text-blue-500 text-lg"></i>
-                  <span>District: Palghar, Maharashtra – 401208, India</span>
-                </a>
-              </li>
-              <li>
-                <a href="tel:+910000000000" class="flex items-center space-x-3 hover:text-blue-400 transition-all duration-200">
-                  <i class="fas fa-phone text-blue-500 text-lg"></i>
-                  <span>+91 0000000000</span>
-                </a>
-              </li>
-              <li>
-                <a href="mailto:manuplast901@gmail.com" class="flex items-center space-x-3 hover:text-blue-400 transition-all duration-200">
-                  <i class="fas fa-envelope text-blue-500 text-lg"></i>
-                  <span>manuplast901@gmail.com</span>
-                </a>
-              </li>
-              <li class="flex items-center space-x-3">
-                <i class="fas fa-clock text-blue-500 text-lg"></i>
-                <span>Opening Hours: 10:00 - 18:00</span>
-              </li>
-            </ul>
+          <!-- Footer Bottom -->
+          <div class="mt-8 pt-6 border-t border-gray-600 text-center">
+            <nav class="flex justify-center space-x-6 text-gray-300 text-sm mb-4">
+              <a href="index.html" class="footer-link hover:text-blue-400 hover:underline transition-all duration-200">Home</a>
+              <a href="products.html" class="footer-link hover:text-blue-400 hover:underline transition-all duration-200">Products</a>
+              <a href="contact.html" class="footer-link hover:text-blue-400 hover:underline transition-all duration-200">Contact</a>
+            </nav>
+            <p class="text-gray-400 text-xs">© 2025 ManuPlast. All Rights Reserved.</p>
           </div>
         </div>
 
-        <!-- Footer Bottom -->
-        <div class="mt-12 pt-8 border-t border-gray-600 text-center">
-          <div class="flex justify-center space-x-8 text-gray-300 text-base mb-6">
-            <a href="index" class="footer-link hover:text-blue-400 hover:underline transition-all duration-200">Home</a>
-            <a href="products" class="footer-link hover:text-blue-400 hover:underline transition-all duration-200">Products</a>
-            <a href="contact" class="footer-link hover:text-blue-400 hover:underline transition-all duration-200">Contact</a>
-          </div>
-          <p class="text-gray-400 text-sm">© 2025 ManuPlast. All Rights Reserved.</p>
-        </div>
-      </footer>
-      <!-- Promotion Stripe -->
-      <div class="bg-gray-900 py-4 text-gray-300 text-center border-t border-gray-700">
-        <div class="container flex items-center justify-center">
-          <a href="https://vybtek.com/" target="_blank" class="flex items-center space-x-3 hover:text-blue-400 transition-all duration-200">
-            <span class="text-sm font-medium">Created by</span>
-            <img src="https://vybtek.com/images/logo.png" alt="VybTek Logo" class="h-10">
-            <span class="text-sm font-medium">VybTek IT Solutions</span>
+        <!-- Promotion Stripe -->
+        <div class="bg-gray-900 py-3 text-gray-300 text-center border-t border-gray-700">
+          <a href="https://vybtek.com/" target="_blank" class="flex items-center justify-center space-x-2 hover:text-blue-400 transition-all duration-200" aria-label="Created by VybTek">
+            <span class="text-xs font-medium">Created by</span>
+            <img src="https://vybtek.com/images/logo.png" alt="VybTek Logo" class="h-8">
+            <span class="text-xs font-medium">VybTek IT Solutions</span>
           </a>
         </div>
-      </div>
+      </footer>
     `;
-
-    this.activateCurrentFooterLink();
   }
 
   activateCurrentFooterLink() {
     const footerLinks = this.querySelectorAll(".footer-link");
-    const currentPath =
-      window.location.pathname.split("/").pop() || "index.html";
+    const currentPath = window.location.pathname.split("/").pop() || "index.html";
 
-    footerLinks.forEach((link) => {
-      const linkPath = link.getAttribute("href")
-        ? link.getAttribute("href").split("/").pop()
-        : null;
-
+    footerLinks.forEach(link => {
+      const linkPath = link.getAttribute("href")?.split("/").pop() || "";
       if (linkPath === currentPath) {
         link.classList.add("text-blue-400", "font-semibold", "underline");
         link.classList.remove("text-gray-300");

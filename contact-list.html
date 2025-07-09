@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contact Dashboard - Manu Plast</title>
+    <!-- Add your existing meta tags here -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+    <link href="style.css" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="contact-dashboard.js" defer></script>
+    <script src="sidebar.js" defer></script>
+  </head>
+
+  <body class="bg-gray-100">
+    <main class="flex w-full">
+      <!-- Sidebar -->
+      <special-sidebar
+        class="w-1/4 h-screen"
+        aria-label="Product Filters"
+      ></special-sidebar>
+      <!-- Dashboard Content -->
+      <div class="md:w-3/4 pt-10 pl-0 p-4">
+        <div class="flex justify-between items-center mb-8">
+          <h1 class="text-3xl font-bold text-gray-800">
+            <i class="fas fa-address-book text-red-500 mr-2"></i>
+            Contact Inquiries
+          </h1>
+          <div class="flex space-x-4">
+            <button
+              id="refresh-contacts"
+              class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors"
+            >
+              <i class="fas fa-sync-alt mr-2"></i>Refresh
+            </button>
+            <button
+              id="export-contacts"
+              class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors"
+            >
+              <i class="fas fa-file-export mr-2"></i>Export CSV
+            </button>
+          </div>
+        </div>
+
+        <!-- Filters and Search -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label
+                for="contact-search"
+                class="block text-sm font-medium text-gray-700 mb-1"
+                >Search</label
+              >
+              <div class="relative">
+                <input
+                  type="text"
+                  id="contact-search"
+                  placeholder="Search contacts..."
+                  class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500"
+                />
+                <div
+                  class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"
+                >
+                  <i class="fas fa-search text-gray-400"></i>
+                </div>
+              </div>
+            </div>
+            <div>
+              <label
+                for="contact-filter"
+                class="block text-sm font-medium text-gray-700 mb-1"
+                >Filter</label
+              >
+              <select
+                id="contact-filter"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500"
+              >
+                <option value="all">All Contacts</option>
+                <option value="recent">Recent (Last 7 days)</option>
+                <option value="email">With Email</option>
+                <option value="phone">With Phone</option>
+              </select>
+            </div>
+            <div>
+              <label
+                for="contact-sort"
+                class="block text-sm font-medium text-gray-700 mb-1"
+                >Sort By</label
+              >
+              <select
+                id="contact-sort"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500"
+              >
+                <option value="newest">Newest First</option>
+                <option value="oldest">Oldest First</option>
+                <option value="name">By Name (A-Z)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+          <div
+            class="bg-white rounded-lg shadow-md p-6 border-l-4 border-red-500"
+          >
+            <div class="flex justify-between items-center">
+              <div>
+                <p class="text-sm font-medium text-gray-500">Total Contacts</p>
+                <p id="total-contacts" class="text-3xl font-bold text-gray-800">
+                  0
+                </p>
+              </div>
+              <div class="bg-red-100 p-3 rounded-full">
+                <i class="fas fa-users text-red-500 text-xl"></i>
+              </div>
+            </div>
+          </div>
+          <div
+            class="bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-500"
+          >
+            <div class="flex justify-between items-center">
+              <div>
+                <p class="text-sm font-medium text-gray-500">
+                  Filtered Contacts
+                </p>
+                <p
+                  id="filtered-contacts"
+                  class="text-3xl font-bold text-gray-800"
+                >
+                  0
+                </p>
+              </div>
+              <div class="bg-blue-100 p-3 rounded-full">
+                <i class="fas fa-filter text-blue-500 text-xl"></i>
+              </div>
+            </div>
+          </div>
+          <div
+            class="bg-white rounded-lg shadow-md p-6 border-l-4 border-green-500"
+          >
+            <div class="flex justify-between items-center">
+              <div>
+                <p class="text-sm font-medium text-gray-500">
+                  Today's Contacts
+                </p>
+                <p id="today-contacts" class="text-3xl font-bold text-gray-800">
+                  0
+                </p>
+              </div>
+              <div class="bg-green-100 p-3 rounded-full">
+                <i class="fas fa-calendar-day text-green-500 text-xl"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contacts List -->
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+          <div id="contacts-loading" class="text-center py-12">
+            <div
+              class="animate-spin rounded-full h-12 w-12 border-b-2 border-red-500 mx-auto mb-4"
+            ></div>
+            <p class="text-gray-600">Loading contacts...</p>
+          </div>
+          <div id="contacts-container" class="hidden">
+            <div id="contacts-list" class="divide-y divide-gray-200"></div>
+            <div id="contacts-pagination" class="px-6 py-4 bg-gray-50"></div>
+          </div>
+          <div id="contacts-empty" class="hidden text-center py-12">
+            <div class="mb-4">
+              <i class="fas fa-address-book text-gray-300 text-6xl"></i>
+            </div>
+            <h3 class="text-xl font-medium text-gray-600 mb-2">
+              No Contacts Found
+            </h3>
+            <p class="text-gray-500 mb-6">There are no contacts to display.</p>
+            <button
+              id="refresh-empty"
+              class="bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600 transition-colors"
+            >
+              <i class="fas fa-sync-alt mr-2"></i>Refresh
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contact Detail Modal -->
+      <div
+        id="contact-modal"
+        class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4"
+      >
+        <div
+          class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+        >
+          <!-- Modal content will be inserted here by JavaScript -->
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

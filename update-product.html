@@ -88,7 +88,7 @@
               aria-required="true"
               aria-describedby="name-error"
             />
-            <p id="name-error" class="text-red-600 text-sm hidden">
+            <p id="name-error" class="text-red-600 text-sm mt-1 hidden">
               Please enter a valid category name.
             </p>
           </div>
@@ -96,10 +96,10 @@
           <!-- Product Image -->
           <div>
             <label for="image" class="block text-gray-700 font-medium mb-1"
-              >Category Image URL</label
+              >Category Image</label
             >
             <input
-              type="url"
+              type="file"
               id="image"
               name="image"
               class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -108,7 +108,7 @@
               aria-required="true"
               aria-describedby="image-error"
             />
-            <p id="image-error" class="text-red-600 text-sm hidden">
+            <p id="image-error" class="text-red-600 text-sm mt-1 hidden">
               Please enter a valid image URL.
             </p>
           </div>
@@ -130,7 +130,7 @@
               aria-required="true"
               aria-describedby="description-error"
             ></textarea>
-            <p id="description-error" class="text-red-600 text-sm hidden">
+            <p id="description-error" class="text-red-600 text-sm mt-1 hidden">
               Please enter a valid description.
             </p>
           </div>
@@ -164,8 +164,9 @@
           <div class="text-center">
             <button
               type="submit"
-              class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-300 w-full sm:w-auto focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-300 w-full sm:w-auto focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-400 disabled:cursor-not-allowed"
               aria-label="Update Product Category"
+              id="submit-button"
             >
               Update Product
             </button>
@@ -179,6 +180,75 @@
       if (localStorage.getItem("isLoggedIn") !== "true") {
         window.location.href = "login.html";
       }
+
+      // Client-side form validation
+      document.getElementById("update-product-form")?.addEventListener("submit", (e) => {
+        e.preventDefault();
+        let isValid = true;
+
+        // Validate Category Name
+        const nameInput = document.getElementById("name");
+        const nameError = document.getElementById("name-error");
+        if (!nameInput.value.trim()) {
+          nameError.classList.remove("hidden");
+          nameInput.classList.add("border-red-500");
+          isValid = false;
+        } else {
+          nameError.classList.add("hidden");
+          nameInput.classList.remove("border-red-500");
+        }
+
+        // Validate Image URL
+        const imageInput = document.getElementById("image");
+        const imageError = document.getElementById("image-error");
+        const urlPattern = /^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w- ./?%&=]*)?$/i;
+        if (!imageInput.value.trim() || !urlPattern.test(imageInput.value.trim())) {
+          imageError.classList.remove("hidden");
+          imageInput.classList.add("border-red-500");
+          isValid = false;
+        } else {
+          imageError.classList.add("hidden");
+          imageInput.classList.remove("border-red-500");
+        }
+
+        // Validate Description
+        const descriptionInput = document.getElementById("description");
+        const descriptionError = document.getElementById("description-error");
+        if (!descriptionInput.value.trim()) {
+          descriptionError.classList.remove("hidden");
+          descriptionInput.classList.add("border-red-500");
+          isValid = false;
+        } else {
+          descriptionError.classList.add("hidden");
+          descriptionInput.classList.remove("border-red-500");
+        }
+
+        // Validate at least one product type with required fields
+        const typesContainer = document.getElementById("types-container");
+        const typeItems = typesContainer.querySelectorAll(".type-item");
+        let hasValidType = false;
+        typeItems.forEach((typeDiv, index) => {
+          const typeName = typeDiv.querySelector(`#type-name-${index}`)?.value.trim();
+          const typeImages = typeDiv.querySelectorAll(`.type-images-container[data-type-index="${index}"] .type-image`);
+          const typeDescription = typeDiv.querySelector(`#type-description-${index}`)?.value.trim();
+          const typePrice = typeDiv.querySelector(`#type-price-${index}`)?.value.trim();
+          const validImages = Array.from(typeImages).some(input => input.value.trim() && urlPattern.test(input.value.trim()));
+
+          if (typeName && validImages && typeDescription && typePrice && parseFloat(typePrice) > 0) {
+            hasValidType = true;
+          }
+        });
+
+        if (!hasValidType) {
+          alert("Please add at least one valid product type with name, image URL, description, and price.");
+          isValid = false;
+        }
+
+        if (isValid) {
+          // Trigger the form submission handled by products.js
+          document.getElementById("update-product-form").dispatchEvent(new Event("submit", { cancelable: true }));
+        }
+      });
     </script>
   </body>
 </html>

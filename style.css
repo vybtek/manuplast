@@ -259,3 +259,110 @@ html {
     .animate-slide-up {
       animation: slide-up 1.2s ease-out forwards;
     }
+
+
+    /* Notification animation */
+#notification {
+    transition: all 0.3s ease;
+    transform: translateX(100%);
+}
+
+#notification.show {
+    transform: translateX(0);
+}
+
+/* Modal styles */
+#category-modal {
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+#category-modal .modal-content {
+    transform: translateY(-20px);
+    transition: transform 0.3s ease;
+}
+
+#category-modal.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+#category-modal.show .modal-content {
+    transform: translateY(0);
+}
+/* Modal styles */
+#category-modal {
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    opacity: 0;
+    visibility: hidden;
+}
+
+#category-modal.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Prevent scrolling when modal is open */
+body.modal-open {
+    overflow: hidden;
+}
+
+/* Add this to your existing styles */
+#category-modal,
+#update-category-modal {
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+#category-modal .modal-content,
+#update-category-modal .modal-content {
+    animation: modalFadeIn 0.3s ease;
+}
+
+/* Prevent scrolling when modal is open */
+body.modal-open {
+    overflow: hidden;
+}
+
+
+.hide-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .hide-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .gallery-item img {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .gallery-item img:hover {
+      transform: scale(1.05);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+    .thumbnail {
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    .thumbnail:hover {
+      opacity: 1;
+      transform: scale(1.1);
+    }
+    .thumbnail.active {
+      opacity: 1 !important;
+      border: 2px solid #4f46e5 !important;
+      transform: scale(1.05);
+    }
+    .lightbox {
+      transition: opacity 0.3s ease;
+    }
+    .lightbox-content img {
+      animation: fadeIn 0.3s ease;
+    }
+    .size-card, .color-card {
+      transition: all 0.3s ease;
+    }
+    .size-card:hover, .color-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }

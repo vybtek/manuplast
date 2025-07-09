@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Settings</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/png" href="./images/logo.png" />
+  </head>
+  <body class="h-screen flex items-center justify-center bg-gray-100">
+    <div class="bg-white p-8 rounded shadow-md w-full max-w-sm">
+      <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Settings</h2>
+      <form id="reset-password-form" class="space-y-4">
+        <input
+          type="password"
+          id="old-password"
+          placeholder="Old Password"
+          class="w-full p-2 border rounded"
+          required
+        />
+        <input
+          type="password"
+          id="new-password"
+          placeholder="New Password"
+          class="w-full p-2 border rounded"
+          required
+        />
+        <button
+          type="submit"
+          class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+        >
+          Reset Password
+        </button>
+      </form>
+      <p
+        id="error-message"
+        class="text-red-500 text-sm mt-3 text-center hidden"
+      >
+        Error resetting password
+      </p>
+      <p
+        id="success-message"
+        class="text-green-500 text-sm mt-3 text-center hidden"
+      >
+        Password reset successfully
+      </p>
+      <button
+        id="logout-button"
+        class="w-full bg-gray-500 text-white p-2 rounded hover:bg-gray-600 mt-4"
+      >
+        Logout
+      </button>
+    </div>
+
+    <script>
+      // Check if user is logged in
+      if (!localStorage.getItem("isLoggedIn")) {
+        window.location.href = "index.html";
+      }
+
+      document
+        .getElementById("reset-password-form")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+
+          const oldPassword = document.getElementById("old-password").value;
+          const newPassword = document.getElementById("new-password").value;
+          const errorMessage = document.getElementById("error-message");
+          const successMessage = document.getElementById("success-message");
+
+          // Reset messages
+          errorMessage.classList.add("hidden");
+          successMessage.classList.add("hidden");
+          try {
+            const token = localStorage.getItem("token");
+            const response = await fetch("http://192.168.0.102:5000/api/manuplast/admin/change-password", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({ oldPassword, newPassword }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+              successMessage.textContent = "Password reset successfully";
+              successMessage.classList.remove("hidden");
+              // Clear form
+              document.getElementById("reset-password-form").reset();
+            } else {
+              errorMessage.textContent = data.message || "Error resetting password";
+              errorMessage.classList.remove("hidden");
+            }
+          } catch (error) {
+            errorMessage.textContent = "An error occurred. Please try again.";
+            errorMessage.classList.remove("hidden");
+          }
+        });
+
+      // Logout functionality
+      document.getElementById("logout-button").addEventListener("click", function () {
+        localStorage.removeItem("isLoggedIn");
+        localStorage.removeItem("token");
+        window.location.href = "index.html";
+      });
+    </script>
+  </body>
+</html>

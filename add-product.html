@@ -3,10 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Add Product | Manu Plast Admin</title>
+    <title>Add Product Variants | Manu Plast Admin</title>
     <meta
       name="description"
-      content="Admin interface for adding new products to a selected category on the Manu Plast website."
+      content="Admin panel to add product variants (Product Types) in Manu Plast."
     />
     <meta name="robots" content="noindex, nofollow" />
     <meta name="author" content="Manu Plast" />
@@ -32,7 +32,8 @@
     <aside role="navigation" aria-label="Admin Sidebar">
       <special-sidebar></special-sidebar>
     </aside>
-    <main role="main" class="flex justify-center w-full md:pl-80 py-12">
+
+    <main class="flex justify-center w-full md:pl-80 py-12">
       <div class="bg-white shadow-lg rounded-lg p-6 w-full max-w-3xl">
         <h1
           class="text-2xl font-bold text-center text-gray-700 mb-4"
@@ -40,11 +41,14 @@
         >
           ADD NEW PRODUCT
         </h1>
+
         <form
           id="product-form"
           class="space-y-4"
           aria-labelledby="add-product-heading"
+          enctype="multipart/form-data"
         >
+          <!-- Category -->
           <div>
             <label for="category" class="block text-gray-700 font-medium mb-2"
               >Category</label
@@ -53,186 +57,38 @@
               id="category"
               name="category"
               required
-              aria-required="true"
               class="w-full p-2 border rounded-lg"
             >
-              <option value="" disabled selected>Select a Category</option>
+              <option value="" disabled selected>Select a category</option>
             </select>
           </div>
+
+          <!-- Product Variants -->
           <div id="types-container" class="space-y-4">
-            <h2
-              class="text-lg font-semibold text-gray-700"
-              id="product-types-heading"
-            >
-              Add Product Types
-            </h2>
-            <div
-              class="type-item space-y-2 border p-4 rounded-lg"
-              role="group"
-              aria-labelledby="product-types-heading"
-            >
-              <div class="flex justify-between items-center">
-                <h4 class="font-semibold">Product Type</h4>
-                <button
-                  type="button"
-                  class="remove-type text-red-500 text-3xl"
-                  aria-label="Remove Product Type"
-                >
-                  ×
-                </button>
-              </div>
-              <div>
-                <label
-                  for="type-name-0"
-                  class="block text-gray-700 font-medium mb-2"
-                  >Type Name</label
-                >
-                <input
-                  type="text"
-                  id="type-name-0"
-                  class="type-name w-full p-2 border rounded"
-                  placeholder="Type Name"
-                />
-              </div>
-              <div>
-                <label class="block text-gray-700 font-medium mb-2"
-                  >Type Images</label
-                >
-                <div
-                  class="type-images-container space-y-2"
-                  data-type-index="0"
-                >
-                  <div class="flex items-center space-x-2">
-                    <input
-                      type="file"
-                      class="type-image w-full p-2 border rounded"
-                      placeholder="Type Image URL"
-                    />
-                    <button
-                      type="button"
-                      class="remove-image text-red-500"
-                      aria-label="Remove Image"
-                    >
-                      ×
-                    </button>
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  class="add-image-btn bg-gray-200 px-3 py-1 mt-2 rounded hover:bg-gray-300"
-                  data-type-index="0"
-                  aria-label="Add Another Image"
-                >
-                  + Add Image
-                </button>
-              </div>
-              <div>
-                <label
-                  for="type-description-0"
-                  class="block text-gray-700 font-medium mb-2"
-                  >Type Description</label
-                >
-                <textarea
-                  id="type-description-0"
-                  class="type-description w-full p-2 border rounded"
-                  placeholder="Type Description"
-                ></textarea>
-              </div>
-              <div>
-                <label
-                  for="type-price-0"
-                  class="block text-gray-700 font-medium mb-2"
-                  >Type Price</label
-                >
-                <input
-                  type="number"
-                  step="0.01"
-                  id="type-price-0"
-                  class="type-price w-full p-2 border rounded"
-                  placeholder="Type Price"
-                />
-              </div>
-              <div>
-                <label class="block text-gray-700 font-medium mb-2"
-                  >Sizes</label
-                >
-                <div class="type-sizes-container space-y-2" data-type-index="0">
-                  <div class="flex items-center space-x-2">
-                    <input
-                      type="text"
-                      class="type-size w-full p-2 border rounded"
-                      placeholder="Size (e.g., S, M, L)"
-                    />
-                    <button
-                      type="button"
-                      class="remove-size text-red-500"
-                      aria-label="Remove Size"
-                    >
-                      ×
-                    </button>
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  class="add-size-btn bg-gray-200 px-3 py-1 mt-2 rounded hover:bg-gray-300"
-                  data-type-index="0"
-                  aria-label="Add Another Size"
-                >
-                  + Add Size
-                </button>
-              </div>
-              <div>
-                <label class="block text-gray-700 font-medium mb-2"
-                  >Colors</label
-                >
-                <div
-                  class="type-colors-container space-y-2"
-                  data-type-index="0"
-                >
-                  <div class="flex items-center space-x-2">
-                    <input
-                      type="text"
-                      class="type-color w-full p-2 border rounded"
-                      placeholder="Color (e.g., Red, Blue)"
-                    />
-                    <button
-                      type="button"
-                      class="remove-color text-red-500"
-                      aria-label="Remove Color"
-                    >
-                      ×
-                    </button>
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  class="add-color-btn bg-gray-200 px-3 py-1 mt-2 rounded hover:bg-gray-300"
-                  data-type-index="0"
-                  aria-label="Add Another Color"
-                >
-                  + Add Color
-                </button>
-              </div>
-            </div>
+            <h2 class="text-lg font-semibold text-gray-700">Add Product</h2>
+            <!-- dynamic product type blocks will appear here -->
           </div>
-          <button
-            type="button"
-            id="add-type-btn"
-            class="bg-gray-200 px-4 py-2 rounded hover:bg-gray-300"
-            aria-label="Add Another Product Type"
-          >
-            + Add More Type
-          </button>
-          <button
-            type="submit"
-            class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600"
-            aria-label="Add Product"
-          >
-            Add Product
-          </button>
+
+          <!-- Buttons -->
+          <div class="flex justify-between gap-4 mt-4">
+            <button
+              type="button"
+              id="add-type-btn"
+              class="bg-gray-200 px-4 py-2 rounded hover:bg-gray-300"
+            >
+              + Add Product
+            </button>
+            <button
+              type="submit"
+              class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 flex-grow"
+            >
+              Save Products
+            </button>
+          </div>
         </form>
       </div>
     </main>
+
     <script defer>
       function logout() {
         localStorage.removeItem("isLoggedIn");
