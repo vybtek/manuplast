@@ -23,7 +23,7 @@ document.getElementById("blog-form").addEventListener("submit", async (e) => {
 
   try {
     const response = await fetch(
-      "http://192.168.0.102:5000/api/manuplast/blogs",
+      "https://api.vybtek.com/api/manuplast/blogs",
       {
         method: "POST",
 

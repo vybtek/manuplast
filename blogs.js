@@ -31,7 +31,7 @@ async function fetchBlogs(containerId = "blog-grid", view = "default") {
 
   try {
     const response = await fetch(
-      "http://192.168.0.102:5000/api/manuplast/blogs"
+      "https://api.vybtek.com/api/manuplast/blogs"
     );
 
     if (!response.ok) throw new Error("Failed to fetch blogs");
@@ -51,8 +51,9 @@ async function fetchBlogs(containerId = "blog-grid", view = "default") {
         blogCard.innerHTML = `
 <div class="bg-white p-4 rounded-lg shadow flex flex-col gap-2 sm:flex-row sm:items-center justify-between">
 <div class="flex items-center space-x-4">
-<img src="${blog.image_url}" alt="${blog.title
-          }" class="w-20 h-20 object-cover rounded" />
+<img src="${blog.image}" alt="${
+          blog.title
+        }" class="w-20 h-20 object-cover rounded" />
 <div>
 <h4 class="font-semibold text-gray-800">${blog.title}</h4>
 <p class="text-sm text-gray-500 truncate max-w-xs">
@@ -62,21 +63,25 @@ async function fetchBlogs(containerId = "blog-grid", view = "default") {
 </div>
 </div>
 <div class="flex gap-2 mt-2 sm:mt-0">
-<a href="update-blog.html?id=${blog.id
-          }" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm">Edit</a>
-<button onclick="confirmDelete('${blog.id
-          }')" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm">Delete</button>
+<a href="update-blog.html?id=${
+          blog.id
+        }" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm">Edit</a>
+<button onclick="confirmDelete('${
+          blog.id
+        }')" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm">Delete</button>
 <button onclick="confirmToggleActive('${blog.id}', '${blog.status}')" 
 
-                class="${blog.status === "ACTIVE"
-            ? "bg-yellow-500 hover:bg-yellow-600"
-            : "bg-green-500 hover:bg-green-600"
-          } text-white px-3 py-1 rounded text-sm">
+                class="${
+                  blog.status === "ACTIVE"
+                    ? "bg-yellow-500 hover:bg-yellow-600"
+                    : "bg-green-500 hover:bg-green-600"
+                } text-white px-3 py-1 rounded text-sm">
 
                 ${blog.status === "ACTIVE" ? "Deactivate" : "Activate"}
 </button>
-<a href="blog-detail.html?id=${blog.id
-          }&source=dashboard" class="bg-gray-200 text-black px-3 py-1 rounded text-sm">View</a>
+<a href="blog-detail.html?id=${
+          blog.id
+        }&source=dashboard" class="bg-gray-200 text-black px-3 py-1 rounded text-sm">View</a>
 </div>
 </div>
 
@@ -86,8 +91,9 @@ async function fetchBlogs(containerId = "blog-grid", view = "default") {
 
         blogCard.innerHTML = `
 <div class="rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 bg-white">
-<img src="${blog.image_url}" alt="${blog.title
-          }" class="w-full h-60 object-cover hover:scale-105 transition-transform duration-300">
+<img src="${blog.image}" alt="${
+          blog.title
+        }" class="w-full h-60 object-cover hover:scale-105 transition-transform duration-300">
 <div class="p-5 space-y-3">
 <div class="text-gray-400 text-xs uppercase tracking-wider flex items-center gap-1">
 <span class="text-yellow-500 font-semibold">•</span> ${blog.author}
@@ -100,8 +106,9 @@ async function fetchBlogs(containerId = "blog-grid", view = "default") {
 
                 ${blog.content.substring(0, 150)}...
 </p>
-<a href="blog-detail.html?id=${blog.id
-          }" class="inline-block text-blue-500 hover:text-blue-700 text-sm font-medium transition-colors duration-200 hover:underline">
+<a href="blog-detail.html?id=${
+          blog.id
+        }" class="inline-block text-blue-500 hover:text-blue-700 text-sm font-medium transition-colors duration-200 hover:underline">
 
                 Read More →
 </a>
@@ -129,7 +136,7 @@ async function fetchBlogDetail() {
 
   try {
     const response = await fetch(
-      `http://192.168.0.102:5000/api/manuplast/blogs/${blogId}`
+      `https://api.vybtek.com/api/manuplast/blogs/${blogId}`
     );
 
     if (!response.ok) throw new Error("Blog not found");
@@ -156,7 +163,7 @@ async function fetchBlogDetail() {
 </div>
 <h1 class="text-4xl font-extrabold text-gray-900 leading-tight tracking-tight">${blog.title}</h1>
 <div class="overflow-hidden rounded-xl shadow-md">
-<img src="${blog.image_url}" alt="${blog.title}" class="w-full object-cover transition-transform duration-500 ease-in-out" />
+<img src="${blog.image}" alt="${blog.title}" class="w-full object-cover transition-transform duration-500 ease-in-out" />
 </div>
 <div class="prose prose-lg max-w-none text-gray-800">
 <p class="whitespace-pre-line">${blog.content}</p>
@@ -180,14 +187,13 @@ async function toggleBlogActive(blogId, currentStatus) {
 
   try {
     const response = await fetch(
-      `http://192.168.0.102:5000/api/manuplast/blogs/${blogId}/status`,
+      `https://api.vybtek.com/api/manuplast/blogs/${blogId}/status`,
 
       {
         method: "PATCH",
 
         headers: {
           "Content-Type": "application/json",
-
           Authorization: `Bearer ${token}`,
         },
 
@@ -220,7 +226,7 @@ async function deleteBlog(blogId) {
 
   try {
     const response = await fetch(
-      `http://192.168.0.102:5000/api/manuplast/blogs/${blogId}`,
+      `https://api.vybtek.com/api/manuplast/blogs/${blogId}`,
 
       {
         method: "DELETE",
@@ -249,7 +255,7 @@ async function fetchBlogForUpdate() {
 
   try {
     const res = await fetch(
-      `http://192.168.0.102:5000/api/manuplast/blogs/${blogId}`
+      `https://api.vybtek.com/api/manuplast/blogs/${blogId}`
     );
 
     if (!res.ok) throw new Error("Failed to fetch blog");
@@ -288,7 +294,7 @@ document
 
     try {
       const res = await fetch(
-        `http://192.168.0.102:5000/api/manuplast/blogs/${id}`,
+        `https://api.vybtek.com/api/manuplast/blogs/${id}`,
         {
           method: "PATCH",
 

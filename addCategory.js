@@ -34,8 +34,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
       try {
         const url = categoryId
-          ? `http://192.168.0.102:5000/api/manuplast/categories/${categoryId}`
-          : `http://192.168.0.102:5000/api/manuplast/categories`;
+          ? `https://api.vybtek.com/api/manuplast/categories/${categoryId}`
+          : `https://api.vybtek.com/api/manuplast/categories`;
         const method = categoryId ? "PUT" : "POST";
         const response = await fetch(url, {
           method,
@@ -82,7 +82,7 @@ async function fetchCategoryForUpdate(categoryId) {
     }
 
     const response = await fetch(
-      `http://192.168.0.102:5000/api/manuplast/categories/${categoryId}`,
+      `https://api.vybtek.com/api/manuplast/categories/${categoryId}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,

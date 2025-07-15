@@ -16,7 +16,7 @@ async function fetchProducts(containerId = "product-grid", view = "default") {
     const token = localStorage.getItem("token");
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
     const response = await fetch(
-      "http://192.168.0.102:5000/api/manuplast/categories",
+      "https://api.vybtek.com/api/manuplast/categories",
       { headers }
     );
 
@@ -276,7 +276,7 @@ async function deleteCategory(id) {
 
   try {
     const response = await fetch(
-      `http://192.168.0.102:5000/api/manuplast/categories/${id}`,
+      `https://api.vybtek.com/api/manuplast/categories/${id}`,
       {
         method: "DELETE",
         headers: {
@@ -310,7 +310,7 @@ async function toggleActive(categoryId, currentStatus) {
 
   try {
     const response = await fetch(
-      `http://192.168.0.102:5000/api/manuplast/categories/${categoryId}/status`,
+      `https://api.vybtek.com/api/manuplast/categories/${categoryId}/status`,
       {
         method: "PATCH",
         headers: {
@@ -438,49 +438,42 @@ function handleDashboardActions(e) {
 
 async function fetchProductDetail() {
   const productDetail = document.getElementById("product-detail");
-  console.log("product-detail element:", productDetail);
   if (!productDetail) {
     console.error("product-detail element not found");
     alert("Error: Product detail container not found. Please check the HTML.");
     return;
   }
-
+ 
   const params = new URLSearchParams(window.location.search);
   const categoryId = params.get("id");
   const source = params.get("source");
-
+ 
   if (!categoryId) {
     productDetail.innerHTML = `
       <p class="text-red-500 text-lg text-center font-semibold py-12">Category not found.</p>
     `;
     return;
   }
-
+ 
   productDetail.innerHTML = `
     <div class="flex justify-center items-center py-12">
       <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
     </div>
   `;
-
+ 
   try {
     const token = localStorage.getItem("token");
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
-    const categoryResponse = await fetch(
-      `http://192.168.0.102:5000/api/manuplast/categories/${categoryId}`,
-      { headers }
-    );
+    const API_BASE_URL = "https://api.vybtek.com/api/manuplast";
+ 
+    // Fetch category
+    const categoryResponse = await fetch(`${API_BASE_URL}/categories/${categoryId}`, { headers });
     if (!categoryResponse.ok) {
-      throw new Error(
-        `Failed to fetch category details: ${categoryResponse.status} ${categoryResponse.statusText}`
-      );
+      throw new Error(`Failed to fetch category: ${categoryResponse.status}`);
     }
-
     const category = await categoryResponse.json();
-    console.log("Fetched category:", category);
-
-    const isFromDashboard =
-      document.referrer.includes("dashboard") || source === "dashboard";
-
+ 
+    const isFromDashboard = document.referrer.includes("dashboard") || source === "dashboard";
     if (category.status?.toLowerCase() !== "active" && !isFromDashboard) {
       productDetail.innerHTML = `
         <div class="text-center py-16">
@@ -492,245 +485,110 @@ async function fetchProductDetail() {
       `;
       return;
     }
-
-    const typesResponse = await fetch(
-      `http://192.168.0.102:5000/api/manuplast/producttypes?category_id=${categoryId}`,
-      { headers }
-    );
+ 
+    // Fetch product types
+    const typesResponse = await fetch(`${API_BASE_URL}/producttypes?category_id=${categoryId}`, { headers });
     if (!typesResponse.ok) {
-      throw new Error(
-        `Failed to fetch product types: ${typesResponse.status} ${typesResponse.statusText}`
-      );
+      throw new Error(`Failed to fetch product types: ${typesResponse.status}`);
     }
-
     const productTypes = await typesResponse.json();
-    console.log("Raw product types response:", productTypes);
-
-    // Filter product types by category_id (strict comparison)
+ 
     const filteredProductTypes = Array.isArray(productTypes)
       ? productTypes
-          .filter((type) => {
-            const typeCategoryId = String(type.category_id); // Convert to string to handle type mismatches
-            const expectedCategoryId = String(categoryId);
-            const isValid = typeCategoryId === expectedCategoryId;
-            console.log(
-              `Product type ${
-                type.id || "unknown"
-              }: category_id = ${typeCategoryId}, expected = ${expectedCategoryId}, included = ${isValid}`
-            );
-            return isValid;
-          })
+          .filter((type) => String(type.category_id) === String(categoryId))
           .map((type) => {
-            console.log(
-              `Processing product type ${type.id || "unknown"}:`,
-              type
-            );
             return {
               ...type,
-              images: Array.isArray(type.images)
-                ? type.images
-                    .map((img) =>
-                      typeof img === "string" ? img : img.image_url
-                    )
-                    .filter((url) => url && typeof url === "string")
-                    .map((url) => url || "./images/placeholder.jpg")
+              images: Array.isArray(type.colors)
+                ? type.colors.flatMap((color) =>
+                    Array.isArray(color.images)
+                      ? color.images.map((img) => img.image_url).filter(Boolean)
+                      : []
+                  )
                 : ["./images/placeholder.jpg"],
               sizes: Array.isArray(type.sizes)
-                ? type.sizes
-                    .map((sizeObj) =>
-                      typeof sizeObj === "string" ? sizeObj : sizeObj.size
-                    )
-                    .filter(
-                      (size) =>
-                        size && typeof size === "string" && size.trim() !== ""
-                    )
+                ? type.sizes.map((s) => (typeof s === "string" ? s : s.size)).filter(Boolean)
                 : [],
               colors: Array.isArray(type.colors)
-                ? type.colors
-                    .map((colorObj) =>
-                      typeof colorObj === "string" ? colorObj : colorObj.color
-                    )
-                    .filter(
-                      (color) =>
-                        color &&
-                        typeof color === "string" &&
-                        color.trim() !== ""
-                    )
+                ? type.colors.map((c) => (typeof c === "string" ? c : c.color)).filter(Boolean)
                 : [],
             };
           })
       : [];
-    console.log("Filtered and processed product types:", filteredProductTypes);
-
-    if (filteredProductTypes.length === 0) {
-      console.warn(`No product types found for category_id ${categoryId}`);
-    }
-
-    try {
-      const typesContent = filteredProductTypes.length
-        ? `
-            <h2 class="text-3xl font-semibold text-gray-900 mt-10 text-center">Products List</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-6">
-              ${filteredProductTypes
-                .map((type) => {
-                  try {
-                    return `
-                      <a href="type-detail.html?id=${
-                        type.id || ""
-                      }&category_id=${categoryId}" class="block">
-                        <div class="p-6 rounded-xl transition duration-300 bg-white shadow hover:shadow-lg" style="border: 1px solid gray;">
-                          <div class="image-gallery mb-4 relative">
-                            <div class="gallery-container flex overflow-x-auto scroll-smooth snap-x snap-mandatory hide-scrollbar">
-                              ${
-                                type.images.length
-                                  ? type.images
-                                      .map(
-                                        (img, index) => `
-                                        <div class="gallery-item flex-shrink-0 snap-center">
-                                          <img src="${img}" class="w-full h-52 object-cover rounded-md" data-index="${index}" alt="${
-                                          type.name || "Unnamed"
-                                        } image ${
-                                          index + 1
-                                        }" style="border: 1px solid blue;"/>
-                                        </div>
-                                      `
-                                      )
-                                      .join("")
-                                  : `
-                                    <div class="gallery-item flex-shrink-0 snap-center">
-                                      <img src="./images/placeholder.jpg" class="w-full h-52 object-cover rounded-md" data-index="0" alt="Placeholder" style="border: 1px solid blue;"/>
-                                    </div>
-                                  `
-                              }
-                            </div>
-                          </div>
-                          <h3 class="text-2xl font-semibold text-gray-800 mt-4">${
-                            type.name || "Unnamed"
-                          }</h3>
-                          <p class="text-gray-600 mt-3 text-sm leading-relaxed">${
-                            type.description || "No description available"
-                          }</p>
-                          <p class="text-center text-gray-600 hover:text-red-500 mt-4 rounded-lg">
-                            View Details <i class="fa-solid fa-arrow-right ml-1"></i>
-                          </p>
-                        </div>
-                      </a>
-                    `;
-                  } catch (error) {
-                    console.error(
-                      `Error rendering product type ${type.id || "unknown"}:`,
-                      error
-                    );
-                    return "";
-                  }
-                })
-                .join("")}
-            </div>
-          `
-        : `<p class="text-gray-500 mt-8 text-center">No products available in this category.</p>`;
-
-      productDetail.innerHTML = `
-        <div class="max-w-6xl mx-auto bg-white/90 backdrop-blur-lg overflow-hidden p-8 mt-2">
-          <h1 class="text-4xl font-bold text-gray-900 text-center tracking-wide">${
-            category.name || "Unnamed"
-          }</h1>
-          <div class="mt-8 flex justify-center">
-            <img src="${
-              category.image_url || "./images/placeholder.jpg"
-            }" class="w-full max-h-[28rem] object-cover rounded-xl transition-transform duration-300 hover:shadow-xl" alt="${
-        category.name || "Unnamed"
-      }">
-          </div>
-          <p class="mt-8 text-lg text-gray-700 leading-relaxed text-justify">${
-            category.description || "No description available"
-          }</p>
-          ${typesContent}
-          <div class="flex justify-center mt-10">
-            <a href="products.html" class="bg-gradient-to-r from-gray-800 to-gray-900 text-white font-semibold px-8 py-3 rounded-full transition duration-300 hover:from-gray-700 hover:to-gray-800 hover:shadow-lg">
-              ← Back to Categories
-            </a>
-          </div>
+ 
+    const typesContent = filteredProductTypes.length
+      ? `
+        <h2 class="text-3xl font-semibold text-gray-900 mt-10 text-center">Products List</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-6">
+          ${filteredProductTypes
+            .map((type) => {
+              const galleryImages = type.images.length
+                ? type.images
+                    .map(
+                      (img, index) => `
+                  <div class="gallery-item flex-shrink-0 snap-center">
+                    <img src="${img}" class="w-full h-52 object-cover rounded-md" data-index="${index}" />
+                  </div>
+                `
+                    )
+                    .join("")
+                : `
+                  <div class="gallery-item flex-shrink-0 snap-center">
+                    <img src="./images/placeholder.jpg" class="w-full h-52 object-cover rounded-md" />
+                  </div>
+                `;
+ 
+              return `
+                <a href="type-detail.html?id=${type.id}&category_id=${categoryId}" class="block">
+                  <div class="p-6 rounded-xl bg-white shadow hover:shadow-lg" style="border: 1px solid gray;">
+                    <div class="image-gallery mb-4 relative">
+                      <div class="gallery-container flex overflow-x-auto scroll-smooth snap-x snap-mandatory hide-scrollbar">
+                        ${galleryImages}
+                      </div>
+                    </div>
+                    <h3 class="text-2xl font-semibold text-gray-800 mt-4">${type.name}</h3>
+                    <p class="text-gray-600 mt-3 text-sm leading-relaxed">${type.description || "No description available"}</p>
+                    <p class="text-center text-gray-600 hover:text-red-500 mt-4 rounded-lg">
+                      View Details <i class="fa-solid fa-arrow-right ml-1"></i>
+                    </p>
+                  </div>
+                </a>
+              `;
+            })
+            .join("")}
         </div>
-        <style>
-          .hide-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-          }
-          .hide-scrollbar::-webkit-scrollbar {
-            display: none;
-          }
-          .gallery-container {
-            display: flex;
-            overflow-x: auto;
-            scroll-behavior: smooth;
-            padding: 0 10px;
-          }
-          .gallery-item {
-            flex: 0 0 auto;
-            width: 100%;
-            max-width: 320px;
-            margin-right: 16px;
-          }
-          .gallery-item:last-child {
-            margin-right: 0;
-          }
-          .gallery-item img {
-            width: 100%;
-            height: 208px;
-            object-fit: cover;
-            display: block;
-          }
-        </style>
-        <script>
-          document.addEventListener("DOMContentLoaded", () => {
-            document.querySelectorAll(".gallery-container").forEach((galleryContainer) => {
-              const images = galleryContainer.querySelectorAll(".gallery-item");
-              if (images.length > 1) {
-                let currentIndex = 0;
-                function updateScroll() {
-                  const imageWidth = images[0].offsetWidth + 16;
-                  galleryContainer.scrollTo({
-                    left: currentIndex * imageWidth,
-                    behavior: "smooth"
-                  });
-                }
-                const navDiv = document.createElement("div");
-                navDiv.className = "gallery-nav flex justify-between mt-2";
-                galleryContainer.parentElement.appendChild(navDiv);
-                const prevButton = navDiv.querySelector(".prev");
-                const nextButton = navDiv.querySelector(".next");
-                prevButton.addEventListener("click", () => {
-                  if (currentIndex > 0) {
-                    currentIndex--;
-                    updateScroll();
-                    prevButton.disabled = currentIndex === 0;
-                    nextButton.disabled = false;
-                  }
-                });
-                nextButton.addEventListener("click", () => {
-                  if (currentIndex < images.length - 1) {
-                    currentIndex++;
-                    updateScroll();
-                    nextButton.disabled = currentIndex === images.length - 1;
-                    prevButton.disabled = false;
-                  }
-                });
-              }
-            });
-          });
-        </script>
-      `;
-    } catch (error) {
-      console.error("Error rendering product detail content:", error);
-      productDetail.innerHTML = `
-        <p class="text-red-500 text-lg text-center font-semibold py-12">Error rendering product details: ${error.message}</p>
-      `;
-    }
+      `
+      : `<p class="text-gray-500 mt-8 text-center">No products available in this category.</p>`;
+ 
+    productDetail.innerHTML = `
+      <div class="max-w-6xl mx-auto bg-white/90 backdrop-blur-lg overflow-hidden p-8 mt-2">
+        <h1 class="text-4xl font-bold text-gray-900 text-center tracking-wide">${category.name}</h1>
+        <div class="mt-8 flex justify-center">
+          <img src="${category.image_url || "./images/placeholder.jpg"}"
+               class="w-full max-h-[28rem] object-cover rounded-xl transition-transform duration-300 hover:shadow-xl" />
+        </div>
+        <p class="mt-8 text-lg text-gray-700 leading-relaxed text-justify">${category.description || "No description available"}</p>
+        ${typesContent}
+        <div class="flex justify-center mt-10">
+          <a href="products.html" class="bg-gradient-to-r from-gray-800 to-gray-900 text-white font-semibold px-8 py-3 rounded-full transition hover:from-gray-700 hover:to-gray-800 hover:shadow-lg">
+            ← Back to Categories
+          </a>
+        </div>
+      </div>
+      <style>
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .gallery-container { display: flex; overflow-x: auto; scroll-behavior: smooth; padding: 0 10px; }
+        .gallery-item { flex: 0 0 auto; width: 100%; max-width: 320px; margin-right: 16px; }
+        .gallery-item:last-child { margin-right: 0; }
+        .gallery-item img { width: 100%; height: 208px; object-fit: cover; display: block; }
+      </style>
+    `;
   } catch (error) {
-    console.error("Error loading category details:", error);
+    console.error("Error loading product details:", error);
     productDetail.innerHTML = `
       <div class="col-span-full text-center py-12">
-        <h3 class="text-xl font-medium text-red-600">Error loading category details</h3>
+        <h3 class="text-xl font-medium text-red-600">Error loading product details</h3>
         <p class="text-gray-600 mt-2">${error.message}</p>
         <button onclick="fetchProductDetail()" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
           Try Again
@@ -739,660 +597,717 @@ async function fetchProductDetail() {
     `;
   }
 }
+ 
+ 
+
 
 // Enhanced Product Detail Page - Display Only Version
 class ProductDetailManager {
-  constructor() {
-    this.currentImageIndex = 0;
-    this.imageViewMode = "gallery"; // 'gallery' or 'zoom'
-    this.product = null;
-    this.isLoading = false;
+    constructor() {
+        this.currentImageIndex = 0;
+        this.currentSelectedColorIndex = 0; // New: To track the currently selected color
+        this.imageViewMode = "gallery"; // 'gallery' or 'zoom'
+        this.product = null;
+        this.isLoading = false;
 
-    this.init();
-  }
-
-  init() {
-    this.fetchProductDetail();
-    this.setupEventListeners();
-  }
-
-  setupEventListeners() {
-    // Keyboard navigation for images
-    document.addEventListener("keydown", (e) =>
-      this.handleKeyboardNavigation(e)
-    );
-
-    // Window resize handler
-    window.addEventListener("resize", () => this.handleWindowResize());
-  }
-
-  async fetchProductDetail() {
-    const typeDetail = document.getElementById("type-detail");
-    if (!typeDetail) {
-      this.showError("Product detail container not found");
-      return;
+        this.init();
     }
 
-    const params = new URLSearchParams(window.location.search);
-    const typeId = params.get("id");
-    const categoryId = params.get("category_id");
-
-    if (!typeId || !categoryId) {
-      this.renderError("Product not found. Invalid product ID or category.");
-      return;
+    init() {
+        this.fetchProductDetail();
+        this.setupEventListeners();
     }
 
-    this.showLoadingState();
-    this.isLoading = true;
-
-    try {
-      const response = await this.makeApiCall(typeId);
-      const product = await response.json();
-
-      if (!this.validateProduct(product, categoryId)) {
-        this.renderError(
-          "This product does not belong to the specified category."
+    setupEventListeners() {
+        // Keyboard navigation for images
+        document.addEventListener("keydown", (e) =>
+            this.handleKeyboardNavigation(e)
         );
-        return;
-      }
 
-      this.product = this.processProductData(product);
-      this.renderProductDetail();
-      this.initializeInteractions();
-      this.trackProductView();
-    } catch (error) {
-      console.error("Error loading product:", error);
-      this.renderError(`Failed to load product: ${error.message}`);
-    } finally {
-      this.isLoading = false;
-    }
-  }
-
-  async makeApiCall(typeId) {
-    const token = this.getAuthToken();
-    const headers = token ? { Authorization: `Bearer ${token}` } : {};
-
-    const response = await fetch(
-      `http://192.168.0.102:5000/api/manuplast/producttypes/${typeId}`,
-      {
-        headers,
-        timeout: 10000, // 10 second timeout
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error(`API Error: ${response.status} ${response.statusText}`);
+        // Window resize handler
+        window.addEventListener("resize", () => this.handleWindowResize());
     }
 
-    return response;
-  }
+    async fetchProductDetail() {
+        const typeDetail = document.getElementById("type-detail");
+        if (!typeDetail) {
+            return;
+        }
 
-  getAuthToken() {
-    try {
-      return localStorage.getItem("token");
-    } catch (error) {
-      console.warn("Could not access localStorage for token");
-      return null;
+        const params = new URLSearchParams(window.location.search);
+        const typeId = params.get("id");
+        const categoryId = params.get("category_id");
+
+        if (!typeId || !categoryId) {
+            this.renderError("Product not found. Invalid product ID or category.");
+            return;
+        }
+
+        this.showLoadingState();
+        this.isLoading = true;
+
+        try {
+            const response = await this.makeApiCall(typeId);
+            const product = await response.json();
+
+            if (!this.validateProduct(product, categoryId)) {
+                this.renderError(
+                    "This product does not belong to the specified category."
+                );
+                return;
+            }
+
+            this.product = this.processProductData(product);
+            this.renderProductDetail();
+            this.initializeInteractions();
+            this.trackProductView();
+        } catch (error) {
+            console.error("Error loading product:", error);
+            this.renderError(`Failed to load product: ${error.message}`);
+        } finally {
+            this.isLoading = false;
+        }
     }
-  }
 
-  validateProduct(product, expectedCategoryId) {
-    const productCategoryId = String(product.category_id);
-    const categoryId = String(expectedCategoryId);
+    async makeApiCall(typeId) {
+        const token = this.getAuthToken();
+        const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
-    console.log(
-      `Validating product: ${product.id}, category: ${productCategoryId}, expected: ${categoryId}`
-    );
+        const response = await fetch(
+            `https://api.vybtek.com/api/manuplast/producttypes/${typeId}`, {
+                headers,
+                timeout: 10000, // 10 second timeout
+            }
+        );
 
-    return productCategoryId === categoryId;
-  }
+        if (!response.ok) {
+            throw new Error(`API Error: ${response.status} ${response.statusText}`);
+        }
 
-  processProductData(rawProduct) {
-    return {
-      ...rawProduct,
-      images: this.processImages(rawProduct.images),
-      sizes: this.processSizes(rawProduct.sizes),
-      colors: this.processColors(rawProduct.colors),
-      price: this.formatPrice(rawProduct.price),
-      rating: this.calculateRating(rawProduct.reviews),
-      availability: this.checkAvailability(rawProduct.stock),
-    };
-  }
+        return response;
+    }
 
-  processImages(images) {
-    if (!Array.isArray(images)) return ["./images/placeholder.jpg"];
+    getAuthToken() {
+        try {
+            return localStorage.getItem("token");
+        } catch (error) {
+            console.warn("Could not access localStorage for token");
+            return null;
+        }
+    }
 
-    return images
-      .map((img) => (typeof img === "string" ? img : img?.image_url))
-      .filter((url) => url && typeof url === "string" && url.trim() !== "")
-      .map((url) => (url.startsWith("http") ? url : `./images/${url}`))
-      .concat(images.length === 0 ? ["./images/placeholder.jpg"] : []);
-  }
+    validateProduct(product, expectedCategoryId) {
+        const productCategoryId = String(product.category_id);
+        const categoryId = String(expectedCategoryId);
 
-  processSizes(sizes) {
-    if (!Array.isArray(sizes)) return [];
+        console.log(
+            `Validating product: ${product.id}, category: ${productCategoryId}, expected: ${categoryId}`
+        );
 
-    return sizes
-      .map((size) => (typeof size === "string" ? size : size?.size))
-      .filter((size) => size && typeof size === "string" && size.trim() !== "")
-      .sort((a, b) => {
-        const sizeOrder = ["XS", "S", "M", "L", "XL", "XXL"];
-        return sizeOrder.indexOf(a) - sizeOrder.indexOf(b);
-      });
-  }
+        return productCategoryId === categoryId;
+    }
 
-  processColors(colors) {
-    if (!Array.isArray(colors)) return [];
+    // MODIFIED: Process product data to include images with colors
+    processProductData(rawProduct) {
+        const processedProduct = {
+            ...rawProduct,
+            sizes: this.processSizes(rawProduct.sizes),
+            colors: this.processColorsWithImages(rawProduct.colors), // Process colors with their images
+            price: this.formatPrice(rawProduct.price),
+            rating: this.calculateRating(rawProduct.reviews),
+            availability: this.checkAvailability(rawProduct.stock),
+        };
 
-    return colors
-      .map((color) => (typeof color === "string" ? color : color?.color))
-      .filter(
-        (color) => color && typeof color === "string" && color.trim() !== ""
-      )
-      .map((color) => ({
-        name: color,
-        hex: this.getColorHex(color),
-        textColor: this.getTextColor(color),
-      }));
-  }
+        // Determine initial images to display (from the first color or placeholder)
+        processedProduct.displayImages = processedProduct.colors.length > 0 ?
+            processedProduct.colors[this.currentSelectedColorIndex].images : ["./images/placeholder.jpg"];
 
-  getColorHex(colorName) {
-    const colorMap = {
-      red: "#ef4444",
-      blue: "#3b82f6",
-      green: "#10b981",
-      yellow: "#f59e0b",
-      black: "#000000",
-      white: "#ffffff",
-      gray: "#6b7280",
-      pink: "#ec4899",
-      purple: "#8b5cf6",
-      orange: "#f97316",
-    };
+        return processedProduct;
+    }
 
-    return colorMap[colorName.toLowerCase()] || "#6b7280";
-  }
+    // NEW/MODIFIED: Method to process colors and their associated images
+    processColorsWithImages(colors) {
+        if (!Array.isArray(colors)) return [];
 
-  getTextColor(colorName) {
-    const lightColors = ["white", "yellow", "lightgray", "pink", "orange"];
-    return lightColors.includes(colorName.toLowerCase())
-      ? "#000000"
-      : "#ffffff";
-  }
+        return colors.map(colorObj => {
+            const colorName = typeof colorObj === "string" ? colorObj : colorObj?.color;
+            const rawImages = colorObj?.images || [];
 
-  formatPrice(price) {
-    if (!price) return "N/A";
-    return new Intl.NumberFormat("en-IN", {
-      style: "currency",
-      currency: "INR",
-      minimumFractionDigits: 0,
-    }).format(price);
-  }
+            const processedImages = rawImages
+                .map((img) => (typeof img === "string" ? img : img?.image_url))
+                .filter((url) => url && typeof url === "string" && url.trim() !== "")
+                .map((url) => (url.startsWith("http") ? url : `./images/${url}`)); // Adjust path if needed
 
-  calculateRating(reviews) {
-    if (!Array.isArray(reviews) || reviews.length === 0) return 0;
-    const total = reviews.reduce(
-      (sum, review) => sum + (review.rating || 0),
-      0
-    );
-    return Math.round((total / reviews.length) * 10) / 10;
-  }
+            return {
+                name: colorName,
+                hex: this.getColorHex(colorName),
+                textColor: this.getTextColor(colorName),
+                images: processedImages.length > 0 ? processedImages : ["./images/placeholder.jpg"] // Ensure each color has at least one image
+            };
+        }).filter(color => color.name); // Filter out any colors without a name
+    }
 
-  checkAvailability(stock) {
-    if (!stock || stock === 0) return "out-of-stock";
-    if (stock < 10) return "low-stock";
-    return "in-stock";
-  }
 
-  showLoadingState() {
-    const typeDetail = document.getElementById("type-detail");
-    typeDetail.innerHTML = `
-      <div class="animate-pulse">
-        <div class="bg-white rounded-2xl p-8 shadow-xl">
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+    processSizes(sizes) {
+        if (!Array.isArray(sizes)) return [];
+
+        return sizes
+            .map((size) => (typeof size === "string" ? size : size?.size))
+            .filter((size) => size && typeof size === "string" && size.trim() !== "")
+            .sort((a, b) => {
+                const sizeOrder = ["XS", "S", "M", "L", "XL", "XXL"];
+                return sizeOrder.indexOf(a) - sizeOrder.indexOf(b);
+            });
+    }
+
+    getColorHex(colorName) {
+        const colorMap = {
+            red: "#ef4444",
+            blue: "#3b82f6",
+            green: "#10b981",
+            yellow: "#f59e0b",
+            black: "#000000",
+            white: "#ffffff",
+            gray: "#6b7280",
+            pink: "#ec4899",
+            purple: "#8b5cf6",
+            orange: "#f97316",
+        };
+
+        return colorMap[colorName.toLowerCase()] || "#6b7280";
+    }
+
+    getTextColor(colorName) {
+        const lightColors = ["white", "yellow", "lightgray", "pink", "orange"];
+        return lightColors.includes(colorName.toLowerCase()) ?
+            "#000000" :
+            "#ffffff";
+    }
+
+    formatPrice(price) {
+        if (!price) return "N/A";
+        return new Intl.NumberFormat("en-IN", {
+            style: "currency",
+            currency: "INR",
+            minimumFractionDigits: 0,
+        }).format(price);
+    }
+
+    calculateRating(reviews) {
+        if (!Array.isArray(reviews) || reviews.length === 0) return 0;
+        const total = reviews.reduce(
+            (sum, review) => sum + (review.rating || 0),
+            0
+        );
+        return Math.round((total / reviews.length) * 10) / 10;
+    }
+
+    checkAvailability(stock) {
+        if (!stock || stock === 0) return "out-of-stock";
+        if (stock < 10) return "low-stock";
+        return "in-stock";
+    }
+
+    showLoadingState() {
+        const typeDetail = document.getElementById("type-detail");
+        typeDetail.innerHTML = `
+            <div class="animate-pulse">
+                <div class="bg-white rounded-2xl p-8 shadow-xl">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                        <div class="space-y-4">
+                            <div class="bg-gray-300 h-96 rounded-xl"></div>
+                            <div class="flex space-x-2">
+                                ${Array(4)
+                                    .fill()
+                                    .map(
+                                        () => '<div class="bg-gray-300 w-16 h-16 rounded-lg"></div>'
+                                    )
+                                    .join("")}
+                            </div>
+                        </div>
+                        <div class="space-y-6">
+                            <div class="bg-gray-300 h-8 rounded"></div>
+                            <div class="bg-gray-300 h-6 w-1/2 rounded"></div>
+                            <div class="bg-gray-300 h-20 rounded"></div>
+                            <div class="bg-gray-300 h-12 w-1/3 rounded"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    renderProductDetail() {
+        const typeDetail = document.getElementById("type-detail");
+        const product = this.product;
+
+        typeDetail.innerHTML = `
+            <div class="bg-white rounded-2xl shadow-xl overflow-hidden transform transition-all duration-500">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-0">
+                    <div id="image-gallery-section" class="p-8 bg-gradient-to-br from-gray-50 to-gray-100">
+                        ${this.renderImageGallery()}
+                    </div>
+
+                    <div id="product-info-section" class="p-8">
+                        ${this.renderProductInfo()}
+                    </div>
+                </div>
+
+                <div class="border-t border-gray-200 p-8">
+                    ${this.renderAdditionalDetails()}
+                </div>
+            </div>
+        `;
+    }
+
+    // MODIFIED: Use product.displayImages for rendering
+    renderImageGallery() {
+        const product = this.product;
+        const imagesToDisplay = product.displayImages; // Use the currently active set of images
+
+        return `
             <div class="space-y-4">
-              <div class="bg-gray-300 h-96 rounded-xl"></div>
-              <div class="flex space-x-2">
-                ${Array(4)
-                  .fill()
-                  .map(
-                    () => '<div class="bg-gray-300 w-16 h-16 rounded-lg"></div>'
-                  )
-                  .join("")}
-              </div>
+                <div class="relative group">
+                    <div class="aspect-w-1 aspect-h-1 bg-white rounded-xl overflow-hidden shadow-lg">
+                        <img id="main-image"
+                             src="${imagesToDisplay[this.currentImageIndex]}"
+                             alt="${product.name}"
+                             class="w-full h-80 object-cover cursor-zoom-in transition-transform duration-300 group-hover:scale-105">
+                    </div>
+
+                    <div class="absolute top-4 right-4 space-y-2">
+                        <button id="fullscreen-image" class="bg-white bg-opacity-80 hover:bg-opacity-100 p-2 rounded-full shadow-md transition-all duration-300">
+                            <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
+                            </svg>
+                        </button>
+                    </div>
+
+                    ${
+                        imagesToDisplay.length > 1
+                            ? `
+                        <button id="prev-image" class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100 p-2 rounded-full shadow-md transition-all duration-300">
+                            <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                            </svg>
+                        </button>
+                        <button id="next-image" class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100 p-2 rounded-full shadow-md transition-all duration-300">
+                            <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                        </button>
+                    `
+                            : ""
+                    }
+                </div>
+
+                ${
+                    imagesToDisplay.length > 1
+                        ? `
+                    <div class="flex space-x-2 overflow-x-auto pb-2">
+                        ${imagesToDisplay
+                            .map(
+                                (image, index) => `
+                            <img src="${image}"
+                                alt="${product.name} ${index + 1}"
+                                class="thumbnail w-16 h-16 object-cover rounded-lg cursor-pointer border-2 border-transparent hover:border-blue-500 transition-all duration-300 flex-shrink-0 ${
+                                    index === this.currentImageIndex ? "border-blue-500" : ""
+                                }"
+                                data-index="${index}">
+                        `
+                            )
+                            .join("")}
+                    </div>
+                `
+                        : ""
+                }
+
+                <div class="text-center text-sm text-gray-500">
+                    <span id="image-counter">${this.currentImageIndex + 1}</span> / ${imagesToDisplay.length}
+                </div>
             </div>
+        `;
+    }
+
+    // MODIFIED: Added color swatch active state and data attributes
+    renderProductInfo() {
+        const product = this.product;
+
+        return `
             <div class="space-y-6">
-              <div class="bg-gray-300 h-8 rounded"></div>
-              <div class="bg-gray-300 h-6 w-1/2 rounded"></div>
-              <div class="bg-gray-300 h-20 rounded"></div>
-              <div class="bg-gray-300 h-12 w-1/3 rounded"></div>
+                <div>
+                    <h1 class="text-3xl text-start font-bold text-gray-900 mb-2">${
+                        product.name
+                    }</h1>
+                </div>
+
+                <div>
+                    <p class="text-gray-600 text-start leading-relaxed">${
+                        product.description || "No description available"
+                    }</p>
+                </div>
+
+                ${
+                    product.sizes.length > 0
+                        ? `
+                    <div>
+                        <h3 class="text-lg text-start font-semibold text-gray-900 mb-3">Available Sizes</h3>
+                        <div class="flex flex-wrap gap-2">
+                            ${product.sizes
+                                .map(
+                                    (size) => `
+                                <span class="px-4 py-2 border border-gray-300 rounded-lg bg-gray-50">
+                                    ${size}
+                                </span>
+                            `
+                                )
+                                .join("")}
+                        </div>
+                    </div>
+                `
+                        : ""
+                }
+
+                ${
+                    product.colors.length > 0
+                        ? `
+                    <div>
+                        <h3 class="text-lg text-start font-semibold text-gray-900 mb-3">Available Colors</h3>
+                        <div id="product-colors-container" class="flex flex-wrap gap-3">
+                            ${product.colors
+                                .map(
+                                    (color, index) => `
+                                <button type="button"
+                                        class="color-swatch relative w-12 h-12 rounded-full border-2 border-gray-300 flex items-center justify-center
+                                            ${index === this.currentSelectedColorIndex ? 'ring-2 ring-offset-2 ring-blue-500' : ''}"
+                                        style="background-color: ${color.hex};"
+                                        title="${color.name}"
+                                        data-color-index="${index}">
+                                    <span class="sr-only">${color.name}</span>
+                                    ${index === this.currentSelectedColorIndex ? '<svg class="w-6 h-6 text-white text-shadow-sm" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>' : ''}
+                                </button>
+                            `
+                                )
+                                .join("")}
+                        </div>
+                    </div>
+                `
+                        : ""
+                }
             </div>
-          </div>
-        </div>
-      </div>
-    `;
-  }
+        `;
+    }
 
-  renderProductDetail() {
-    const typeDetail = document.getElementById("type-detail");
-    const product = this.product;
+    renderAdditionalDetails() {
+        const product = this.product;
 
-    typeDetail.innerHTML = `
-      <div class="bg-white rounded-2xl shadow-xl overflow-hidden transform transition-all duration-500">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-0">
-          <!-- Image Gallery Section -->
-          <div class="p-8 bg-gradient-to-br from-gray-50 to-gray-100">
-            ${this.renderImageGallery()}
-          </div>
-          
-          <!-- Product Info Section -->
-          <div class="p-8">
-            ${this.renderProductInfo()}
-          </div>
-        </div>
-        
-        <!-- Additional Details Section -->
-        <div class="border-t border-gray-200 p-8">
-          ${this.renderAdditionalDetails()}
-        </div>
-      </div>
-    `;
-  }
+        return `
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
 
-  renderImageGallery() {
-    const product = this.product;
-
-    return `
-      <div class="space-y-4">
-        <!-- Main Image -->
-        <div class="relative group">
-          <div class="aspect-w-1 aspect-h-1 bg-white rounded-xl overflow-hidden shadow-lg">
-            <img id="main-image" 
-                 src="${product.images[0]}" 
-                 alt="${product.name}" 
-                 class="w-full h-80 object-cover cursor-zoom-in transition-transform duration-300 group-hover:scale-105">
-          </div>
-          
-          <!-- Image Controls -->
-          <div class="absolute top-4 right-4 space-y-2">
-            <button id="fullscreen-image" class="bg-white bg-opacity-80 hover:bg-opacity-100 p-2 rounded-full shadow-md transition-all duration-300">
-              <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
-              </svg>
-            </button>
-          </div>
-          
-          <!-- Navigation Arrows -->
-          ${
-            product.images.length > 1
-              ? `
-            <button id="prev-image" class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100 p-2 rounded-full shadow-md transition-all duration-300">
-              <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-              </svg>
-            </button>
-            <button id="next-image" class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100 p-2 rounded-full shadow-md transition-all duration-300">
-              <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-              </svg>
-            </button>
-          `
-              : ""
-          }
-        </div>
-        
-        <!-- Thumbnail Gallery -->
-        ${
-          product.images.length > 1
-            ? `
-          <div class="flex space-x-2 overflow-x-auto pb-2">
-            ${product.images
-              .map(
-                (image, index) => `
-              <img src="${image}" 
-                   alt="${product.name} ${index + 1}" 
-                   class="thumbnail w-16 h-16 object-cover rounded-lg cursor-pointer border-2 border-transparent hover:border-blue-500 transition-all duration-300 flex-shrink-0 ${
-                     index === 0 ? "border-blue-500" : ""
-                   }"
-                   data-index="${index}">
-            `
-              )
-              .join("")}
-          </div>
-        `
-            : ""
-        }
-        
-        <!-- Image Counter -->
-        <div class="text-center text-sm text-gray-500">
-          <span id="image-counter">1</span> / ${product.images.length}
-        </div>
-      </div>
-    `;
-  }
-
-  renderProductInfo() {
-    const product = this.product;
-
-    return `
-      <div class="space-y-6">
-        <!-- Product Title & Rating -->
-        <div>
-          <h1 class="text-3xl text-start font-bold text-gray-900 mb-2">${
-            product.name
-          }</h1>
-        </div>
-        
-        <!-- Description -->
-        <div>
-          <p class="text-gray-600 text-start leading-relaxed">${
-            product.description || "No description available"
-          }</p>
-        </div>
-        
-        <!-- Size Information -->
-        ${
-          product.sizes.length > 0
-            ? `
-          <div>
-            <h3 class="text-lg text-start font-semibold text-gray-900 mb-3">Available Sizes</h3>
-            <div class="flex flex-wrap gap-2">
-              ${product.sizes
-                .map(
-                  (size) => `
-                <span class="px-4 py-2 border border-gray-300 rounded-lg bg-gray-50">
-                  ${size}
-                </span>
-              `
-                )
-                .join("")}
             </div>
-          </div>
-        `
-            : ""
+        `;
+    }
+
+    renderStarRating(rating) {
+        const stars = [];
+        for (let i = 1; i <= 5; i++) {
+            stars.push(`
+                <svg class="w-5 h-5 ${
+                    i <= rating ? "text-yellow-400" : "text-gray-300"
+                }" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                </svg>
+            `);
         }
-        
-        <!-- Color Information -->
-        ${
-          product.colors.length > 0
-            ? `
-          <div>
-            <h3 class="text-lg text-start font-semibold text-gray-900 mb-3">Available Colors</h3>
-            <div class="flex flex-wrap gap-3">
-              ${product.colors
-                .map(
-                  (color) => `
-                <span class="relative w-12 h-12 rounded-full border-2 border-gray-200" 
-                      style="background-color: ${color.hex}"
-                      title="${color.name}">
-                  <span class="sr-only">${color.name}</span>
-                </span>
-              `
-                )
-                .join("")}
+        return stars.join("");
+    }
+
+    getAvailabilityClass(availability) {
+        switch (availability) {
+            case "in-stock":
+                return "bg-green-100 text-green-800";
+            case "low-stock":
+                return "bg-yellow-100 text-yellow-800";
+            case "out-of-stock":
+                return "bg-red-100 text-red-800";
+            default:
+                return "bg-gray-100 text-gray-800";
+        }
+    }
+
+    getAvailabilityText(availability) {
+        switch (availability) {
+            case "in-stock":
+                return "In Stock";
+            case "low-stock":
+                return "Low Stock";
+            case "out-of-stock":
+                return "Out of Stock";
+            default:
+                return "Unknown";
+        }
+    }
+
+    initializeInteractions() {
+        this.setupImageGallery();
+        this.setupColorSwatches(); // NEW: Setup listeners for color swatches
+    }
+
+    setupImageGallery() {
+        const mainImage = document.getElementById("main-image");
+        const thumbnails = document.querySelectorAll(".thumbnail");
+        const prevBtn = document.getElementById("prev-image");
+        const nextBtn = document.getElementById("next-image");
+        const fullscreenBtn = document.getElementById("fullscreen-image");
+        const imageCounter = document.getElementById("image-counter");
+
+        // Thumbnail clicks
+        thumbnails.forEach((thumb, index) => {
+            thumb.addEventListener("click", () => this.changeImage(index));
+        });
+
+        // Navigation buttons
+        if (prevBtn) {
+            prevBtn.addEventListener("click", () => this.previousImage());
+        }
+        if (nextBtn) {
+            nextBtn.addEventListener("click", () => this.nextImage());
+        }
+
+        // Fullscreen toggle
+        if (fullscreenBtn) {
+            fullscreenBtn.addEventListener("click", () => this.openLightbox());
+        }
+
+        // Main image click for lightbox
+        if (mainImage) {
+            mainImage.addEventListener("click", () => this.openLightbox());
+        }
+    }
+
+    // NEW: Setup listeners for color swatches
+    setupColorSwatches() {
+        const colorContainer = document.getElementById("product-colors-container");
+        if (colorContainer) {
+            colorContainer.querySelectorAll('.color-swatch').forEach(swatch => {
+                swatch.addEventListener('click', (event) => {
+                    const colorIndex = parseInt(event.currentTarget.dataset.colorIndex);
+                    this.selectColor(colorIndex);
+                });
+            });
+        }
+    }
+
+    // NEW: Handles selection of a color
+    selectColor(index) {
+        // If already selected, do nothing
+        if (index === this.currentSelectedColorIndex) {
+            return;
+        }
+
+        this.currentSelectedColorIndex = index;
+        this.currentImageIndex = 0; // Reset image index to 0 for the new color
+
+        // Update the displayImages to reflect the new color's images
+        this.product.displayImages =
+            this.product.colors[this.currentSelectedColorIndex]?.images || ["./images/placeholder.jpg"];
+
+        // Re-render the image gallery and product info section to update images and color active state
+        // Re-rendering entire sections is often easier than managing individual DOM elements for complex changes
+        const imageGallerySection = document.getElementById('image-gallery-section');
+        if (imageGallerySection) {
+            imageGallerySection.innerHTML = this.renderImageGallery();
+            this.setupImageGallery(); // Re-attach event listeners for newly rendered image elements
+        }
+
+        const productInfoSection = document.getElementById('product-info-section');
+        if (productInfoSection) {
+            productInfoSection.innerHTML = this.renderProductInfo();
+            this.setupColorSwatches(); // Re-attach event listeners for newly rendered color swatches
+        }
+    }
+
+
+    // MODIFIED: Use product.displayImages
+    changeImage(index) {
+        this.currentImageIndex = index;
+        const mainImage = document.getElementById("main-image");
+        const thumbnails = document.querySelectorAll(".thumbnail");
+        const imageCounter = document.getElementById("image-counter");
+        const imagesToDisplay = this.product.displayImages; // Use images for the currently selected color
+
+        if (mainImage) {
+            mainImage.src = imagesToDisplay[index];
+        }
+
+        thumbnails.forEach((thumb, i) => {
+            thumb.classList.toggle("border-blue-500", i === index);
+            thumb.classList.toggle("border-transparent", i !== index);
+        });
+
+        if (imageCounter) {
+            imageCounter.textContent = index + 1;
+        }
+    }
+
+    // MODIFIED: Use product.displayImages
+    previousImage() {
+        const imagesToDisplay = this.product.displayImages;
+        if (imagesToDisplay.length === 0) return;
+        const newIndex =
+            this.currentImageIndex > 0 ?
+            this.currentImageIndex - 1 :
+            imagesToDisplay.length - 1;
+        this.changeImage(newIndex);
+    }
+
+    // MODIFIED: Use product.displayImages
+    nextImage() {
+        const imagesToDisplay = this.product.displayImages;
+        if (imagesToDisplay.length === 0) return;
+        const newIndex =
+            this.currentImageIndex < imagesToDisplay.length - 1 ?
+            this.currentImageIndex + 1 :
+            0;
+        this.changeImage(newIndex);
+    }
+
+    // MODIFIED: Use product.displayImages
+    openLightbox() {
+        const imagesToDisplay = this.product.displayImages;
+        if (imagesToDisplay.length === 0) return; // No images to show in lightbox
+
+        // Create lightbox dynamically
+        const lightbox = document.createElement("div");
+        lightbox.id = "lightbox";
+        lightbox.className =
+            "fixed inset-0 bg-black bg-opacity-95 flex items-center justify-center z-50";
+
+        lightbox.innerHTML = `
+            <div class="relative max-w-4xl max-h-screen p-4">
+                <img src="${imagesToDisplay[this.currentImageIndex]}"
+                     alt="${this.product.name}"
+                     class="max-w-full max-h-full object-contain">
+                <button id="close-lightbox" class="absolute top-4 right-4 text-white bg-black bg-opacity-50 p-2 rounded-full hover:bg-opacity-75 transition-all">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
             </div>
-          </div>
-        `
-            : ""
+        `;
+
+        document.body.appendChild(lightbox);
+
+        // Add event listeners
+        document.getElementById("close-lightbox").addEventListener("click", () => {
+            document.body.removeChild(lightbox);
+        });
+
+        lightbox.addEventListener("click", (e) => {
+            if (e.target === lightbox) {
+                document.body.removeChild(lightbox);
+            }
+        });
+    }
+
+    handleKeyboardNavigation(e) {
+        if (this.isLoading) return;
+
+        // Only handle if not typing in input
+        if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
+
+        switch (e.key) {
+            case "ArrowLeft":
+                e.preventDefault();
+                this.previousImage();
+                break;
+            case "ArrowRight":
+                e.preventDefault();
+                this.nextImage();
+                break;
+            case "Escape":
+                const lightbox = document.getElementById("lightbox");
+                if (lightbox) {
+                    document.body.removeChild(lightbox);
+                }
+                break;
+            case " ":
+                e.preventDefault();
+                this.openLightbox();
+                break;
         }
-      </div>
-    `;
-  }
-
-  renderAdditionalDetails() {
-    const product = this.product;
-
-    return `
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-       
-      </div>
-    `;
-  }
-
-  renderStarRating(rating) {
-    const stars = [];
-    for (let i = 1; i <= 5; i++) {
-      stars.push(`
-        <svg class="w-5 h-5 ${
-          i <= rating ? "text-yellow-400" : "text-gray-300"
-        }" fill="currentColor" viewBox="0 0 20 20">
-          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-        </svg>
-      `);
-    }
-    return stars.join("");
-  }
-
-  getAvailabilityClass(availability) {
-    switch (availability) {
-      case "in-stock":
-        return "bg-green-100 text-green-800";
-      case "low-stock":
-        return "bg-yellow-100 text-yellow-800";
-      case "out-of-stock":
-        return "bg-red-100 text-red-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  }
-
-  getAvailabilityText(availability) {
-    switch (availability) {
-      case "in-stock":
-        return "In Stock";
-      case "low-stock":
-        return "Low Stock";
-      case "out-of-stock":
-        return "Out of Stock";
-      default:
-        return "Unknown";
-    }
-  }
-
-  initializeInteractions() {
-    this.setupImageGallery();
-  }
-
-  setupImageGallery() {
-    const mainImage = document.getElementById("main-image");
-    const thumbnails = document.querySelectorAll(".thumbnail");
-    const prevBtn = document.getElementById("prev-image");
-    const nextBtn = document.getElementById("next-image");
-    const fullscreenBtn = document.getElementById("fullscreen-image");
-    const imageCounter = document.getElementById("image-counter");
-
-    // Thumbnail clicks
-    thumbnails.forEach((thumb, index) => {
-      thumb.addEventListener("click", () => this.changeImage(index));
-    });
-
-    // Navigation buttons
-    if (prevBtn) {
-      prevBtn.addEventListener("click", () => this.previousImage());
-    }
-    if (nextBtn) {
-      nextBtn.addEventListener("click", () => this.nextImage());
     }
 
-    // Fullscreen toggle
-    if (fullscreenBtn) {
-      fullscreenBtn.addEventListener("click", () => this.openLightbox());
+    handleWindowResize() {
+        // Adjust layout for responsive design
+        this.adjustLayoutForViewport();
     }
 
-    // Main image click for lightbox
-    if (mainImage) {
-      mainImage.addEventListener("click", () => this.openLightbox());
-    }
-  }
+    adjustLayoutForViewport() {
+        // Responsive adjustments
+        const isMobile = window.innerWidth < 768;
+        const thumbnails = document.querySelectorAll(".thumbnail");
 
-  changeImage(index) {
-    this.currentImageIndex = index;
-    const mainImage = document.getElementById("main-image");
-    const thumbnails = document.querySelectorAll(".thumbnail");
-    const imageCounter = document.getElementById("image-counter");
-
-    if (mainImage) {
-      mainImage.src = this.product.images[index];
+        thumbnails.forEach((thumb) => {
+            thumb.style.width = isMobile ? "12" : "16";
+            thumb.style.height = isMobile ? "12" : "16";
+        });
     }
 
-    thumbnails.forEach((thumb, i) => {
-      thumb.classList.toggle("border-blue-500", i === index);
-      thumb.classList.toggle("border-transparent", i !== index);
-    });
-
-    if (imageCounter) {
-      imageCounter.textContent = index + 1;
-    }
-  }
-
-  previousImage() {
-    const newIndex =
-      this.currentImageIndex > 0
-        ? this.currentImageIndex - 1
-        : this.product.images.length - 1;
-    this.changeImage(newIndex);
-  }
-
-  nextImage() {
-    const newIndex =
-      this.currentImageIndex < this.product.images.length - 1
-        ? this.currentImageIndex + 1
-        : 0;
-    this.changeImage(newIndex);
-  }
-
-  openLightbox() {
-    // Create lightbox dynamically
-    const lightbox = document.createElement("div");
-    lightbox.id = "lightbox";
-    lightbox.className =
-      "fixed inset-0 bg-black bg-opacity-95 flex items-center justify-center z-50";
-
-    lightbox.innerHTML = `
-      <div class="relative max-w-4xl max-h-screen p-4">
-        <img src="${this.product.images[this.currentImageIndex]}" 
-             alt="${this.product.name}" 
-             class="max-w-full max-h-full object-contain">
-        <button id="close-lightbox" class="absolute top-4 right-4 text-white bg-black bg-opacity-50 p-2 rounded-full hover:bg-opacity-75 transition-all">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-          </svg>
-        </button>
-      </div>
-    `;
-
-    document.body.appendChild(lightbox);
-
-    // Add event listeners
-    document.getElementById("close-lightbox").addEventListener("click", () => {
-      document.body.removeChild(lightbox);
-    });
-
-    lightbox.addEventListener("click", (e) => {
-      if (e.target === lightbox) {
-        document.body.removeChild(lightbox);
-      }
-    });
-  }
-
-  handleKeyboardNavigation(e) {
-    if (this.isLoading) return;
-
-    // Only handle if not typing in input
-    if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
-
-    switch (e.key) {
-      case "ArrowLeft":
-        e.preventDefault();
-        this.previousImage();
-        break;
-      case "ArrowRight":
-        e.preventDefault();
-        this.nextImage();
-        break;
-      case "Escape":
-        const lightbox = document.getElementById("lightbox");
-        if (lightbox) {
-          document.body.removeChild(lightbox);
+    trackProductView() {
+        // Analytics tracking
+        if (typeof gtag !== "undefined") {
+            gtag("event", "view_item", {
+                item_id: this.product.id,
+                item_name: this.product.name,
+                item_category: this.product.category_name,
+                value: parseFloat(this.product.price.replace(/[^\d.]/g, "")),
+            });
         }
-        break;
-      case " ":
-        e.preventDefault();
-        this.openLightbox();
-        break;
     }
-  }
 
-  handleWindowResize() {
-    // Adjust layout for responsive design
-    this.adjustLayoutForViewport();
-  }
-
-  adjustLayoutForViewport() {
-    // Responsive adjustments
-    const isMobile = window.innerWidth < 768;
-    const thumbnails = document.querySelectorAll(".thumbnail");
-
-    thumbnails.forEach((thumb) => {
-      thumb.style.width = isMobile ? "12" : "16";
-      thumb.style.height = isMobile ? "12" : "16";
-    });
-  }
-
-  trackProductView() {
-    // Analytics tracking
-    if (typeof gtag !== "undefined") {
-      gtag("event", "view_item", {
-        item_id: this.product.id,
-        item_name: this.product.name,
-        item_category: this.product.category_name,
-        value: parseFloat(this.product.price.replace(/[^\d.]/g, "")),
-      });
+    renderError(message) {
+        const typeDetail = document.getElementById("type-detail");
+        typeDetail.innerHTML = `
+            <div class="bg-white rounded-2xl p-12 shadow-xl text-center">
+                <div class="mx-auto w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-6">
+                    <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.728-.833-2.498 0L3.334 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                    </svg>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-900 mb-4">Oops! Something went wrong</h2>
+                <p class="text-gray-600 mb-8">${message}</p>
+                <div class="flex justify-center space-x-4">
+                    <button onclick="window.history.back()" class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300">
+                        Go Back
+                    </button>
+                    <button onclick="location.reload()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300">
+                        Try Again
+                    </button>
+                </div>
+            </div>
+        `;
     }
-  }
 
-  renderError(message) {
-    const typeDetail = document.getElementById("type-detail");
-    typeDetail.innerHTML = `
-      <div class="bg-white rounded-2xl p-12 shadow-xl text-center">
-        <div class="mx-auto w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-6">
-          <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.728-.833-2.498 0L3.334 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
-          </svg>
-        </div>
-        <h2 class="text-2xl font-bold text-gray-900 mb-4">Oops! Something went wrong</h2>
-        <p class="text-gray-600 mb-8">${message}</p>
-        <div class="flex justify-center space-x-4">
-          <button onclick="window.history.back()" class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300">
-            Go Back
-          </button>
-          <button onclick="location.reload()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300">
-            Try Again
-          </button>
-        </div>
-      </div>
-    `;
-  }
-
-  showError(message) {
-    console.error(message);
-    alert(message);
-  }
+    showError(message) {
+        console.error(message);
+        alert(message);
+    }
 }
 
 // Initialize the application
 document.addEventListener("DOMContentLoaded", () => {
-  new ProductDetailManager();
+    new ProductDetailManager();
 });
 
 // Legacy support for existing function calls
 async function fetchTypeDetail() {
-  new ProductDetailManager();
+    new ProductDetailManager();
 }
 
 // Export for module usage
 if (typeof module !== "undefined" && module.exports) {
-  module.exports = ProductDetailManager;
+    module.exports = ProductDetailManager;
 }
 
 async function fetchProductForUpdate() {
@@ -1413,7 +1328,7 @@ async function fetchProductForUpdate() {
     }
 
     const response = await fetch(
-      `http://192.168.0.102:5000/api/manuplast/categories/${categoryId}`,
+      `https://api.vybtek.com/api/manuplast/categories/${categoryId}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -1520,7 +1435,7 @@ document
       formData.append("image", image);
 
       const categoryResponse = await fetch(
-        `http://192.168.0.102:5000/api/manuplast/categories/${categoryId}`,
+        `https://api.vybtek.com/api/manuplast/categories/${categoryId}`,
         {
           method: "PUT",
           headers: {
@@ -1551,7 +1466,7 @@ document
         }
 
         const typeResponse = await fetch(
-          `http://192.168.0.102:5000/api/manuplast/producttypes`,
+          `https://api.vybtek.com/api/manuplast/producttypes`,
           {
             method: "POST",
             headers: {
@@ -1579,7 +1494,7 @@ document
           imageForm.append("producttype_id", typeId);
           imageForm.append("image", image);
           const imgResponse = await fetch(
-            `http://192.168.0.102:5000/api/manuplast/producttypeimages`,
+            `https://api.vybtek.com/api/manuplast/producttypeimages`,
             {
               method: "POST",
               headers: {
@@ -1598,7 +1513,7 @@ document
 
         for (const size of type.sizes) {
           const sizeResponse = await fetch(
-            `http://192.168.0.102:5000/api/manuplast/producttypesizes`,
+            `https://api.vybtek.com/api/manuplast/producttypesizes`,
             {
               method: "POST",
               headers: {
@@ -1619,7 +1534,7 @@ document
 
         for (const color of type.colors) {
           const colorResponse = await fetch(
-            `http://192.168.0.102:5000/api/manuplast/producttypecolors`,
+            `https://api.vybtek.com/api/manuplast/producttypecolors`,
             {
               method: "POST",
               headers: {
@@ -1676,7 +1591,7 @@ document
 
     try {
       const response = await fetch(
-        "http://192.168.0.102:5000/api/manuplast/categories",
+        "https://api.vybtek.com/api/manuplast/categories",
         {
           method: "POST",
           headers: {
@@ -1727,7 +1642,7 @@ document
 
     try {
       const response = await fetch(
-        `http://192.168.0.102:5000/api/manuplast/categories/${categoryId}`,
+        `https://api.vybtek.com/api/manuplast/categories/${categoryId}`,
         {
           method: "PATCH",
           headers: {

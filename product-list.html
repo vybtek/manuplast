@@ -9,6 +9,8 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     />
     <script src="https://cdn.tailwindcss.com"></script>
+        <script src="sidebar.js" defer></script>
+
     <style>
       .modal {
         transition: opacity 0.3s ease;
@@ -37,18 +39,53 @@
         width: 100%;
         max-width: 18rem;
       }
+      .image-preview-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 8px;
+      }
+      .image-preview-item {
+        position: relative;
+        width: 80px;
+        height: 80px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        overflow: hidden;
+      }
+      .image-preview-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .remove-image-btn {
+        position: absolute;
+        top: 2px;
+        right: 2px;
+        background-color: rgba(255, 0, 0, 0.7);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        font-size: 0.75rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+      }
     </style>
   </head>
   <body class="bg-gray-100 h-full">
     <div class="flex h-full">
-      <!-- Sidebar -->
       <div class="md:w-64 h-full bg-white shadow-md">
-        <special-sidebar class="h-full" aria-label="Product Filters"></special-sidebar>
+      <special-sidebar
+        class="w-1/4 h-screen"
+        aria-label="Product Filters"
+      ></special-sidebar>
       </div>
 
-      <!-- Main Content Area -->
       <div class="flex-1 flex flex-col overflow-auto">
-        <!-- Header -->
         <header class="bg-white shadow-sm">
           <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex justify-between items-center">
             <h1 class="text-2xl font-bold text-gray-900">Products Management</h1>
@@ -58,16 +95,13 @@
           </div>
         </header>
 
-        <!-- Main Content -->
         <main class="flex-1 p-6 overflow-auto">
           <div id="dashboard-products-list" class="space-y-4 max-w-7xl mx-auto">
-            <!-- Products will be loaded here -->
-          </div>
+            </div>
         </main>
       </div>
     </div>
 
-    <!-- Add Product Modal -->
     <div id="add-product-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
       <div class="bg-white rounded-lg p-6 modal-content max-w-3xl mx-auto w-full">
         <div class="flex justify-between items-center mb-6">
@@ -94,17 +128,19 @@
               <input type="number" step="0.01" id="add-product-price" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required />
             </div>
             <div class="form-field">
-              <label for="add-product-images" class="block text-gray-700 font-medium mb-2 text-center">Product Images*</label>
-              <input type="file" id="add-product-images" class="w-full p-3 border border-gray-300 rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:bg-blue-100 file:text-blue-700 hover:file:bg-blue-200" accept="image/*" multiple required />
-            </div>
-            <div class="form-field">
               <label for="add-product-sizes" class="block text-gray-700 font-medium mb-2 text-center">Sizes (comma separated)</label>
               <input type="text" id="add-product-sizes" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g., Small, Medium, Large" />
             </div>
-            <div class="form-field">
-              <label for="add-product-colors" class="block text-gray-700 font-medium mb-2 text-center">Colors (comma separated)</label>
-              <input type="text" id="add-product-colors" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g., Red, Blue, Green" />
+
+            <div class="col-span-1 sm:col-span-2 space-y-4 p-4 border border-gray-200 rounded-lg bg-gray-50">
+              <label class="block text-gray-700 font-medium mb-2 text-center">Product Colors & Images*</label>
+              <div id="add-color-image-inputs" class="space-y-4">
+                </div>
+              <button type="button" id="add-new-color-field-btn" class="w-full bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition-colors">
+                <i class="fas fa-plus mr-2"></i> Add New Color
+              </button>
             </div>
+
             <div class="col-span-1 sm:col-span-2 form-field">
               <label for="add-product-description" class="block text-gray-700 font-medium mb-2 text-center">Description*</label>
               <textarea id="add-product-description" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" rows="4" required></textarea>
@@ -119,68 +155,87 @@
       </div>
     </div>
 
-    <!-- Update Product Modal -->
-   <!-- Update Product Modal -->
-<div id="update-product-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-  <div class="bg-white rounded-lg p-6 modal-content max-w-3xl mx-auto w-full">
-    <div class="flex justify-between items-center mb-6">
-      <h3 class="text-xl font-bold text-gray-800">Update Product</h3>
-      <button id="close-update-product-modal" class="text-gray-500 hover:text-gray-700">
-        <i class="fas fa-times text-lg"></i>
-      </button>
-    </div>
-    <form id="update-product-form" class="space-y-6">
-      <input type="hidden" id="csrf-token" value="YOUR_CSRF_TOKEN_HERE" />
-      <input type="hidden" id="update-product-id" />
-      <!-- Add these hidden inputs -->
-      <input type="hidden" id="update-product-size-ids" name="sizeIds" />
-      <input type="hidden" id="update-product-color-ids" name="colorIds" />
-      <input type="hidden" id="update-product-image-ids" name="imageIds" />
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-        <div class="form-field">
-          <label for="update-product-name" class="block text-gray-700 font-medium mb-2 text-center">Product Name*</label>
-          <input type="text" id="update-product-name" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required />
+    <div id="update-product-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+      <div class="bg-white rounded-lg p-6 modal-content max-w-3xl mx-auto w-full">
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-xl font-bold text-gray-800">Update Product</h3>
+          <button id="close-update-product-modal" class="text-gray-500 hover:text-gray-700">
+            <i class="fas fa-times text-lg"></i>
+          </button>
         </div>
-        <div class="form-field">
-          <label for="update-product-category" class="block text-gray-700 font-medium mb-2 text-center">Category*</label>
-          <select id="update-product-category" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
-            <option value="" disabled selected>Select Category</option>
-          </select>
-        </div>
-        <div class="form-field">
-          <label for="update-product-price" class="block text-gray-700 font-medium mb-2 text-center">Price*</label>
-          <input type="number" step="0.01" id="update-product-price" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required />
-        </div>
-        <div class="form-field">
-          <label for="update-product-images" class="block text-gray-700 font-medium mb-2 text-center">Product Images</label>
-          <input type="file" id="update-product-images" class="w-full p-3 border border-gray-300 rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:bg-blue-100 file:text-blue-700 hover:file:bg-blue-200" accept="image/*" multiple />
-          <div id="current-product-image-preview" class="mt-3 flex flex-wrap gap-2">
-            <p class="text-sm text-gray-500 w-full text-center">Current Images:</p>
-          </div>
-        </div>
-        <div class="form-field">
-          <label for="update-product-sizes" class="block text-gray-700 font-medium mb-2 text-center">Sizes (comma separated)</label>
-          <input type="text" id="update-product-sizes" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g., Small, Medium, Large" />
-        </div>
-        <div class="form-field">
-          <label for="update-product-colors" class="block text-gray-700 font-medium mb-2 text-center">Colors (comma separated)</label>
-          <input type="text" id="update-product-colors" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g., Red, Blue, Green" />
-        </div>
-        <div class="col-span-1 sm:col-span-2 form-field">
-          <label for="update-product-description" class="block text-gray-700 font-medium mb-2 text-center">Description*</label>
-          <textarea id="update-product-description" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" rows="4" required></textarea>
-        </div>
-      </div>
-      <div class="col-span-1 sm:col-span-2">
-        <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors">
-          Update Product
-        </button>
-      </div>
-    </form>
-  </div>
-</div>
+        <form id="update-product-form" class="space-y-6">
+          <input type="hidden" id="csrf-token" value="YOUR_CSRF_TOKEN_HERE" />
+          <input type="hidden" id="update-product-id" />
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div class="form-field">
+              <label for="update-product-name" class="block text-gray-700 font-medium mb-2 text-center">Product Name*</label>
+              <input type="text" id="update-product-name" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required />
+            </div>
+            <div class="form-field">
+              <label for="update-product-category" class="block text-gray-700 font-medium mb-2 text-center">Category*</label>
+              <select id="update-product-category" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                <option value="" disabled selected>Select Category</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label for="update-product-price" class="block text-gray-700 font-medium mb-2 text-center">Price*</label>
+              <input type="number" step="0.01" id="update-product-price" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required />
+            </div>
+            <div class="form-field">
+              <label for="update-product-sizes" class="block text-gray-700 font-medium mb-2 text-center">Sizes (comma separated)</label>
+              <input type="text" id="update-product-sizes" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g., Small, Medium, Large" />
+            </div>
 
-    <script src="sidebar.js"></script>
+            <div class="col-span-1 sm:col-span-2 space-y-4 p-4 border border-gray-200 rounded-lg bg-gray-50">
+              <label class="block text-gray-700 font-medium mb-2 text-center">Product Colors & Images*</label>
+              <div id="update-color-image-inputs" class="space-y-4">
+                </div>
+              <button type="button" id="update-add-new-color-field-btn" class="w-full bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition-colors">
+                <i class="fas fa-plus mr-2"></i> Add New Color
+              </button>
+            </div>
+
+            <div class="col-span-1 sm:col-span-2 form-field">
+              <label for="update-product-description" class="block text-gray-700 font-medium mb-2 text-center">Description*</label>
+              <textarea id="update-product-description" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" rows="4" required></textarea>
+            </div>
+          </div>
+          <div class="col-span-1 sm:col-span-2">
+            <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors">
+              Update Product
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div id="product-details-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg p-6 modal-content max-w-2xl mx-auto w-full">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-gray-800" id="detail-product-name"></h3>
+                <button id="close-product-details-modal" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-lg"></i>
+                </button>
+            </div>
+            <div class="space-y-4">
+                <p><strong>Category:</strong> <span id="detail-product-category"></span></p>
+                <p><strong>Price:</strong> $<span id="detail-product-price"></span></p>
+                <p><strong>Description:</strong> <span id="detail-product-description"></span></p>
+                <p><strong>Status:</strong> <span id="detail-product-status"></span></p>
+                <p><strong>Sizes:</strong> <span id="detail-product-sizes"></span></p>
+                <div>
+                    <strong>Colors & Images:</strong>
+                    <div id="detail-product-colors" class="space-y-2 mt-2">
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="products-list.js"></script>
   </body>
 </html>
+
+
+
+

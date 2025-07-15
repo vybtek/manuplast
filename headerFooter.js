@@ -125,16 +125,13 @@ class SpecialFooter extends HTMLElement {
                Crafting premium bottles and jars with innovation and sustainability.
               </p>
               <div class="flex space-x-4">
-                <a href="https://instagram.com" target="_blank" class="text-gray-300 hover:text-blue-400 transition-colors duration-200" aria-label="Instagram">
+                <a href="https://www.instagram.com/manuplastco" target="_blank" class="text-gray-300 hover:text-blue-400 transition-colors duration-200" aria-label="Instagram">
                   <i class="fab fa-instagram text-xl"></i>
                 </a>
-                <a href="https://twitter.com" target="_blank" class="text-gray-300 hover:text-blue-400 transition-colors duration-200" aria-label="Twitter">
-                  <i class="fa-brands fa-x-twitter text-xl"></i>
-                </a>
-                <a href="https://linkedin.com" target="_blank" class="text-gray-300 hover:text-blue-400 transition-colors duration-200" aria-label="LinkedIn">
+                <a href="https://www.linkedin.com/company/manuplastco" target="_blank" class="text-gray-300 hover:text-blue-400 transition-colors duration-200" aria-label="LinkedIn">
                   <i class="fab fa-linkedin text-xl"></i>
                 </a>
-                <a href="#" target="_blank" class="text-gray-300 hover:text-blue-400 transition-colors duration-200" aria-label="LinkedIn">
+                <a href="https://www.facebook.com/manuplastco" target="_blank" class="text-gray-300 hover:text-blue-400 transition-colors duration-200" aria-label="LinkedIn">
                   <i class="fab fa-facebook-f text-lg"></i>
                 </a>
               </div>
@@ -171,9 +168,9 @@ class SpecialFooter extends HTMLElement {
                   </a>
                 </li>
                 <li>
-                  <a href="tel:+910000000000" class="flex items-center space-x-2 hover:text-blue-400 transition-all duration-200" aria-label="Phone Number">
+                  <a href="tel:+919833922750" class="flex items-center space-x-2 hover:text-blue-400 transition-all duration-200" aria-label="Phone Number">
                     <i class="fas fa-phone text-blue-500"></i>
-                    <span>+91 0000000000</span>
+                    <span>+91 9833922750</span>
                   </a>
                 </li>
                 <li>

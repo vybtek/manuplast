@@ -4,7 +4,7 @@
  */
 class ContactDashboard {
     constructor() {
-        this.apiEndpoint = "http://192.168.0.102:5000/api/manuplast/contacts";
+        this.apiEndpoint = "https://api.vybtek.com/api/manuplast/contacts";
         this.contacts = [];
         this.filteredContacts = [];
         this.currentPage = 1;

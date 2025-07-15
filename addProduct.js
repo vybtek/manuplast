@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
 async function fetchCategories() {
   try {
     const res = await fetch(
-      "http://192.168.0.102:5000/api/manuplast/categories"
+      "https://api.vybtek.com/api/manuplast/categories"
     );
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const categories = await res.json();
@@ -115,7 +115,7 @@ async function submitProduct(e) {
       formData.append("image", imageFiles[0]);
 
       const productRes = await fetch(
-        "http://192.168.0.102:5000/api/manuplast/producttypes",
+        "https://api.vybtek.com/api/manuplast/producttypes",
         {
           method: "POST",
           headers: { Authorization: `Bearer ${token}` },
@@ -133,7 +133,7 @@ async function submitProduct(e) {
         imageForm.append("producttype_id", typeId);
         imageForm.append("image", imageFiles[j]);
         const imgRes = await fetch(
-          "http://192.168.0.102:5000/api/manuplast/producttypeimages",
+          "https://api.vybtek.com/api/manuplast/producttypeimages",
           {
             method: "POST",
             headers: { Authorization: `Bearer ${token}` },
@@ -151,7 +151,7 @@ async function submitProduct(e) {
         .filter((s) => s);
       for (let size of sizes) {
         await fetch(
-          "http://192.168.0.102:5000/api/manuplast/producttypesizes",
+          "https://api.vybtek.com/api/manuplast/producttypesizes",
           {
             method: "POST",
             headers: {
@@ -171,7 +171,7 @@ async function submitProduct(e) {
         .filter((c) => c);
       for (let color of colors) {
         await fetch(
-          "http://192.168.0.102:5000/api/manuplast/producttypecolors",
+          "https://api.vybtek.com/api/manuplast/producttypecolors",
           {
             method: "POST",
             headers: {
