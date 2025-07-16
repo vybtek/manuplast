@@ -9,14 +9,34 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     />
     <script src="https://cdn.tailwindcss.com"></script>
-        <script src="sidebar.js" defer></script>
+    <script src="sidebar.js" defer></script>
 
     <style>
       .modal {
         transition: opacity 0.3s ease;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 50;
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        overflow-y: auto;
+        padding: 1rem;
       }
       .modal-content {
         animation: modalFadeIn 0.3s ease;
+        max-width: 800px; /* Adjusted for responsiveness */
+        width: 100%;
+        margin: 1rem auto;
+        background: white;
+        border-radius: 0.5rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        max-height: calc(100vh - 2rem); /* Allow scrolling within modal */
+        overflow-y: auto;
       }
       @keyframes modalFadeIn {
         from {
@@ -31,9 +51,6 @@
       html,
       body {
         height: 100%;
-      }
-      .modal-content {
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
       }
       .form-field {
         width: 100%;
@@ -74,15 +91,18 @@
         justify-content: center;
         cursor: pointer;
       }
+      @media (max-width: 640px) {
+        .modal-content {
+          margin: 0.5rem;
+          max-height: calc(100vh - 1rem);
+        }
+      }
     </style>
   </head>
   <body class="bg-gray-100 h-full">
     <div class="flex h-full">
       <div class="md:w-64 h-full bg-white shadow-md">
-      <special-sidebar
-        class="w-1/4 h-screen"
-        aria-label="Product Filters"
-      ></special-sidebar>
+        <special-sidebar class="w-1/4 h-screen" aria-label="Product Filters"></special-sidebar>
       </div>
 
       <div class="flex-1 flex flex-col overflow-auto">
@@ -96,14 +116,14 @@
         </header>
 
         <main class="flex-1 p-6 overflow-auto">
-          <div id="dashboard-products-list" class="space-y-4 max-w-7xl mx-auto">
-            </div>
+          <div id="dashboard-products-list" class="space-y-4 max-w-7xl mx-auto"></div>
         </main>
       </div>
     </div>
 
-    <div id="add-product-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-      <div class="bg-white rounded-lg p-6 modal-content max-w-3xl mx-auto w-full">
+    <!-- Add Product Modal -->
+    <div id="add-product-modal" class="modal hidden">
+      <div class="modal-content p-6">
         <div class="flex justify-between items-center mb-6">
           <h3 class="text-xl font-bold text-gray-800">Add New Product</h3>
           <button id="close-add-product-modal" class="text-gray-500 hover:text-gray-700">
@@ -134,8 +154,7 @@
 
             <div class="col-span-1 sm:col-span-2 space-y-4 p-4 border border-gray-200 rounded-lg bg-gray-50">
               <label class="block text-gray-700 font-medium mb-2 text-center">Product Colors & Images*</label>
-              <div id="add-color-image-inputs" class="space-y-4">
-                </div>
+              <div id="add-color-image-inputs" class="space-y-4"></div>
               <button type="button" id="add-new-color-field-btn" class="w-full bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition-colors">
                 <i class="fas fa-plus mr-2"></i> Add New Color
               </button>
@@ -144,6 +163,10 @@
             <div class="col-span-1 sm:col-span-2 form-field">
               <label for="add-product-description" class="block text-gray-700 font-medium mb-2 text-center">Description*</label>
               <textarea id="add-product-description" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" rows="4" required></textarea>
+            </div>
+            <div class="col-span-1 sm:col-span-2 form-field">
+              <label for="add-product-detailed-description" class="block text-gray-700 font-medium mb-2 text-center">Detailed Description (JSON)*</label>
+              <textarea id="add-product-detailed-description" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" rows="6" placeholder='{"features": [], "specifications": []}' required></textarea>
             </div>
           </div>
           <div class="col-span-1 sm:col-span-2">
@@ -155,8 +178,9 @@
       </div>
     </div>
 
-    <div id="update-product-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-      <div class="bg-white rounded-lg p-6 modal-content max-w-3xl mx-auto w-full">
+    <!-- Update Product Modal -->
+    <div id="update-product-modal" class="modal hidden">
+      <div class="modal-content p-6">
         <div class="flex justify-between items-center mb-6">
           <h3 class="text-xl font-bold text-gray-800">Update Product</h3>
           <button id="close-update-product-modal" class="text-gray-500 hover:text-gray-700">
@@ -188,8 +212,7 @@
 
             <div class="col-span-1 sm:col-span-2 space-y-4 p-4 border border-gray-200 rounded-lg bg-gray-50">
               <label class="block text-gray-700 font-medium mb-2 text-center">Product Colors & Images*</label>
-              <div id="update-color-image-inputs" class="space-y-4">
-                </div>
+              <div id="update-color-image-inputs" class="space-y-4"></div>
               <button type="button" id="update-add-new-color-field-btn" class="w-full bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition-colors">
                 <i class="fas fa-plus mr-2"></i> Add New Color
               </button>
@@ -198,6 +221,10 @@
             <div class="col-span-1 sm:col-span-2 form-field">
               <label for="update-product-description" class="block text-gray-700 font-medium mb-2 text-center">Description*</label>
               <textarea id="update-product-description" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" rows="4" required></textarea>
+            </div>
+            <div class="col-span-1 sm:col-span-2 form-field">
+              <label for="update-product-detailed-description" class="block text-gray-700 font-medium mb-2 text-center">Detailed Description (JSON)*</label>
+              <textarea id="update-product-detailed-description" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" rows="6" placeholder='{"features": [], "specifications": []}' required></textarea>
             </div>
           </div>
           <div class="col-span-1 sm:col-span-2">
@@ -209,33 +236,33 @@
       </div>
     </div>
 
-    <div id="product-details-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-lg p-6 modal-content max-w-2xl mx-auto w-full">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-bold text-gray-800" id="detail-product-name"></h3>
-                <button id="close-product-details-modal" class="text-gray-500 hover:text-gray-700">
-                    <i class="fas fa-times text-lg"></i>
-                </button>
-            </div>
-            <div class="space-y-4">
-                <p><strong>Category:</strong> <span id="detail-product-category"></span></p>
-                <p><strong>Price:</strong> $<span id="detail-product-price"></span></p>
-                <p><strong>Description:</strong> <span id="detail-product-description"></span></p>
-                <p><strong>Status:</strong> <span id="detail-product-status"></span></p>
-                <p><strong>Sizes:</strong> <span id="detail-product-sizes"></span></p>
-                <div>
-                    <strong>Colors & Images:</strong>
-                    <div id="detail-product-colors" class="space-y-2 mt-2">
-                        </div>
-                </div>
-            </div>
+    <!-- Product Details Modal -->
+    <div id="product-details-modal" class="modal hidden">
+      <div class="modal-content p-6">
+        <div class="flex justify-between items-center mb-6">
+          <h3 class="text-xl font-bold text-gray-800" id="detail-product-name"></h3>
+          <button id="close-product-details-modal" class="text-gray-500 hover:text-gray-700">
+            <i class="fas fa-times text-lg"></i>
+          </button>
         </div>
+        <div class="space-y-4">
+          <p><strong>Category:</strong> <span id="detail-product-category"></span></p>
+          <p><strong>Price:</strong> $<span id="detail-product-price"></span></p>
+          <p><strong>Description:</strong> <span id="detail-product-description"></span></p>
+          <p><strong>Status:</strong> <span id="detail-product-status"></span></p>
+          <p><strong>Sizes:</strong> <span id="detail-product-sizes"></span></p>
+          <div>
+            <strong>Colors & Images:</strong>
+            <div id="detail-product-colors" class="space-y-2 mt-2"></div>
+          </div>
+          <div>
+            <strong>Detailed Description:</strong>
+            <div id="detail-product-detailed-description" class="space-y-2 mt-2"></div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <script src="products-list.js"></script>
   </body>
 </html>
-
-
-
-

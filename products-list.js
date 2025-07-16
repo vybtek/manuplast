@@ -1,5 +1,5 @@
-// Base API URL - Adjust if your API is on a different port or domain
-const API_BASE_URL = "https://api.vybtek.com/api/manuplast"; // IMPORTANT: Verify this URL matches your backend API
+// Base API URL
+const API_BASE_URL = "https://api.vybtek.com/api/manuplast"; // Verify this matches your backend API
 
 // DOM Elements
 const dashboardProductsList = document.getElementById("dashboard-products-list");
@@ -14,6 +14,7 @@ const addProductCategorySelect = document.getElementById("add-product-category")
 const addProductPriceInput = document.getElementById("add-product-price");
 const addProductSizesInput = document.getElementById("add-product-sizes");
 const addProductDescriptionInput = document.getElementById("add-product-description");
+const addProductDetailedDescriptionInput = document.getElementById("add-product-detailed-description");
 const addColorImageInputsContainer = document.getElementById("add-color-image-inputs");
 const addNewColorFieldBtn = document.getElementById("add-new-color-field-btn");
 
@@ -27,6 +28,7 @@ const updateProductCategorySelect = document.getElementById("update-product-cate
 const updateProductPriceInput = document.getElementById("update-product-price");
 const updateProductSizesInput = document.getElementById("update-product-sizes");
 const updateProductDescriptionInput = document.getElementById("update-product-description");
+const updateProductDetailedDescriptionInput = document.getElementById("update-product-detailed-description");
 const updateColorImageInputsContainer = document.getElementById("update-color-image-inputs");
 const updateAddNewColorFieldBtn = document.getElementById("update-add-new-color-field-btn");
 
@@ -40,21 +42,22 @@ const detailProductDescription = document.getElementById("detail-product-descrip
 const detailProductStatus = document.getElementById("detail-product-status");
 const detailProductSizes = document.getElementById("detail-product-sizes");
 const detailProductColors = document.getElementById("detail-product-colors");
-
+const detailProductDetailedDescription = document.getElementById("detail-product-detailed-description");
 
 let allCategories = []; // To store fetched categories
 
 // --- Helper Functions ---
 
-// Function to generate a unique ID for dynamic elements
+// Generate a unique ID for dynamic elements
 const generateUniqueId = () => `input-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
 
-// Function to create a color/image input row
-function createColorImageInputRow(containerId, colorName = '', images = []) {
+// Create a color/image input row
+function createColorImageInputRow(containerId, colorName = '', images = [], isExisting = false) {
   const rowId = generateUniqueId();
   const rowDiv = document.createElement('div');
   rowDiv.className = 'border border-gray-300 p-3 rounded-lg bg-white relative';
   rowDiv.id = rowId;
+  rowDiv.dataset.isExisting = isExisting;
 
   rowDiv.innerHTML = `
         <div class="flex items-center mb-3">
@@ -67,7 +70,7 @@ function createColorImageInputRow(containerId, colorName = '', images = []) {
         <input type="file" class="color-image-input w-full p-2 border border-gray-300 rounded-lg file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:bg-blue-100 file:text-blue-700 hover:file:bg-blue-200" accept="image/*" multiple />
         <div class="image-preview-container mt-2">
             ${images.map(img => `
-                <div class="image-preview-item" data-image-url="${img.image_url || img.url || ''}">
+                <div class="image-preview-item" data-image-url="${img.image_url || img.url || ''}" data-is-existing="true">
                     <img src="${img.image_url || img.url}" alt="Image Preview" />
                     <button type="button" class="remove-image-btn"><i class="fas fa-times"></i></button>
                 </div>
@@ -78,7 +81,6 @@ function createColorImageInputRow(containerId, colorName = '', images = []) {
   const container = document.getElementById(containerId);
   container.appendChild(rowDiv);
 
-  // Attach event listeners for the new row
   const removeColorBtn = rowDiv.querySelector('.remove-color-btn');
   removeColorBtn.addEventListener('click', () => {
     rowDiv.remove();
@@ -93,13 +95,16 @@ function createColorImageInputRow(containerId, colorName = '', images = []) {
       reader.onload = (e) => {
         const previewItem = document.createElement('div');
         previewItem.className = 'image-preview-item';
-        // Store the File object itself for later FormData construction
-        previewItem.dataset.fileObject = file;
+        previewItem.dataset.isExisting = 'false';
         previewItem.innerHTML = `
                         <img src="${e.target.result}" alt="Image Preview" />
                         <button type="button" class="remove-image-btn"><i class="fas fa-times"></i></button>
                     `;
         imagePreviewContainer.appendChild(previewItem);
+        // Store the File object in a data attribute as a base64 string to avoid serialization issues
+        previewItem.dataset.fileBase64 = e.target.result;
+        previewItem.dataset.fileName = file.name;
+        previewItem.dataset.fileType = file.type;
 
         previewItem.querySelector('.remove-image-btn').addEventListener('click', () => {
           previewItem.remove();
@@ -109,39 +114,39 @@ function createColorImageInputRow(containerId, colorName = '', images = []) {
     });
   });
 
-  // Add event listeners for existing image remove buttons (if any)
   rowDiv.querySelectorAll('.remove-image-btn').forEach(btn => {
     btn.addEventListener('click', (event) => {
       event.target.closest('.image-preview-item').remove();
     });
   });
 
-  return rowDiv; // Return the created rowDiv for easier manipulation if needed
+  return rowDiv;
 }
-
 
 // --- Modal Open/Close Functions ---
 
 function openModal(modalElement) {
   modalElement.classList.remove("hidden");
-  setTimeout(() => (modalElement.style.opacity = "1"), 10); // For transition
+  setTimeout(() => (modalElement.style.opacity = "1"), 10);
 }
 
 function closeModal(modalElement) {
   modalElement.style.opacity = "0";
-  setTimeout(() => modalElement.classList.add("hidden"), 300); // Wait for transition
+  setTimeout(() => modalElement.classList.add("hidden"), 300);
 }
 
 // --- Category Loading ---
 async function populateCategories(selectElement, selectedCategoryId = null) {
   try {
-    const response = await fetch(`${API_BASE_URL}/categories`);
+    const response = await fetch(`${API_BASE_URL}/categories`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('authToken') || 'YOUR_TOKEN_HERE'}`,
+      },
+    });
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    allCategories = await response.json(); // Store all categories
-
-    // Clear existing options except the default one
+    allCategories = await response.json();
     selectElement.innerHTML = '<option value="" disabled selected>Select Category</option>';
 
     allCategories.forEach((category) => {
@@ -169,12 +174,16 @@ async function loadProducts() {
         <p class="text-center text-gray-600 mt-4">Loading products...</p>
     `;
   try {
-    const response = await fetch(`${API_BASE_URL}/producttypes`);
+    const response = await fetch(`${API_BASE_URL}/producttypes`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('authToken') || 'YOUR_TOKEN_HERE'}`,
+      },
+    });
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     const products = await response.json();
-    dashboardProductsList.innerHTML = ""; // Clear loading state
+    dashboardProductsList.innerHTML = "";
 
     if (products.length === 0) {
       dashboardProductsList.innerHTML = `
@@ -202,15 +211,14 @@ async function loadProducts() {
 function createProductCard(product) {
   const card = document.createElement("div");
   card.className = "bg-white rounded-lg shadow-md p-6 flex flex-col sm:flex-row items-center gap-4";
-  card.dataset.productId = product.id; // Store product ID for easy access
+  card.dataset.productId = product.id;
 
-  // Determine main image for the card
   let mainImageUrl = "https://via.placeholder.com/100x100?text=No+Image";
   if (product.colors && product.colors.length > 0) {
     for (const color of product.colors) {
       if (color.images && color.images.length > 0) {
         mainImageUrl = color.images[0].image_url;
-        break; // Take the first image of the first color with an image
+        break;
       }
     }
   }
@@ -248,7 +256,6 @@ function createProductCard(product) {
         </div>
     `;
 
-  // Attach event listeners to buttons
   card.querySelector(".view-btn").addEventListener("click", () => openProductDetailsModal(product));
   card.querySelector(".edit-btn").addEventListener("click", () => openUpdateProductModal(product.id));
   card.querySelector(".delete-btn").addEventListener("click", () => deleteProduct(product.id, product.name));
@@ -260,9 +267,10 @@ function createProductCard(product) {
 // --- Add Product Logic ---
 
 addProductBtn.addEventListener("click", () => {
-  addProductForm.reset(); // Clear previous data
-  addColorImageInputsContainer.innerHTML = ''; // Clear dynamic color inputs
-  createColorImageInputRow('add-color-image-inputs'); // Add one default color input
+  addProductForm.reset();
+  addColorImageInputsContainer.innerHTML = '';
+  createColorImageInputRow('add-color-image-inputs');
+  addProductDetailedDescriptionInput.value = '{"features": [], "specifications": []}';
   populateCategories(addProductCategorySelect);
   openModal(addProductModal);
 });
@@ -286,16 +294,22 @@ addProductForm.addEventListener("submit", async (event) => {
   if (sizesValue) {
     formData.append("sizes", JSON.stringify(sizesValue.split(",").map(s => s.trim()).filter(s => s)));
   } else {
-    formData.append("sizes", "[]"); // Send empty array if no sizes
+    formData.append("sizes", "[]");
   }
 
+  try {
+    const detailedDescription = JSON.parse(addProductDetailedDescriptionInput.value);
+    formData.append("detailed_description", JSON.stringify(detailedDescription));
+  } catch (error) {
+    alert("Invalid JSON in Detailed Description. Please provide valid JSON.");
+    return;
+  }
 
   const colorsData = [];
-  const allFilesForUpload = []; // To collect all unique File objects for FormData
+  const allFilesForUpload = [];
 
   const colorRows = addColorImageInputsContainer.querySelectorAll('.border.border-gray-300.p-3.rounded-lg.bg-white.relative');
 
-  // Check if at least one color row exists
   if (colorRows.length === 0) {
     alert("Please add at least one color.");
     return;
@@ -304,7 +318,6 @@ addProductForm.addEventListener("submit", async (event) => {
   for (const row of colorRows) {
     const colorInput = row.querySelector('.color-input');
     const fileInput = row.querySelector('.color-image-input');
-    const previewItems = row.querySelectorAll('.image-preview-item'); // This gets all preview items, including newly added ones and existing ones if any for update
 
     const colorName = colorInput.value.trim();
     if (!colorName) {
@@ -314,9 +327,8 @@ addProductForm.addEventListener("submit", async (event) => {
 
     const imageIndices = [];
 
-    // Process images selected via file input
     Array.from(fileInput.files).forEach(file => {
-      const fileIndex = allFilesForUpload.push(file) - 1; // Add file and get its index
+      const fileIndex = allFilesForUpload.push(file) - 1;
       imageIndices.push(fileIndex);
     });
 
@@ -328,7 +340,6 @@ addProductForm.addEventListener("submit", async (event) => {
 
   formData.append("colors", JSON.stringify(colorsData));
 
-  // Append all collected files under the 'images' key
   allFilesForUpload.forEach(file => {
     formData.append("images", file);
   });
@@ -336,9 +347,10 @@ addProductForm.addEventListener("submit", async (event) => {
   try {
     const response = await fetch(`${API_BASE_URL}/producttypes`, {
       method: "POST",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('authToken') || 'YOUR_TOKEN_HERE'}`,
+      },
       body: formData,
-      // When using FormData, do NOT set Content-Type header manually.
-      // The browser sets it automatically with the correct boundary.
     });
 
     if (!response.ok) {
@@ -348,19 +360,22 @@ addProductForm.addEventListener("submit", async (event) => {
 
     alert("Product added successfully!");
     closeModal(addProductModal);
-    loadProducts(); // Reload products to show the new one
+    loadProducts();
   } catch (error) {
     console.error("Error adding product:", error);
     alert(`Failed to add product: ${error.message}`);
   }
 });
 
-
 // --- Update Product Logic ---
 
 async function openUpdateProductModal(productId) {
   try {
-    const response = await fetch(`${API_BASE_URL}/producttypes/${productId}`);
+    const response = await fetch(`${API_BASE_URL}/producttypes/${productId}`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('authToken') || 'YOUR_TOKEN_HERE'}`,
+      },
+    });
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -370,24 +385,20 @@ async function openUpdateProductModal(productId) {
     updateProductNameInput.value = product.name;
     updateProductDescriptionInput.value = product.description;
     updateProductPriceInput.value = product.price;
+    updateProductDetailedDescriptionInput.value = product.detailed_description ? JSON.stringify(product.detailed_description, null, 2) : '{"features": [], "specifications": []}';
 
-    // Populate categories and select current one
     await populateCategories(updateProductCategorySelect, product.category_id);
 
-    // Populate sizes
     const sizes = product.sizes ? product.sizes.map(s => s.size).join(", ") : "";
     updateProductSizesInput.value = sizes;
 
-    // Clear existing dynamic color inputs
     updateColorImageInputsContainer.innerHTML = '';
 
-    // Populate colors and their images
     if (product.colors && product.colors.length > 0) {
       product.colors.forEach(color => {
-        createColorImageInputRow('update-color-image-inputs', color.color, color.images);
+        createColorImageInputRow('update-color-image-inputs', color.color, color.images, true);
       });
     } else {
-      // If no colors exist, add one empty row
       createColorImageInputRow('update-color-image-inputs');
     }
 
@@ -419,14 +430,22 @@ updateProductForm.addEventListener("submit", async (event) => {
   if (sizesValue) {
     formData.append("sizes", JSON.stringify(sizesValue.split(",").map(s => s.trim()).filter(s => s)));
   } else {
-    formData.append("sizes", "[]"); // Send empty array if no sizes
+    formData.append("sizes", "[]");
+  }
+
+  try {
+    const detailedDescription = JSON.parse(updateProductDetailedDescriptionInput.value);
+    formData.append("detailed_description", JSON.stringify(detailedDescription));
+  } catch (error) {
+    alert("Invalid JSON in Detailed Description. Please provide valid JSON.");
+    return;
   }
 
   const colorsData = [];
-  const allFilesForUpload = []; // To collect all new File objects for FormData for the update
+  const allFilesForUpload = [];
+
   const colorRows = updateColorImageInputsContainer.querySelectorAll('.border.border-gray-300.p-3.rounded-lg.bg-white.relative');
 
-  // Check if at least one color row exists
   if (colorRows.length === 0) {
     alert("Please add at least one color.");
     return;
@@ -445,28 +464,30 @@ updateProductForm.addEventListener("submit", async (event) => {
 
     const imageIndices = [];
 
-    // First, add existing images to colorsData (by their URLs)
-    // Note: If you need to *remove* existing images, you'd need a more complex
-    // backend logic that differentiates between new images and existing images to be kept.
-    // For now, this implementation assumes any existing images shown in the preview
-    // will be part of the *new* color configuration.
-    // However, the backend is set up to *replace* all colors and their images.
-    // So, if an image URL from an existing product is kept in the preview, it won't be re-uploaded.
-    // The imageIndices here will ONLY refer to NEWLY UPLOADED files.
-    // If you need to track which existing images are kept, the `colors` JSON needs to be more complex
-    // (e.g., `images: [{ url: '...', isNew: false }, { fileIndex: 0, isNew: true }]`).
-    // For simplicity, following the Postman example logic, the `colors` array will specify `imageIndices`
-    // which refer *only* to the `images` sent in the current FormData.
-    // This means existing images are *not* explicitly passed in the `colors` JSON for update,
-    // and if you want to keep them, the backend needs to handle reconciliation.
-    // *Correction for current backend logic*: The backend *replaces* ProductTypeColor and ProductTypeImage.
-    // Therefore, if an image isn't sent in the `images` part of `FormData` for update, it won't be there.
-    // The `imageIndices` logic is correct for mapping files in the *current* `FormData`.
+    // Process preview items (new images only, since existing images must be re-uploaded)
+    previewItems.forEach(item => {
+      if (item.dataset.isExisting === 'false' && item.dataset.fileBase64) {
+        // Convert base64 back to a File object
+        const byteString = atob(item.dataset.fileBase64.split(',')[1]);
+        const mimeString = item.dataset.fileType;
+        const ab = new ArrayBuffer(byteString.length);
+        const ia = new Uint8Array(ab);
+        for (let i = 0; i < byteString.length; i++) {
+          ia[i] = byteString.charCodeAt(i);
+        }
+        const blob = new Blob([ab], { type: mimeString });
+        const file = new File([blob], item.dataset.fileName, { type: mimeString });
+        const fileIndex = allFilesForUpload.push(file) - 1;
+        imageIndices.push(fileIndex);
+      }
+    });
 
-    // Process newly selected files from file input
+    // Process new files from file input
     Array.from(fileInput.files).forEach(file => {
-      const fileIndex = allFilesForUpload.push(file) - 1; // Add file and get its index
-      imageIndices.push(fileIndex);
+      if (!allFilesForUpload.some(existingFile => existingFile.name === file.name && existingFile.size === file.size)) {
+        const fileIndex = allFilesForUpload.push(file) - 1;
+        imageIndices.push(fileIndex);
+      }
     });
 
     colorsData.push({
@@ -477,7 +498,6 @@ updateProductForm.addEventListener("submit", async (event) => {
 
   formData.append("colors", JSON.stringify(colorsData));
 
-  // Append all collected new files under the 'images' key
   allFilesForUpload.forEach(file => {
     formData.append("images", file);
   });
@@ -485,6 +505,9 @@ updateProductForm.addEventListener("submit", async (event) => {
   try {
     const response = await fetch(`${API_BASE_URL}/producttypes/${productId}`, {
       method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('authToken') || 'YOUR_TOKEN_HERE'}`,
+      },
       body: formData,
     });
 
@@ -495,7 +518,7 @@ updateProductForm.addEventListener("submit", async (event) => {
 
     alert("Product updated successfully!");
     closeModal(updateProductModal);
-    loadProducts(); // Reload products
+    loadProducts();
   } catch (error) {
     console.error("Error updating product:", error);
     alert(`Failed to update product: ${error.message}`);
@@ -511,6 +534,9 @@ async function deleteProduct(productId, productName) {
   try {
     const response = await fetch(`${API_BASE_URL}/producttypes/${productId}`, {
       method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('authToken') || 'YOUR_TOKEN_HERE'}`,
+      },
     });
 
     if (!response.ok) {
@@ -519,7 +545,7 @@ async function deleteProduct(productId, productName) {
     }
 
     alert(`Product "${productName}" deleted successfully!`);
-    loadProducts(); // Reload products
+    loadProducts();
   } catch (error) {
     console.error("Error deleting product:", error);
     alert(`Failed to delete product: ${error.message}`);
@@ -529,7 +555,7 @@ async function deleteProduct(productId, productName) {
 // --- Toggle Status Logic ---
 
 async function toggleProductStatus(productId, currentStatus) {
-  const newStatus = currentStatus === "ACTIVE" ? false : true; // API expects boolean active
+  const newStatus = currentStatus === "ACTIVE" ? false : true;
   const statusText = newStatus ? "activate" : "deactivate";
   if (!confirm(`Are you sure you want to ${statusText} this product?`)) {
     return;
@@ -540,6 +566,7 @@ async function toggleProductStatus(productId, currentStatus) {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem('authToken') || 'YOUR_TOKEN_HERE'}`,
       },
       body: JSON.stringify({
         active: newStatus
@@ -552,7 +579,7 @@ async function toggleProductStatus(productId, currentStatus) {
     }
 
     alert(`Product status changed to ${newStatus ? 'ACTIVE' : 'INACTIVE'} successfully!`);
-    loadProducts(); // Reload products to reflect status change
+    loadProducts();
   } catch (error) {
     console.error("Error changing product status:", error);
     alert(`Failed to change product status: ${error.message}`);
@@ -560,6 +587,7 @@ async function toggleProductStatus(productId, currentStatus) {
 }
 
 // --- Product Details Modal Logic ---
+
 function openProductDetailsModal(product) {
   detailProductName.textContent = product.name;
   detailProductCategory.textContent = product.category ? product.category.name : 'N/A';
@@ -570,7 +598,7 @@ function openProductDetailsModal(product) {
     ? product.sizes.map(s => s.size).join(", ")
     : "N/A";
 
-  detailProductColors.innerHTML = ''; // Clear previous colors
+  detailProductColors.innerHTML = '';
 
   if (product.colors && product.colors.length > 0) {
     product.colors.forEach(color => {
@@ -601,11 +629,57 @@ function openProductDetailsModal(product) {
     detailProductColors.innerHTML = '<p class="text-gray-500 italic">No colors available.</p>';
   }
 
+  detailProductDetailedDescription.innerHTML = '';
+  if (product.detailed_description) {
+    const detailedDescription = product.detailed_description;
+    const detailsDiv = document.createElement('div');
+    detailsDiv.className = 'bg-gray-100 p-2 rounded-md';
+
+    if (detailedDescription.features && detailedDescription.features.length > 0) {
+      const featuresHeader = document.createElement('p');
+      featuresHeader.className = 'font-semibold';
+      featuresHeader.textContent = 'Features:';
+      detailsDiv.appendChild(featuresHeader);
+
+      const featuresList = document.createElement('ul');
+      featuresList.className = 'list-disc pl-5';
+      detailedDescription.features.forEach(feature => {
+        const featureItem = document.createElement('li');
+        featureItem.textContent = feature;
+        featuresList.appendChild(featureItem);
+      });
+      detailsDiv.appendChild(featuresList);
+    }
+
+    if (detailedDescription.specifications && detailedDescription.specifications.length > 0) {
+      const specsHeader = document.createElement('p');
+      specsHeader.className = 'font-semibold mt-2';
+      specsHeader.textContent = 'Specifications:';
+      detailsDiv.appendChild(specsHeader);
+
+      detailedDescription.specifications.forEach(spec => {
+        const specDiv = document.createElement('div');
+        specDiv.className = 'ml-2 mt-1';
+        specDiv.innerHTML = `
+          <p><strong>Color:</strong> ${spec.color}</p>
+          <p><strong>Material:</strong> ${spec.material}</p>
+          <p><strong>Capacity:</strong> ${spec.capacity}</p>
+          <p><strong>Package Content:</strong> ${spec.package_content}</p>
+          <p><strong>Dimensions (cm):</strong> ${spec.dimensions_cm}</p>
+        `;
+        detailsDiv.appendChild(specDiv);
+      });
+    }
+
+    detailProductDetailedDescription.appendChild(detailsDiv);
+  } else {
+    detailProductDetailedDescription.innerHTML = '<p class="text-gray-500 italic">No detailed description available.</p>';
+  }
+
   openModal(productDetailsModal);
 }
 
 closeProductDetailsModalBtn.addEventListener('click', () => closeModal(productDetailsModal));
-
 
 // --- Initial Load ---
 document.addEventListener("DOMContentLoaded", () => {

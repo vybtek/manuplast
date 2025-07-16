@@ -3,7 +3,7 @@ class SpecialHeader extends HTMLElement {
     this.innerHTML = `
       <header class="fixed top-0 left-0 w-full bg-white shadow-lg z-50 transition-all duration-300">
         <nav class="border-b border-gray-200">
-          <div class="container mx-auto flex justify-between items-center px-2 py-0">
+          <div class="container mx-auto flex justify-between items-center px-2 py-2">
             <a href="index.html" class="flex items-center space-x-0 font-serif italic group">
               <img src="./images/logo1.png" alt="Logo" class="w-30 h-16 transition-transform duration-300 group-hover:scale-105" />
             </a>
