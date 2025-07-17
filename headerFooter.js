@@ -95,7 +95,7 @@ class SpecialFooter extends HTMLElement {
   async fetchProducts() {
     try {
       // Replace with your actual API endpoint or database call
-      const response = await fetch('/api/products');
+      const response = await fetch('https://api.vybtek.com/api/manuplast/categories');
       this.products = await response.json();
     } catch (error) {
       console.error('Error fetching categories:', error);

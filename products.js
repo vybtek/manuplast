@@ -125,11 +125,11 @@ async function fetchProducts(containerId = "product-grid", view = "default") {
       } else {
         // Default view for customers with enhanced modern styling
         categoryCard.className =
-          "group relative overflow-hidden rounded-2xl shadow-md transition-all duration-300 hover:shadow-2xl  border border-gray-100 hover:border-blue-200";
+          "group relative overflow-hidden rounded-2xl shadow-md transition-all duration-300 hover:shadow-2xl border border-gray-100 hover:border-blue-200";
         categoryCard.innerHTML = `
           <a href="product-detail.html?id=${
             category.id
-          }" class="block relative">
+          }" class="block relative ">
             <div class="aspect-w-4 aspect-h-3 overflow-hidden">
               <img src="${category.image_url || "./images/placeholder.jpg"}" 
                    alt="${category.name || "Unnamed"}" 
@@ -141,8 +141,8 @@ async function fetchProducts(containerId = "product-grid", view = "default") {
                 category.name || "Unnamed"
               }</h3>
               <p class="text-gray-500 text-sm line-clamp-2 mb-4 leading-relaxed">${
-                category.description?.slice(0, 100) || "No description"
-              }</p>
+                category.description?.slice(0, 160) || "No description"
+              }...</p>
               <div class="flex items-center text-red-500 font-medium text-base group-hover:text-red-600 transition-colors duration-200">
                 Explore Now
                 <svg class="w-5 h-5 ml-2 transition-transform duration-200 group-hover:translate-x-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -495,7 +495,6 @@ function handleDashboardActions(e) {
   }
 }
 
-
 async function fetchProductDetail() {
   const productDetail = document.getElementById("product-detail");
   if (!productDetail) {
@@ -505,13 +504,13 @@ async function fetchProductDetail() {
 
   // Show loading state
   productDetail.innerHTML = `
-    <div class="flex items-center justify-center min-h-screen bg-red-50">
-      <div class="text-center">
-        <div class="w-12 h-12 border-4 border-red-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
-        <p class="mt-4 text-red-800 font-medium">Loading product details...</p>
-      </div>
-    </div>
-  `;
+        <div class="flex items-center justify-center min-h-screen bg-red-50">
+          <div class="text-center">
+            <div class="w-12 h-12 border-4 border-red-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+            <p class="mt-4 text-red-800 font-medium">Loading product details...</p>
+          </div>
+        </div>
+      `;
 
   const params = new URLSearchParams(window.location.search);
   const categoryId = params.get("id");
@@ -519,19 +518,19 @@ async function fetchProductDetail() {
 
   if (!categoryId) {
     productDetail.innerHTML = `
-      <div class="flex items-center justify-center min-h-screen bg-red-50">
-        <div class="text-center max-w-md p-6 bg-white rounded-xl shadow-lg">
-          <div class="text-red-500 text-4xl mb-4">
-            <i class="fas fa-exclamation-triangle"></i>
+          <div class="flex items-center justify-center min-h-screen bg-red-50">
+            <div class="text-center max-w-md p-6 bg-white rounded-xl shadow-lg">
+              <div class="text-red-500 text-4xl mb-4">
+                <i class="fas fa-exclamation-triangle"></i>
+              </div>
+              <h2 class="text-2xl font-bold text-red-800 mb-2">Category Not Found</h2>
+              <p class="text-gray-600 mb-6">The requested category could not be located.</p>
+              <a href="products.html" class="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
+                <i class="fas fa-arrow-left mr-2"></i> Back to Categories
+              </a>
+            </div>
           </div>
-          <h2 class="text-2xl font-bold text-red-800 mb-2">Category Not Found</h2>
-          <p class="text-gray-600 mb-6">The requested category could not be located.</p>
-          <a href="products.html" class="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
-            <i class="fas fa-arrow-left mr-2"></i> Back to Categories
-          </a>
-        </div>
-      </div>
-    `;
+        `;
     return;
   }
 
@@ -554,19 +553,19 @@ async function fetchProductDetail() {
       document.referrer.includes("dashboard") || source === "dashboard";
     if (category.status?.toLowerCase() !== "active" && !isFromDashboard) {
       productDetail.innerHTML = `
-        <div class="flex items-center justify-center min-h-screen bg-red-50">
-          <div class="text-center max-w-md p-6 bg-white rounded-xl shadow-lg">
-            <div class="text-red-500 text-4xl mb-4">
-              <i class="fas fa-pause-circle"></i>
+            <div class="flex items-center justify-center min-h-screen bg-red-50">
+              <div class="text-center max-w-md p-6 bg-white rounded-xl shadow-lg">
+                <div class="text-red-500 text-4xl mb-4">
+                  <i class="fas fa-pause-circle"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-red-800 mb-2">Category Inactive</h2>
+                <p class="text-gray-600 mb-6">This category is currently not available for viewing.</p>
+                <a href="products.html" class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition">
+                  <i class="fas fa-arrow-left mr-2"></i> Back to Categories
+                </a>
+              </div>
             </div>
-            <h2 class="text-2xl font-bold text-red-800 mb-2">Category Inactive</h2>
-            <p class="text-gray-600 mb-6">This category is currently not available for viewing.</p>
-            <a href="products.html" class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition">
-              <i class="fas fa-arrow-left mr-2"></i> Back to Categories
-            </a>
-          </div>
-        </div>
-      `;
+          `;
       return;
     }
 
@@ -580,186 +579,242 @@ async function fetchProductDetail() {
     }
     const productTypes = await typesResponse.json();
 
-    const filteredProductTypes = Array.isArray(productTypes)
+    // Extract product types array, handling nested structure
+    const rawProductTypes = Array.isArray(productTypes)
       ? productTypes
-          .filter((type) => String(type.category_id) === String(categoryId))
-          .map((type) => ({
-            ...type,
-            images: Array.isArray(type.colors)
-              ? type.colors.flatMap((color) =>
-                  Array.isArray(color.images)
-                    ? color.images.map((img) => img.image_url).filter(Boolean)
-                    : []
-                )
-              : ["./images/placeholder.jpg"],
-            sizes: Array.isArray(type.sizes)
-              ? type.sizes
-                  .map((s) => (typeof s === "string" ? s : s.size))
-                  .filter(Boolean)
-              : [],
-            colors: Array.isArray(type.colors)
-              ? type.colors
-                  .map((c) => (typeof c === "string" ? c : c.color))
-                  .filter(Boolean)
-              : [],
-          }))
-      : [];
+      : productTypes.category || [];
+    const filteredProductTypes = rawProductTypes
+      .filter(
+        (type) =>
+          type.category && String(type.category.id) === String(categoryId)
+      )
+      .map((type) => ({
+        ...type,
+        images: Array.isArray(type.colors)
+          ? type.colors.flatMap((color) =>
+              Array.isArray(color.images)
+                ? color.images.map((img) => img.image_url).filter(Boolean)
+                : []
+            )
+          : ["./images/placeholder.jpg"],
+        cover_image:
+          type.cover_image_url ||
+          type.images?.[0] ||
+          "./images/placeholder.jpg",
+        sizes: Array.isArray(type.sizes)
+          ? type.sizes
+              .map((s) => (typeof s === "string" ? s : s.size))
+              .filter(Boolean)
+          : [],
+        colors: Array.isArray(type.colors)
+          ? type.colors
+              .map((c) => (typeof c === "string" ? c : c.color))
+              .filter(Boolean)
+          : [],
+      }));
+
+    console.log("Filtered Product Types:", filteredProductTypes);
 
     // Render the page
     productDetail.innerHTML = `
-      <div class="min-h-screen bg-red-50">
-        <!-- Hero Section -->
-        <div class="bg-gradient-to-r from-red-600 to-red-800 text-white py-16 px-4 text-center">
-          <nav class="flex justify-center items-center mb-8">
-            <a href="products.html" class="text-red-100 hover:text-white transition">
-              <i class="fas fa-home mr-1"></i> Categories
-            </a>
-            <span class="mx-2">/</span>
-            <span class="font-semibold">${category.name}</span>
-          </nav>
-          
-          <h1 class="text-4xl md:text-5xl font-bold mb-4">${category.name}</h1>
-          <p class="text-xl text-red-100">Premium quality products crafted for excellence</p>
-        </div>
-
-        <!-- Category Section -->
-        <div class="max-w-6xl mx-auto px-4 py-12">
-          <div class="flex flex-col md:flex-row gap-8 items-center bg-white rounded-xl shadow-md overflow-hidden">
-            <div class="md:w-1/2">
-              <img src="${category.image_url || "./images/placeholder.jpg"}" 
-                   alt="${category.name}" 
-                   class="w-full h-64 md:h-96 object-cover hover:scale-105 transition duration-300" />
+          <div class="min-h-screen bg-red-50">
+            <!-- Hero Section -->
+            <div class="bg-gradient-to-r from-red-600 to-red-800 text-white py-16 px-4 text-center">
+              <nav class="flex justify-center items-center mb-8">
+                <a href="products.html" class="text-red-100 hover:text-white transition">
+                  <i class="fas fa-home mr-1"></i> Categories
+                </a>
+                <span class="mx-2">/</span>
+                <span class="font-semibold">${category.name}</span>
+              </nav>
+              <h1 class="text-4xl md:text-5xl font-bold mb-4">${
+                category.name
+              }</h1>
+              <p class="text-xl text-red-100">Premium quality products crafted for excellence</p>
             </div>
-            
-            <div class="md:w-1/2 p-6">
-              <h2 class="text-3xl font-bold text-red-800 mb-4">About ${category.name}</h2>
-              <p class="text-gray-600 leading-relaxed">
-                ${category.description || "Discover our comprehensive range of high-quality products designed to meet your specific needs."}
-              </p>
-            </div>
-          </div>
-        </div>
 
-        <!-- Products Section -->
-        <div class="max-w-6xl mx-auto px-4 py-8">
-          <div class="flex justify-between items-center mb-8">
-            <h2 class="text-2xl font-bold text-gray-800">
-              <i class="fas fa-box-open mr-2"></i>
-              Product Collection
-            </h2>
-            <span class="bg-red-600 text-white px-3 py-1 rounded-full text-sm">
-              ${filteredProductTypes.length} ${filteredProductTypes.length === 1 ? 'Product' : 'Products'}
-            </span>
-          </div>
-          
-          ${filteredProductTypes.length ? `
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              ${filteredProductTypes.map((type, index) => `
-                <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition duration-300">
-                  <div class="relative h-48 overflow-hidden">
-                    <img src="${type.images[0] || "./images/placeholder.jpg"}" 
-                         alt="${type.name}" 
-                         class="w-full h-full object-cover" />
-                    <div class="absolute top-0 right-0 p-2">
-                      ${type.colors.length ? `<span class="bg-white text-red-600 text-xs px-2 py-1 rounded-full">${type.colors.length} Colors</span>` : ''}
-                      ${type.sizes.length ? `<span class="bg-white text-red-600 text-xs px-2 py-1 rounded-full ml-1">${type.sizes.length} Sizes</span>` : ''}
-                    </div>
-                  </div>
-                  
-                  <div class="p-4">
-                    <h3 class="text-xl font-bold text-gray-600 mb-2">${type.name}</h3>
-                    
-                    
-                    <div class="mb-4">
-                      ${type.colors.length ? `
-                        <div class="flex items-center mb-2">
-                          <span class="text-sm font-medium text-gray-700 mr-2">Colors:</span>
-                          <div class="flex">
-                            ${type.colors.slice(0, 4).map(color => `
-                              <div class="w-5 h-5 rounded-full border border-gray-200 ml-1" 
-                                   style="background-color: ${color.toLowerCase()}" 
-                                   title="${color}"></div>
-                            `).join('')}
-                            ${type.colors.length > 4 ? `<span class="text-xs text-red-600 ml-1">+${type.colors.length - 4}</span>` : ''}
-                          </div>
-                        </div>
-                      ` : ''}
-                      
-                      ${type.sizes.length ? `
-                        <div class="flex items-center">
-                          <span class="text-sm font-medium text-gray-700 mr-2">Sizes:</span>
-                          <div class="flex flex-wrap">
-                            ${type.sizes.slice(0, 3).map(size => `
-                              <span class="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded mr-1 mb-1">${size}</span>
-                            `).join('')}
-                            ${type.sizes.length > 3 ? `<span class="text-xs text-red-600 ml-1">+${type.sizes.length - 3}</span>` : ''}
-                          </div>
-                        </div>
-                      ` : ''}
-                    </div>
-                    
-                    <a href="type-detail.html?id=${type.id}&category_id=${categoryId}" 
-                       class="flex items-center justify-center bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg transition">
-                      <span>View Details</span>
-                      <i class="fas fa-arrow-right ml-2"></i>
-                    </a>
-                  </div>
+            <!-- Category Section -->
+            <div class="max-w-6xl mx-auto px-4 py-12">
+              <div class="flex flex-col md:flex-row gap-8 items-center bg-white rounded-xl shadow-md overflow-hidden">
+                <div class="md:w-1/2">
+                  <img src="${category.image_url || "./images/placeholder.jpg"}"
+                       alt="${category.name}"
+                       class="w-full h-64 md:h-96 object-cover hover:scale-105 transition duration-300" />
                 </div>
-              `).join('')}
-            </div>
-          ` : `
-            <div class="text-center py-12">
-              <div class="text-red-500 text-5xl mb-4">
-                <i class="fas fa-box-open"></i>
+                <div class="md:w-1/2 p-6">
+                  <h2 class="text-3xl font-bold text-red-800 mb-4">About ${
+                    category.name
+                  }</h2>
+                  <p class="text-gray-600 leading-relaxed">
+                    ${
+                      category.description ||
+                      "Discover our comprehensive range of high-quality products designed to meet your specific needs."
+                    }
+                  </p>
+                </div>
               </div>
-              <h3 class="text-2xl font-bold text-red-800 mb-2">No Products Available</h3>
-              <p class="text-gray-600">This category doesn't have any products yet. Check back later for updates.</p>
             </div>
-          `}
-          
-          <div class="text-center mt-8">
-            <a href="products.html" 
-               class="inline-flex items-center px-4 py-2 border border-red-600 text-red-600 rounded-lg hover:bg-red-600 hover:text-white transition">
-              <i class="fas fa-arrow-left mr-2"></i>
-              Back to Categories
-            </a>
-          </div>
-        </div>
-      </div>
-    `;
 
-    // <p class="text-gray-600 mb-4 line-clamp-2">
-    //                   ${type.description || "Discover the exceptional quality and craftsmanship of this premium product."}
-    //                 </p>
+            <!-- Products Section -->
+            <div class="max-w-6xl mx-auto px-4 py-8">
+              <div class="flex justify-between items-center mb-8">
+                <h2 class="text-2xl font-bold text-gray-800">
+                  <i class="fas fa-box-open mr-2"></i>
+                  Product Collection
+                </h2>
+                <span class="bg-red-600 text-white px-3 py-1 rounded-full text-sm">
+                  ${filteredProductTypes.length} ${
+      filteredProductTypes.length === 1 ? "Product" : "Products"
+    }
+                </span>
+              </div>
+              ${
+                filteredProductTypes.length
+                  ? `
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  ${filteredProductTypes
+                    .map(
+                      (type, index) => `
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition duration-300">
+                      <div class="relative h-48 overflow-hidden">
+                        <img src="${type.cover_image}"
+                             alt="${type.name}"
+                             class="w-full h-full object-cover" />
+                        <div class="absolute top-0 right-0 p-2">
+                          ${
+                            type.colors.length
+                              ? `<span class="bg-white text-red-600 text-xs px-2 py-1 rounded-full">${type.colors.length} Colors</span>`
+                              : ""
+                          }
+                          ${
+                            type.sizes.length
+                              ? `<span class="bg-white text-red-600 text-xs px-2 py-1 rounded-full ml-1">${type.sizes.length} Sizes</span>`
+                              : ""
+                          }
+                        </div>
+                      </div>
+                      <div class="p-4">
+                        <h3 class="text-xl font-bold text-gray-600 mb-2">${
+                          type.name
+                        }</h3>
+                        <div class="mb-4">
+                          ${
+                            type.colors.length
+                              ? `
+                            <div class="flex items-center mb-2">
+                              <span class="text-sm font-medium text-gray-700 mr-2">Colors:</span>
+                              <div class="flex">
+                                ${type.colors
+                                  .slice(0, 4)
+                                  .map(
+                                    (color) => `
+                                  <div class="w-5 h-5 rounded-full border border-gray-200 ml-1"
+                                       style="background-color: ${color.toLowerCase()}"
+                                       title="${color}"></div>
+                                `
+                                  )
+                                  .join("")}
+                                ${
+                                  type.colors.length > 4
+                                    ? `<span class="text-xs text-red-600 ml-1">+${
+                                        type.colors.length - 4
+                                      }</span>`
+                                    : ""
+                                }
+                              </div>
+                            </div>
+                          `
+                              : ""
+                          }
+                          ${
+                            type.sizes.length
+                              ? `
+                            <div class="flex items-center">
+                              <span class="text-sm font-medium text-gray-700 mr-2">Sizes:</span>
+                              <div class="flex flex-wrap">
+                                ${type.sizes
+                                  .slice(0, 3)
+                                  .map(
+                                    (size) => `
+                                  <span class="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded mr-1 mb-1">${size}</span>
+                                `
+                                  )
+                                  .join("")}
+                                ${
+                                  type.sizes.length > 3
+                                    ? `<span class="text-xs text-red-600 ml-1">+${
+                                        type.sizes.length - 3
+                                      }</span>`
+                                    : ""
+                                }
+                              </div>
+                            </div>
+                          `
+                              : ""
+                          }
+                        </div>
+                        <a href="type-detail.html?id=${
+                          type.id
+                        }&category_id=${categoryId}"
+                           class="flex items-center justify-center bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg transition">
+                          <span>View Details</span>
+                          <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                      </div>
+                    </div>
+                  `
+                    )
+                    .join("")}
+                </div>
+              `
+                  : `
+                <div class="text-center py-12">
+                  <div class="text-red-500 text-5xl mb-4">
+                    <i class="fas fa-box-open"></i>
+                  </div>
+                  <h3 class="text-2xl font-bold text-red-800 mb-2">No Products Available</h3>
+                  <p class="text-gray-600">This category doesn't have any products yet. Check back later for updates.</p>
+                </div>
+              `
+              }
+              <div class="text-center mt-8">
+                <a href="products.html"
+                   class="inline-flex items-center px-4 py-2 border border-red-600 text-red-600 rounded-lg hover:bg-red-600 hover:text-white transition">
+                  <i class="fas fa-arrow-left mr-2"></i>
+                  Back to Categories
+                </a>
+              </div>
+            </div>
+          </div>
+        `;
 
     // Add Font Awesome if not already present
     if (!document.querySelector('link[href*="font-awesome"]')) {
-      const fontAwesome = document.createElement('link');
-      fontAwesome.rel = 'stylesheet';
-      fontAwesome.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css';
+      const fontAwesome = document.createElement("link");
+      fontAwesome.rel = "stylesheet";
+      fontAwesome.href =
+        "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css";
       document.head.appendChild(fontAwesome);
     }
-
   } catch (error) {
     console.error("Error loading product details:", error);
     productDetail.innerHTML = `
-      <div class="flex items-center justify-center min-h-screen bg-red-50">
-        <div class="text-center max-w-md p-6 bg-white rounded-xl shadow-lg">
-          <div class="text-red-500 text-4xl mb-4">
-            <i class="fas fa-exclamation-triangle"></i>
+          <div class="flex items-center justify-center min-h-screen bg-red-50">
+            <div class="text-center max-w-md p-6 bg-white rounded-xl shadow-lg">
+              <div class="text-red-500 text-4xl mb-4">
+                <i class="fas fa-exclamation-triangle"></i>
+              </div>
+              <h2 class="text-2xl font-bold text-red-800 mb-2">Error Loading Products</h2>
+              <p class="text-gray-600 mb-6">${error.message}</p>
+              <button onclick="fetchProductDetail()"
+                      class="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
+                <i class="fas fa-refresh mr-2"></i> Try Again
+              </button>
+            </div>
           </div>
-          <h2 class="text-2xl font-bold text-red-800 mb-2">Error Loading Products</h2>
-          <p class="text-gray-600 mb-6">${error.message}</p>
-          <button onclick="fetchProductDetail()" 
-                  class="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
-            <i class="fas fa-refresh mr-2"></i> Try Again
-          </button>
-        </div>
-      </div>
-    `;
+        `;
   }
 }
-
 
 class ProductDetailManager {
   constructor() {
@@ -779,13 +834,18 @@ class ProductDetailManager {
   }
 
   setupEventListeners() {
-    document.addEventListener("keydown", (e) => this.handleKeyboardNavigation(e));
+    document.addEventListener("keydown", (e) =>
+      this.handleKeyboardNavigation(e)
+    );
     window.addEventListener("resize", () => this.handleWindowResize());
   }
 
   async fetchProductDetail() {
     const typeDetail = document.getElementById("type-detail");
-    if (!typeDetail) return;
+    if (!typeDetail) {
+      console.error("type-detail element not found");
+      return;
+    }
 
     const params = new URLSearchParams(window.location.search);
     const typeId = params.get("id");
@@ -809,12 +869,16 @@ class ProductDetailManager {
         { headers, timeout: 10000 }
       );
       if (!productResponse.ok) {
-        throw new Error(`API Error: ${productResponse.status} ${productResponse.statusText}`);
+        throw new Error(
+          `API Error: ${productResponse.status} ${productResponse.statusText}`
+        );
       }
       const product = await productResponse.json();
 
       if (!this.validateProduct(product, categoryId)) {
-        this.renderError("This product does not belong to the specified category.");
+        this.renderError(
+          "This product does not belong to the specified category."
+        );
         return;
       }
 
@@ -824,12 +888,17 @@ class ProductDetailManager {
         { headers, timeout: 10000 }
       );
       if (!relatedResponse.ok) {
-        throw new Error(`Failed to fetch related products: ${relatedResponse.status}`);
+        throw new Error(
+          `Failed to fetch related products: ${relatedResponse.status}`
+        );
       }
       const relatedProducts = await relatedResponse.json();
 
       this.product = this.processProductData(product);
-      this.relatedProducts = this.processRelatedProducts(relatedProducts, typeId);
+      this.relatedProducts = this.processRelatedProducts(
+        relatedProducts,
+        typeId
+      );
       this.renderProductDetail();
       this.initializeInteractions();
       this.trackProductView();
@@ -851,7 +920,9 @@ class ProductDetailManager {
   }
 
   validateProduct(product, expectedCategoryId) {
-    const productCategoryId = String(product.category_id);
+    const productCategoryId = String(
+      product.category?.id || product.category_id || ""
+    );
     const categoryId = String(expectedCategoryId);
     return productCategoryId === categoryId;
   }
@@ -860,35 +931,56 @@ class ProductDetailManager {
     const processedProduct = {
       ...rawProduct,
       sizes: this.processSizes(rawProduct.sizes),
-      colors: this.processColorsWithImages(rawProduct.colors),
+      colors: this.processColorsWithImages(rawProduct.colors || []),
       price: this.formatPrice(rawProduct.price),
-      rating: this.calculateRating(rawProduct.reviews),
-      availability: this.checkAvailability(rawProduct.stock),
+      rating: this.calculateRating(rawProduct.reviews || []),
+      availability: this.checkAvailability(rawProduct.stock || 0),
       description: rawProduct.description || "No description available",
-      features: Array.isArray(rawProduct.features) && rawProduct.features.length
-        ? rawProduct.features
-        : [
-            "High-quality durable material",
-            "Ergonomic design for comfort",
-            "Water-resistant coating",
-            "Easy to clean and maintain",
-            "Eco-friendly production",
-          ],
-      specifications: Array.isArray(rawProduct.specifications) && rawProduct.specifications.length
-        ? rawProduct.specifications
-        : [
-            { key: "Material", value: "Premium Synthetic Fabric" },
-            { key: "Weight", value: "1.2 kg" },
-            { key: "Dimensions", value: "30 x 20 x 10 cm" },
-            { key: "Warranty", value: "2 Years" },
-            { key: "Color Options", value: rawProduct.colors?.length || "Multiple" },
-          ],
+      features:
+        Array.isArray(rawProduct.features) && rawProduct.features.length
+          ? rawProduct.features
+          : [
+              "High-quality durable material",
+              "Ergonomic design for comfort",
+              "Water-resistant coating",
+              "Easy to clean and maintain",
+              "Eco-friendly production",
+            ],
+      specifications:
+        Array.isArray(rawProduct.specifications) &&
+        rawProduct.specifications.length
+          ? rawProduct.specifications.map((spec, index) => ({
+              id: `spec-${index}`,
+              items: [
+                { key: "Color", value: spec.color || "N/A" },
+                { key: "Capacity", value: spec.capacity || "N/A" },
+                { key: "Material", value: spec.material || "N/A" },
+                { key: "Dimensions", value: spec.dimensions_cm || "N/A" },
+                {
+                  key: "Package Content",
+                  value: spec.package_content || "N/A",
+                },
+              ].filter((item) => item.value !== "N/A"),
+            }))
+          : [
+              { key: "Material", value: "Premium Synthetic Fabric" },
+              { key: "Weight", value: "1.2 kg" },
+              { key: "Dimensions", value: "30 x 20 x 10 cm" },
+              { key: "Warranty", value: "2 Years" },
+              {
+                key: "Color Options",
+                value:
+                  (rawProduct.colors?.length || 0) > 0
+                    ? rawProduct.colors.length
+                    : "Multiple",
+              },
+            ],
     };
 
     processedProduct.displayImages =
       processedProduct.colors.length > 0
         ? processedProduct.colors[this.currentSelectedColorIndex].images
-        : ["./images/placeholder.jpg"];
+        : [rawProduct.cover_image_url || "./images/placeholder.jpg"];
 
     return processedProduct;
   }
@@ -906,7 +998,7 @@ class ProductDetailManager {
                 ? color.images.map((img) => img.image_url).filter(Boolean)
                 : []
             )
-          : ["./images/placeholder.jpg"],
+          : [type.cover_image_url || "./images/placeholder.jpg"],
         sizes: Array.isArray(type.sizes)
           ? type.sizes
               .map((s) => (typeof s === "string" ? s : s.size))
@@ -926,7 +1018,8 @@ class ProductDetailManager {
 
     return colors
       .map((colorObj) => {
-        const colorName = typeof colorObj === "string" ? colorObj : colorObj?.color;
+        const colorName =
+          typeof colorObj === "string" ? colorObj : colorObj?.color;
         const rawImages = colorObj?.images || [];
 
         const processedImages = rawImages
@@ -938,7 +1031,10 @@ class ProductDetailManager {
           name: colorName,
           hex: this.getColorHex(colorName),
           textColor: this.getTextColor(colorName),
-          images: processedImages.length > 0 ? processedImages : ["./images/placeholder.jpg"],
+          images:
+            processedImages.length > 0
+              ? processedImages
+              : ["./images/placeholder.jpg"],
         };
       })
       .filter((color) => color.name);
@@ -974,7 +1070,9 @@ class ProductDetailManager {
 
   getTextColor(colorName) {
     const lightColors = ["white", "yellow", "lightgray", "pink", "orange"];
-    return lightColors.includes(colorName.toLowerCase()) ? "#000000" : "#ffffff";
+    return lightColors.includes(colorName.toLowerCase())
+      ? "#000000"
+      : "#ffffff";
   }
 
   formatPrice(price) {
@@ -988,12 +1086,15 @@ class ProductDetailManager {
 
   calculateRating(reviews) {
     if (!Array.isArray(reviews) || reviews.length === 0) return 0;
-    const total = reviews.reduce((sum, review) => sum + (review.rating || 0), 0);
+    const total = reviews.reduce(
+      (sum, review) => sum + (review.rating || 0),
+      0
+    );
     return Math.round((total / reviews.length) * 10) / 10;
   }
 
   checkAvailability(stock) {
-    if (!stock || stock === 0) return "in-stock";
+    if (!stock || stock === 0) return "out-of-stock";
     if (stock < 10) return "low-stock";
     return "in-stock";
   }
@@ -1001,49 +1102,56 @@ class ProductDetailManager {
   showLoadingState() {
     const typeDetail = document.getElementById("type-detail");
     typeDetail.innerHTML = `
-      <div class="animate-pulse">
-        <div class="bg-white rounded-2xl p-8 shadow-xl">
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            <div class="space-y-4">
-              <div class="bg-gray-300 h-96 rounded-xl"></div>
-              <div class="flex space-x-2">
-                ${Array(4).fill().map(() => '<div class="bg-gray-300 w-16 h-16 rounded-lg"></div>').join("")}
+          <div class="animate-pulse">
+            <div class="bg-white rounded-2xl p-8 shadow-xl">
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <div class="space-y-4">
+                  <div class="bg-gray-300 h-96 rounded-xl"></div>
+                  <div class="flex space-x-2">
+                    ${Array(4)
+                      .fill()
+                      .map(
+                        () =>
+                          '<div class="bg-gray-300 w-16 h-16 rounded-lg"></div>'
+                      )
+                      .join("")}
+                  </div>
+                </div>
+                <div class="space-y-6">
+                  <div class="bg-gray-300 h-8 rounded"></div>
+                  <div class="bg-gray-300 h-6 w-1/2 rounded"></div>
+                  <div class="bg-gray-300 h-20 rounded"></div>
+                  <div class="bg-gray-300 h-12 w-1/3 rounded"></div>
+                </div>
               </div>
             </div>
-            <div class="space-y-6">
-              <div class="bg-gray-300 h-8 rounded"></div>
-              <div class="bg-gray-300 h-6 w-1/2 rounded"></div>
-              <div class="bg-gray-300 h-20 rounded"></div>
-              <div class="bg-gray-300 h-12 w-1/3 rounded"></div>
-            </div>
           </div>
-        </div>
-      </div>
-    `;
+        `;
   }
 
   renderProductDetail() {
     const typeDetail = document.getElementById("type-detail");
-    const product = this.product;
+    if (!typeDetail) return;
 
+    const product = this.product;
     typeDetail.innerHTML = `
-      <div class="bg-white rounded-2xl shadow-2xl overflow-hidden animate-slide-in">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-0">
-          <div id="image-gallery-section" class="p-8 bg-gradient-to-br from-gray-50 to-gray-100">
-            ${this.renderImageGallery()}
+          <div class="bg-white rounded-2xl shadow-2xl overflow-hidden animate-slide-in">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-0">
+              <div id="image-gallery-section" class="p-8 bg-gradient-to-br from-gray-50 to-gray-100">
+                ${this.renderImageGallery()}
+              </div>
+              <div id="product-info-section" class="p-8 sticky top-20">
+                ${this.renderProductInfo()}
+              </div>
+            </div>
+            <div class="border-t border-gray-200 p-8 bg-gray-50">
+              ${this.renderAdditionalDetails()}
+            </div>
+            <div class="p-8">
+              ${this.renderRelatedProducts()}
+            </div>
           </div>
-          <div id="product-info-section" class="p-8 sticky top-20">
-            ${this.renderProductInfo()}
-          </div>
-        </div>
-        <div class="border-t border-gray-200 p-8 bg-gray-50">
-          ${this.renderAdditionalDetails()}
-        </div>
-        <div class="p-8">
-          ${this.renderRelatedProducts()}
-        </div>
-      </div>
-    `;
+        `;
   }
 
   renderImageGallery() {
@@ -1051,155 +1159,174 @@ class ProductDetailManager {
     const imagesToDisplay = product.displayImages;
 
     return `
-      <div class="space-y-4">
-        <div class="relative group">
-          <div class="aspect-w-1 aspect-h-1 bg-white rounded-xl overflow-hidden shadow-lg">
-            <img id="main-image"
-                 src="${imagesToDisplay[this.currentImageIndex]}"
-                 alt="${product.name}"
-                 class="w-full h-96 object-cover cursor-zoom-in transition-transform duration-300 group-hover:scale-105">
-          </div>
-          <div class="absolute top-4 right-4 space-y-2">
-            <button id="fullscreen-image" class="bg-white bg-opacity-80 hover:bg-opacity-100 p-2 rounded-full shadow-md transition-all duration-300">
-              <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
-              </svg>
-            </button>
-          </div>
-          ${
-            imagesToDisplay.length > 1
-              ? `
-              <button id="prev-image" class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100 p-2 rounded-full shadow-md transition-all duration-300">
-                <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                </svg>
-              </button>
-              <button id="next-image" class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100 p-2 rounded-full shadow-md transition-all duration-300">
-                <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                </svg>
-              </button>
-              `
-              : ""
-          }
-        </div>
-        ${
-          imagesToDisplay.length > 1
-            ? `
-            <div class="flex space-x-2 overflow-x-auto pb-2">
-              ${imagesToDisplay
-                .map(
-                  (image, index) => `
-                  <img src="${image}"
-                       alt="${product.name} ${index + 1}"
-                       class="thumbnail w-16 h-16 object-cover rounded-lg cursor-pointer border-2 border-transparent hover:border-blue-500 transition-all duration-300 flex-shrink-0 ${
-                         index === this.currentImageIndex ? "border-blue-500" : ""
-                       }"
-                       data-index="${index}">
-                `
-                )
-                .join("")}
+          <div class="space-y-4">
+            <div class="relative group">
+              <div class="aspect-w-1 aspect-h-1 bg-white rounded-xl overflow-hidden shadow-lg">
+                <img id="main-image"
+                     src="${
+                       imagesToDisplay[this.currentImageIndex] ||
+                       "./images/placeholder.jpg"
+                     }"
+                     alt="${product.name}"
+                     class="w-full h-96 object-cover cursor-zoom-in transition-transform duration-300 group-hover:scale-105">
+              </div>
+              <div class="absolute top-4 right-4 space-y-2">
+                <button id="fullscreen-image" class="bg-white bg-opacity-80 hover:bg-opacity-100 p-2 rounded-full shadow-md transition-all duration-300">
+                  <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
+                  </svg>
+                </button>
+              </div>
+              ${
+                imagesToDisplay.length > 1
+                  ? `
+                  <button id="prev-image" class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100 p-2 rounded-full shadow-md transition-all duration-300">
+                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                    </svg>
+                  </button>
+                  <button id="next-image" class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100 p-2 rounded-full shadow-md transition-all duration-300">
+                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                  </button>
+                  `
+                  : ""
+              }
             </div>
-            `
-            : ""
-        }
-        <div class="text-center text-sm text-gray-500">
-          <span id="image-counter">${this.currentImageIndex + 1}</span> / ${imagesToDisplay.length}
-        </div>
-      </div>
-    `;
+            ${
+              imagesToDisplay.length > 1
+                ? `
+                <div class="flex space-x-2 overflow-x-auto pb-2">
+                  ${imagesToDisplay
+                    .map(
+                      (image, index) => `
+                      <img src="${image || "./images/placeholder.jpg"}"
+                           alt="${product.name} ${index + 1}"
+                           class="thumbnail w-16 h-16 object-cover rounded-lg cursor-pointer border-2 border-transparent hover:border-blue-500 transition-all duration-300 flex-shrink-0 ${
+                             index === this.currentImageIndex
+                               ? "border-blue-500"
+                               : ""
+                           }"
+                           data-index="${index}">
+                    `
+                    )
+                    .join("")}
+                </div>
+                `
+                : ""
+            }
+            <div class="text-center text-sm text-gray-500">
+              <span id="image-counter">${this.currentImageIndex + 1}</span> / ${
+      imagesToDisplay.length || 1
+    }
+            </div>
+          </div>
+        `;
   }
 
   renderProductInfo() {
     const product = this.product;
 
     return `
-      <div class="space-y-6">
-        <div>
-          <h1 class="text-3xl font-bold text-gray-900 mb-2">${product.name}</h1>
-          <div class="flex items-center space-x-2">
-            <span class="text-2xl font-semibold text-gray-900">${product.price}</span>
-            <span class="${this.getAvailabilityClass(product.availability)} text-sm font-medium px-2 py-1 rounded-full">
-              ${this.getAvailabilityText(product.availability)}
-            </span>
+          <div class="space-y-6">
+            <div>
+              <h1 class="text-3xl font-bold text-gray-900 mb-2">${
+                product.name || "Unnamed Product"
+              }</h1>
+              <div class="flex items-center space-x-2">
+                <span class="text-2xl font-semibold text-gray-900">${
+                  product.price || "N/A"
+                }</span>
+                <span class="${this.getAvailabilityClass(
+                  product.availability
+                )} text-sm font-medium px-2 py-1 rounded-full">
+                  ${this.getAvailabilityText(product.availability)}
+                </span>
+              </div>
+              <div class="flex items-center mt-2">${this.renderStarRating(
+                product.rating
+              )}</div>
+            </div>
+            ${
+              product.sizes.length > 0
+                ? `
+                <div>
+                  <h3 class="text-lg font-semibold text-gray-900 text-start mb-3">Available Sizes</h3>
+                  <div class="flex flex-wrap gap-2">
+                    ${product.sizes
+                      .map(
+                        (size) => `
+                        <span class="px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 hover:bg-gray-100 transition-all duration-300">
+                          ${size}
+                        </span>
+                      `
+                      )
+                      .join("")}
+                  </div>
+                </div>
+                `
+                : ""
+            }
+            ${
+              product.colors.length > 0
+                ? `
+                <div>
+                  <h3 class="text-lg text-start font-semibold text-gray-900 mb-3">Available Colors</h3>
+                  <div id="product-colors-container" class="flex flex-wrap gap-3">
+                    ${product.colors
+                      .map(
+                        (color, index) => `
+                        <button type="button"
+                                class="color-swatch relative w-12 h-12 rounded-full border-2 border-gray-300 flex items-center justify-center hover:scale-110 transition-all duration-300
+                                  ${
+                                    index === this.currentSelectedColorIndex
+                                      ? "ring-2 ring-offset-2 ring-blue-500"
+                                      : ""
+                                  }"
+                                style="background-color: ${color.hex};"
+                                title="${color.name}"
+                                data-color-index="${index}">
+                          <span class="sr-only">${color.name}</span>
+                          ${
+                            index === this.currentSelectedColorIndex
+                              ? '<svg class="w-6 h-6 text-white text-shadow-sm" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>'
+                              : ""
+                          }
+                        </button>
+                      `
+                      )
+                      .join("")}
+                  </div>
+                </div>
+                `
+                : ""
+            }
           </div>
-          <div class="flex items-center mt-2">${this.renderStarRating(product.rating)}</div>
-        </div>
-        ${
-          product.sizes.length > 0
-            ? `
-            <div>
-              <h3 class="text-lg font-semibold text-gray-900 text-start mb-3">Available Sizes</h3>
-              <div class="flex flex-wrap gap-2">
-                ${product.sizes
-                  .map(
-                    (size) => `
-                    <span class="px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 hover:bg-gray-100 transition-all duration-300">
-                      ${size}
-                    </span>
-                  `
-                  )
-                  .join("")}
-              </div>
-            </div>
-            `
-            : ""
-        }
-        ${
-          product.colors.length > 0
-            ? `
-            <div>
-              <h3 class="text-lg text-start font-semibold text-gray-900 mb-3">Available Colors</h3>
-              <div id="product-colors-container" class="flex flex-wrap gap-3">
-                ${product.colors
-                  .map(
-                    (color, index) => `
-                    <button type="button"
-                            class="color-swatch relative w-12 h-12 rounded-full border-2 border-gray-300 flex items-center justify-center hover:scale-110 transition-all duration-300
-                              ${index === this.currentSelectedColorIndex ? "ring-2 ring-offset-2 ring-blue-500" : ""}"
-                            style="background-color: ${color.hex};"
-                            title="${color.name}"
-                            data-color-index="${index}">
-                      <span class="sr-only">${color.name}</span>
-                      ${
-                        index === this.currentSelectedColorIndex
-                          ? '<svg class="w-6 h-6 text-white text-shadow-sm" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>'
-                          : ""
-                      }
-                    </button>
-                  `
-                  )
-                  .join("")}
-              </div>
-            </div>
-            `
-            : ""
-        }
-      </div>
-    `;
+        `;
   }
 
   renderAdditionalDetails() {
     const product = this.product;
 
     return `
-      <div class="space-y-6 text-start">
-        <div class="flex  border-b border-gray-200">
-          <button class="tab-button text-start px-4 py-2 text-lg font-semibold text-gray-600 hover:text-blue-600 transition-all duration-300 ${
-            this.activeTab === "description" ? "tab-active" : ""
-          }" data-tab="description">Description</button>
-          <button class="tab-button px-4 py-2 text-lg font-semibold text-gray-600 hover:text-blue-600 transition-all duration-300 ${
-            this.activeTab === "features" ? "tab-active" : ""
-          }" data-tab="features">Features</button>
-          <button class="tab-button px-4 py-2 text-lg font-semibold text-gray-600 hover:text-blue-600 transition-all duration-300 ${
-            this.activeTab === "specifications" ? "tab-active" : ""
-          }" data-tab="specifications">Specifications</button>
-        </div>
-        <div id="tab-content" class="text-gray-600 leading-relaxed">
-          ${this.renderTabContent()}
-        </div>
-      </div>
-    `;
+          <div class="space-y-6 text-start">
+            <div class="flex border-b border-gray-200">
+              <button class="tab-button text-start px-4 py-2 text-lg font-semibold text-gray-600 hover:text-blue-600 transition-all duration-300 ${
+                this.activeTab === "description" ? "tab-active" : ""
+              }" data-tab="description">Description</button>
+              <button class="tab-button px-4 py-2 text-lg font-semibold text-gray-600 hover:text-blue-600 transition-all duration-300 ${
+                this.activeTab === "features" ? "tab-active" : ""
+              }" data-tab="features">Features</button>
+              <button class="tab-button px-4 py-2 text-lg font-semibold text-gray-600 hover:text-blue-600 transition-all duration-300 ${
+                this.activeTab === "specifications" ? "tab-active" : ""
+              }" data-tab="specifications">Specifications</button>
+            </div>
+            <div id="tab-content" class="text-gray-600 leading-relaxed">
+              ${this.renderTabContent()}
+            </div>
+          </div>
+        `;
   }
 
   renderTabContent() {
@@ -1207,45 +1334,57 @@ class ProductDetailManager {
     switch (this.activeTab) {
       case "description":
         return `
-          <div class="animate-slide-in">
-            <p>${product.description}</p>
-          </div>
-        `;
+              <div class="animate-slide-in">
+                <p>${product.description}</p>
+              </div>
+            `;
       case "features":
         return `
-          <div class="animate-slide-in">
-            ${
-              product.features.length > 0
-                ? `<ul class="list-disc pl-5 space-y-2">
-                    ${product.features
-                      .map((feature) => `<li>${feature}</li>`)
-                      .join("")}
-                  </ul>`
-                : "<p>No features available.</p>"
-            }
-          </div>
-        `;
+              <div class="animate-slide-in">
+                ${
+                  product.features.length > 0
+                    ? `<ul class="list-disc pl-5 space-y-2">
+                        ${product.features
+                          .map((feature) => `<li>${feature}</li>`)
+                          .join("")}
+                      </ul>`
+                    : "<p>No features available.</p>"
+                }
+              </div>
+            `;
       case "specifications":
         return `
-          <div class="animate-slide-in">
-            ${
-              product.specifications.length > 0
-                ? `<dl class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    ${product.specifications
-                      .map(
-                        (spec) => `
-                        <div>
-                          <dt class="font-semibold text-gray-900">${spec.key || "N/A"}:</dt>
-                          <dd>${spec.value || "N/A"}</dd>
+              <div class="animate-slide-in">
+                ${
+                  Array.isArray(product.specifications) &&
+                  product.specifications.length > 0
+                    ? product.specifications
+                        .map(
+                          (spec) => `
+                        <div class="mb-4 p-4 bg-gray-50 rounded-lg shadow-sm">
+                          <h4 class="font-semibold text-lg text-gray-800 mb-2">Specification ${
+                            spec.id.split("-")[1]
+                          }</h4>
+                          <dl class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            ${spec.items
+                              .map(
+                                (item) => `
+                              <div>
+                                <dt class="font-medium text-gray-700">${item.key}:</dt>
+                                <dd class="text-gray-900">${item.value}</dd>
+                              </div>
+                            `
+                              )
+                              .join("")}
+                          </dl>
                         </div>
                       `
-                      )
-                      .join("")}
-                  </dl>`
-                : "<p>No specifications available.</p>"
-            }
-          </div>
-        `;
+                        )
+                        .join("")
+                    : "<p>No specifications available.</p>"
+                }
+              </div>
+            `;
       default:
         return "";
     }
@@ -1253,125 +1392,138 @@ class ProductDetailManager {
 
   renderRelatedProducts() {
     return `
-      <div class="max-w-6xl mx-auto">
-        <h2 class="text-2xl font-bold text-gray-800 mb-8">
-          <i class="fas fa-box-open mr-2"></i>
-          Related Products
-        </h2>
-        ${
-          this.relatedProducts.length
-            ? `
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              ${this.relatedProducts
-                .map(
-                  (type) => `
-                  <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition duration-300">
-                    <div class="relative h-48 overflow-hidden">
-                      <img src="${type.images[0] || "./images/placeholder.jpg"}"
-                           alt="${type.name}"
-                           class="w-full h-full object-cover hover:scale-105 transition duration-300">
-                      <div class="absolute top-2 right-2">
-                        ${
-                          type.colors.length
-                            ? `<span class="bg-white text-red-600 text-xs px-2 py-1 rounded-full">${type.colors.length} Colors</span>`
-                            : ""
-                        }
-                        ${
-                          type.sizes.length
-                            ? `<span class="bg-white text-red-600 text-xs px-2 py-1 rounded-full ml-1">${type.sizes.length} Sizes</span>`
-                            : ""
-                        }
+          <div class="max-w-6xl mx-auto">
+            <h2 class="text-2xl font-bold text-gray-800 mb-8">
+              <i class="fas fa-box-open mr-2"></i>
+              Related Products
+            </h2>
+            ${
+              this.relatedProducts.length
+                ? `
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  ${this.relatedProducts
+                    .map(
+                      (type) => `
+                      <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition duration-300">
+                        <div class="relative h-48 overflow-hidden">
+                          <img src="${
+                            type.images[0] || "./images/placeholder.jpg"
+                          }"
+                               alt="${type.name}"
+                               class="w-full h-full object-cover hover:scale-105 transition duration-300">
+                          <div class="absolute top-2 right-2">
+                            ${
+                              type.colors.length
+                                ? `<span class="bg-white text-red-600 text-xs px-2 py-1 rounded-full">${type.colors.length} Colors</span>`
+                                : ""
+                            }
+                            ${
+                              type.sizes.length
+                                ? `<span class="bg-white text-red-600 text-xs px-2 py-1 rounded-full ml-1">${type.sizes.length} Sizes</span>`
+                                : ""
+                            }
+                          </div>
+                        </div>
+                        <div class="p-4">
+                          <h3 class="text-xl font-bold text-gray-800 mb-2">${
+                            type.name
+                          }</h3>
+                          <div class="mb-4">
+                            ${
+                              type.colors.length
+                                ? `
+                                <div class="flex items-center mb-2">
+                                  <span class="text-sm font-medium text-gray-700 mr-2">Colors:</span>
+                                  <div class="flex">
+                                    ${type.colors
+                                      .slice(0, 4)
+                                      .map(
+                                        (color) => `
+                                        <div class="w-5 h-5 rounded-full border border-gray-200 ml-1"
+                                             style="background-color: ${this.getColorHex(
+                                               color
+                                             )}"
+                                             title="${color}"></div>
+                                      `
+                                      )
+                                      .join("")}
+                                    ${
+                                      type.colors.length > 4
+                                        ? `<span class="text-xs text-blue-600 ml-1">+${
+                                            type.colors.length - 4
+                                          }</span>`
+                                        : ""
+                                    }
+                                  </div>
+                                </div>
+                                `
+                                : ""
+                            }
+                            ${
+                              type.sizes.length
+                                ? `
+                                <div class="flex items-center">
+                                  <span class="text-sm font-medium text-gray-700 mr-2">Sizes:</span>
+                                  <div class="flex flex-wrap">
+                                    ${type.sizes
+                                      .slice(0, 3)
+                                      .map(
+                                        (size) => `
+                                        <span class="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded mr-1 mb-1">${size}</span>
+                                      `
+                                      )
+                                      .join("")}
+                                    ${
+                                      type.sizes.length > 3
+                                        ? `<span class="text-xs text-blue-600 ml-1">+${
+                                            type.sizes.length - 3
+                                          }</span>`
+                                        : ""
+                                    }
+                                  </div>
+                                </div>
+                                `
+                                : ""
+                            }
+                          </div>
+                          <a href="type-detail.html?id=${type.id}&category_id=${
+                        type.category_id
+                      }"
+                             class="flex items-center justify-center bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg transition">
+                            <span>View Details</span>
+                            <i class="fas fa-arrow-right ml-2"></i>
+                          </a>
+                        </div>
                       </div>
-                    </div>
-                    <div class="p-4">
-                      <h3 class="text-xl font-bold text-gray-800 mb-2">${type.name}</h3>
-                     
-                      <div class="mb-4">
-                        ${
-                          type.colors.length
-                            ? `
-                            <div class="flex items-center mb-2">
-                              <span class="text-sm font-medium text-gray-700 mr-2">Colors:</span>
-                              <div class="flex">
-                                ${type.colors
-                                  .slice(0, 4)
-                                  .map(
-                                    (color) => `
-                                    <div class="w-5 h-5 rounded-full border border-gray-200 ml-1"
-                                         style="background-color: ${this.getColorHex(color)}"
-                                         title="${color}"></div>
-                                  `
-                                  )
-                                  .join("")}
-                                ${
-                                  type.colors.length > 4
-                                    ? `<span class="text-xs text-blue-600 ml-1">+${type.colors.length - 4}</span>`
-                                    : ""
-                                }
-                              </div>
-                            </div>
-                            `
-                            : ""
-                        }
-                        ${
-                          type.sizes.length
-                            ? `
-                            <div class="flex items-center">
-                              <span class="text-sm font-medium text-gray-700 mr-2">Sizes:</span>
-                              <div class="flex flex-wrap">
-                                ${type.sizes
-                                  .slice(0, 3)
-                                  .map(
-                                    (size) => `
-                                    <span class="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded mr-1 mb-1">${size}</span>
-                                  `
-                                  )
-                                  .join("")}
-                                ${
-                                  type.sizes.length > 3
-                                    ? `<span class="text-xs text-blue-600 ml-1">+${type.sizes.length - 3}</span>`
-                                    : ""
-                                }
-                              </div>
-                            </div>
-                            `
-                            : ""
-                        }
-                      </div>
-                      <a href="type-detail.html?id=${type.id}&category_id=${type.category_id}"
-                         class="flex items-center justify-center bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg transition">
-                        <span>View Details</span>
-                        <i class="fas fa-arrow-right ml-2"></i>
-                      </a>
-                    </div>
-                  </div>
+                    `
+                    )
+                    .join("")}
+                </div>
                 `
-                )
-                .join("")}
-            </div>
-            `
-            : `
-            <div class="text-center py-12">
-              <div class="text-blue-500 text-5xl mb-4">
-                <i class="fas fa-box-open"></i>
-              </div>
-              <h3 class="text-2xl font-bold text-blue-800 mb-2">No Related Products</h3>
-              <p class="text-gray-600">Check back later for more products in this category.</p>
-            </div>
-            `
-        }
-      </div>
-    `;
+                : `
+                <div class="text-center py-12">
+                  <div class="text-blue-500 text-5xl mb-4">
+                    <i class="fas fa-box-open"></i>
+                  </div>
+                  <h3 class="text-2xl font-bold text-blue-800 mb-2">No Related Products</h3>
+                  <p class="text-gray-600">Check back later for more products in this category.</p>
+                </div>
+                `
+            }
+          </div>
+        `;
   }
 
   renderStarRating(rating) {
     const stars = [];
     for (let i = 1; i <= 5; i++) {
       stars.push(`
-        <svg class="w-5 h-5 ${i <= rating ? "text-yellow-400" : "text-gray-300"}" fill="currentColor" viewBox="0 0 20 20">
-          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-        </svg>
-      `);
+            <svg class="w-5 h-5 ${
+              i <= rating ? "text-yellow-400" : "text-gray-300"
+            }" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+            </svg>
+          `);
     }
     return stars.join("");
   }
@@ -1463,9 +1615,13 @@ class ProductDetailManager {
 
     this.currentSelectedColorIndex = index;
     this.currentImageIndex = 0;
-    this.product.displayImages = this.product.colors[this.currentSelectedColorIndex]?.images || ["./images/placeholder.jpg"];
+    this.product.displayImages = this.product.colors[
+      this.currentSelectedColorIndex
+    ]?.images || [this.product.cover_image_url || "./images/placeholder.jpg"];
 
-    const imageGallerySection = document.getElementById("image-gallery-section");
+    const imageGallerySection = document.getElementById(
+      "image-gallery-section"
+    );
     if (imageGallerySection) {
       imageGallerySection.innerHTML = this.renderImageGallery();
       this.setupImageGallery();
@@ -1486,7 +1642,7 @@ class ProductDetailManager {
     const imagesToDisplay = this.product.displayImages;
 
     if (mainImage) {
-      mainImage.src = imagesToDisplay[index];
+      mainImage.src = imagesToDisplay[index] || "./images/placeholder.jpg";
     }
 
     thumbnails.forEach((thumb, i) => {
@@ -1503,7 +1659,9 @@ class ProductDetailManager {
     const imagesToDisplay = this.product.displayImages;
     if (imagesToDisplay.length === 0) return;
     const newIndex =
-      this.currentImageIndex > 0 ? this.currentImageIndex - 1 : imagesToDisplay.length - 1;
+      this.currentImageIndex > 0
+        ? this.currentImageIndex - 1
+        : imagesToDisplay.length - 1;
     this.changeImage(newIndex);
   }
 
@@ -1511,7 +1669,9 @@ class ProductDetailManager {
     const imagesToDisplay = this.product.displayImages;
     if (imagesToDisplay.length === 0) return;
     const newIndex =
-      this.currentImageIndex < imagesToDisplay.length - 1 ? this.currentImageIndex + 1 : 0;
+      this.currentImageIndex < imagesToDisplay.length - 1
+        ? this.currentImageIndex + 1
+        : 0;
     this.changeImage(newIndex);
   }
 
@@ -1521,20 +1681,24 @@ class ProductDetailManager {
 
     const lightbox = document.createElement("div");
     lightbox.id = "lightbox";
-    lightbox.className = "fixed inset-0 bg-black bg-opacity-95 flex items-center justify-center z-50";
+    lightbox.className =
+      "fixed inset-0 bg-black bg-opacity-95 flex items-center justify-center z-50";
 
     lightbox.innerHTML = `
-      <div class="relative max-w-4xl h-80 p-4">
-        <img src="${imagesToDisplay[this.currentImageIndex]}"
-             alt="${this.product.name}"
-             class="max-w-full max-h-full object-contain">
-        <button id="close-lightbox" class="absolute top-4 right-4 text-white bg-black bg-opacity-50 p-2 rounded-full hover:bg-opacity-75 transition-all">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-          </svg>
-        </button>
-      </div>
-    `;
+          <div class="relative max-w-4xl h-80 p-4">
+            <img src="${
+              imagesToDisplay[this.currentImageIndex] ||
+              "./images/placeholder.jpg"
+            }"
+                 alt="${this.product.name}"
+                 class="max-w-full max-h-full object-contain">
+            <button id="close-lightbox" class="absolute top-4 right-4 text-white bg-black bg-opacity-50 p-2 rounded-full hover:bg-opacity-75 transition-all">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </button>
+          </div>
+        `;
 
     document.body.appendChild(lightbox);
 
@@ -1594,33 +1758,34 @@ class ProductDetailManager {
       gtag("event", "view_item", {
         item_id: this.product.id,
         item_name: this.product.name,
-        item_category: this.product.category_name,
-        value: parseFloat(this.product.price.replace(/[^\d.]/g, "")),
+        item_category: this.product.category?.name || "Unknown Category",
+        value: parseFloat(this.product.price.replace(/[^\d.]/g, "")) || 0,
       });
     }
   }
 
   renderError(message) {
     const typeDetail = document.getElementById("type-detail");
+    if (!typeDetail) return;
     typeDetail.innerHTML = `
-      <div class="bg-white rounded-2xl p-12 shadow-xl text-center animate-slide-in">
-        <div class="mx-auto w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-6">
-          <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.728-.833-2.498 0L3.334 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
-          </svg>
-        </div>
-        <h2 class="text-2xl font-bold text-gray-900 mb-4">Oops! Something went wrong</h2>
-        <p class="text-gray-600 mb-8">${message}</p>
-        <div class="flex justify-center space-x-4">
-          <button onclick="window.history.back()" class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300">
-            Go Back
-          </button>
-          <button onclick="location.reload()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300">
-            Try Again
-          </button>
-        </div>
-      </div>
-    `;
+          <div class="bg-white rounded-2xl p-12 shadow-xl text-center animate-slide-in">
+            <div class="mx-auto w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-6">
+              <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.728-.833-2.498 0L3.334 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+              </svg>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">Oops! Something went wrong</h2>
+            <p class="text-gray-600 mb-8">${message}</p>
+            <div class="flex justify-center space-x-4">
+              <button onclick="window.history.back()" class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300">
+                Go Back
+              </button>
+              <button onclick="location.reload()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300">
+                Try Again
+              </button>
+            </div>
+          </div>
+        `;
   }
 }
 
@@ -1628,9 +1793,10 @@ document.addEventListener("DOMContentLoaded", () => {
   new ProductDetailManager();
 });
 
-async function fetchTypeDetail() {
-  new ProductDetailManager();
-}
+// Remove redundant fetchTypeDetail function
+// async function fetchTypeDetail() {
+//   new ProductDetailManager();
+// }
 
 if (typeof module !== "undefined" && module.exports) {
   module.exports = ProductDetailManager;
@@ -2070,8 +2236,3 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
-
-// <div class="gallery-nav flex justify-between mt-2 ${type.images.length > 1 ? "block" : "hidden"}">
-//           <button class="prev bg-gray-800 text-white p-2 rounded-full" disabled>←</button>
-//           <button class="next bg-gray-800 text-white p-2 rounded-full">→</button>
-//         </div>
