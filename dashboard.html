@@ -29,21 +29,21 @@
       }
     </script>
   </head>
-  <body class="bg-gradient-to-br from-gray-50 to-gray-200 font-sans">
+  <body class="font-sans antialiased bg-gradient-to-br from-gray-50 to-gray-200">
     <!-- Sidebar -->
-    <div class="flex h-screen">
-      <aside role="navigation" aria-label="Admin Sidebar" class="shadow-lg">
+    <div class="flex min-h-screen">
+      <aside role="navigation" aria-label="Admin Sidebar" class="w-64 bg-gradient-to-b from-indigo-900 to-indigo-700 text-white fixed top-0 left-0 h-full overflow-y-auto transition-transform duration-300 ease-in-out md:translate-x-0 -translate-x-full">
         <special-sidebar></special-sidebar>
       </aside>
 
       <!-- Main content -->
       <main
         role="main"
-        class="flex-1 p-4 sm:p-6 md:p-8 lg:p-10 bg-gray-100 min-h-screen md:ml-64 overflow-y-auto"
+        class="flex-1 p-4 sm:p-6 md:p-8 lg:p-10 bg-gray-100 min-h-screen md:ml-64 overflow-y-auto transition-all duration-300"
         aria-labelledby="dashboard-heading"
       >
         <h1
-          class="text-3xl sm:text-4xl font-extrabold mb-8 sm:mb-10 text-gray-900 tracking-tight animate-fadeIn"
+          class="text-3xl sm:text-4xl font-extrabold mb-8 sm:mb-10 bg-clip-text text-transparent bg-gradient-to-r from-indigo-900 to-indigo-500 tracking-tight animate-in fade-in duration-600"
           id="dashboard-heading"
         >
           Welcome to the Dashboard
@@ -56,13 +56,12 @@
         >
           <h2 class="sr-only" id="stats-heading">Statistics Overview</h2>
           <div
-            class="bg-white p-4 sm:p-6 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 animate-fadeIn"
+            class="bg-white p-4 sm:p-6 rounded-xl shadow-sm hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300 animate-in fade-in duration-600 delay-100"
             role="region"
             aria-label="Total Sales"
-            style="animation-delay: 0.1s"
           >
             <h3
-              class="text-base sm:text-lg font-medium text-gray-600 flex items-center"
+              class="text-base sm:text-lg font-semibold text-gray-600 flex items-center"
             >
               <i class="fas fa-dollar-sign mr-2 text-green-500"></i> Total Sales
             </h3>
@@ -73,13 +72,12 @@
             </p>
           </div>
           <div
-            class="bg-white p-4 sm:p-6 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 animate-fadeIn"
+            class="bg-white p-4 sm:p-6 rounded-xl shadow-sm hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300 animate-in fade-in duration-600 delay-200"
             role="region"
             aria-label="Active Projects"
-            style="animation-delay: 0.2s"
           >
             <h3
-              class="text-base sm:text-lg font-medium text-gray-600 flex items-center"
+              class="text-base sm:text-lg font-semibold text-gray-600 flex items-center"
             >
               <i class="fas fa-project-diagram mr-2 text-blue-500"></i> Active
               Projects
@@ -91,13 +89,12 @@
             </p>
           </div>
           <div
-            class="bg-white p-4 sm:p-6 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 animate-fadeIn"
+            class="bg-white p-4 sm:p-6 rounded-xl shadow-sm hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300 animate-in fade-in duration-600 delay-300"
             role="region"
             aria-label="New Clients"
-            style="animation-delay: 0.3s"
           >
             <h3
-              class="text-base sm:text-lg font-medium text-gray-600 flex items-center"
+              class="text-base sm:text-lg font-semibold text-gray-600 flex items-center"
             >
               <i class="fas fa-users mr-2 text-purple-500"></i> New Clients
             </h3>
@@ -111,33 +108,26 @@
 
         <!-- Quick Actions -->
         <section
-          class="bg-white p-4 sm:p-6 rounded-xl shadow-sm mb-8 sm:mb-10 animate-fadeIn"
+          class="bg-white p-4 sm:p-6 rounded-xl shadow-sm mb-8 sm:mb-10 animate-in fade-in duration-600"
           aria-labelledby="actions-heading"
         >
           <h2
-            class="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-gray-900 tracking-tight"
+            class="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-indigo-900 tracking-tight"
             id="actions-heading"
           >
             Quick Actions
           </h2>
           <div class="flex flex-wrap gap-3 sm:gap-4">
             <a
-              href="add-product.html"
-              class="gradient-btn text-white font-semibold py-2 sm:py-3 px-4 sm:px-6 rounded-lg text-sm sm:text-base transition-all duration-300 flex items-center"
-              aria-label="Add New Product"
-            >
-              <i class="fas fa-plus mr-2"></i> Add New Product
-            </a>
-            <a
               href="product-list.html"
-              class="gradient-btn text-white font-semibold py-2 sm:py-3 px-4 sm:px-6 rounded-lg text-sm sm:text-base transition-all duration-300 flex items-center"
+              class="bg-gradient-to-r from-blue-500 to-blue-400 text-white font-semibold py-2 sm:py-3 px-4 sm:px-6 rounded-lg text-sm sm:text-base hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex items-center"
               aria-label="View Products"
             >
               <i class="fas fa-chart-line mr-2"></i> View Products
             </a>
             <a
               href="settings.html"
-              class="gradient-btn text-white font-semibold py-2 sm:py-3 px-4 sm:px-6 rounded-lg text-sm sm:text-base transition-all duration-300 flex items-center"
+              class="bg korshadow-lg hover:-translate-y-1 transition-all duration-300 flex items-center"
               aria-label="Manage Settings"
             >
               <i class="fas fa-cog mr-2"></i> Manage Settings
@@ -147,11 +137,11 @@
 
         <!-- Recent Activities -->
         <section
-          class="bg-white p-4 sm:p-6 rounded-xl shadow-sm mb-8 sm:mb-10 animate-fadeIn"
+          class="bg-white p-4 sm:p-6 rounded-xl shadow-sm mb-8 sm:mb-10 animate-in fade-in duration-600"
           aria-labelledby="activities-heading"
         >
           <h2
-            class="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-gray-900 tracking-tight"
+            class="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-indigo-900 tracking-tight"
             id="activities-heading"
           >
             Recent Activities
@@ -161,16 +151,16 @@
             role="list"
             aria-label="Recent Activities List"
           >
-            <li class="flex items-center">
-              <i class="fas fa-thumbtack mr-2 sm:mr-3 text-blue-500"></i>
+            <li class="flex items-center py-2 border-l-4 border-transparent   duration-300">
+              <i class="fas fa-thumbtack mr-3 text-blue-500"></i>
               Project <strong class="ml-1">Website</strong> updated
             </li>
-            <li class="flex items-center">
-              <i class="fas fa-briefcase mr-2 sm:mr-3 text-green-500"></i> New
+            <li class="flex items-center py-2 border-l-4 border-transparent   duration-300">
+              <i class="fas fa-briefcase mr-3 text-green-500"></i> New
               client <strong class="ml-1">Arpit</strong> registered
             </li>
-            <li class="flex items-center">
-              <i class="fas fa-tools mr-2 sm:mr-3 text-yellow-500"></i>
+            <li class="flex items-center py-2 border-l-4 border-transparent  duration-300">
+              <i class="fas fa-tools mr-3 text-yellow-500"></i>
               Maintenance scheduled for <strong class="ml-1">Server A</strong>
             </li>
           </ul>

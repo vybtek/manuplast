@@ -28,9 +28,6 @@ class SpecialSidebar extends HTMLElement {
               <i class="fa-solid fa-cubes mr-2 text-indigo-400"></i>Blog
             </div>
             <div class="hidden mt-2 space-y-2 pl-6" id="blog-menu">
-              <a href="add-blog.html" class="block px-4 py-2 bg-gray-700/40 rounded-lg hover:bg-indigo-600/50 transition-all duration-200 hover:pl-6">
-                <i class="fa-solid fa-plus mr-2 text-indigo-400"></i>Add Blog
-              </a>
               <a href="blog-list.html" class="block px-4 py-2 bg-gray-700/40 rounded-lg hover:bg-indigo-600/50 transition-all duration-200 hover:pl-6">
                 <i class="fa-solid fa-eye mr-2 text-indigo-400"></i>View Blogs
               </a>

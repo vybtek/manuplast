@@ -22,10 +22,10 @@
       content="Read the latest blog posts from Manu Plast. Discover tips, news, and insights."
     />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://www.yourstorename.com/blog" />
+    <meta property="og:url" content="https://www.manuplast.com/blog" />
     <meta
       property="og:image"
-      content="https://www.yourstorename.com/images/blog-og-image.jpg"
+      content="https://www.manuplast.com/images/blog-og-image.jpg"
     />
     <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image" />
@@ -36,10 +36,10 @@
     />
     <meta
       name="twitter:image"
-      content="https://www.yourstorename.com/images/blog-og-image.jpg"
+      content="https://www.manuplast.com/images/blog-og-image.jpg"
     />
     <!-- Canonical URL -->
-    <link rel="canonical" href="https://www.yourstorename.com/blog" />
+    <link rel="canonical" href="https://www.manuplast.com/blog" />
     <!-- External Styles and Scripts -->
     <link
       rel="stylesheet"
@@ -60,13 +60,13 @@
         "@type": "CollectionPage",
         "name": "Blog",
         "description": "Read the latest blog posts from Manu Plast.",
-        "url": "https://www.yourstorename.com/blog",
+        "url": "https://www.manuplast.com/blog",
         "publisher": {
           "@type": "Organization",
           "name": "Manu Plast",
           "logo": {
             "@type": "ImageObject",
-            "url": "https://www.yourstorename.com/images/logo.jpg"
+            "url": "https://www.manuplast.com/images/logo.jpg"
           }
         }
       }
@@ -83,10 +83,32 @@
       ></special-sidebar>
 
       <!-- Blog List Section -->
-      <section aria-labelledby="blogs-heading" class="md:w-3/4 pt-10 p-4">
-        <h1 id="blogs-heading" class="text-3xl font-bold text-center mb-6">
-          Our Blog List
-        </h1>
+      <section aria-labelledby="blogs-heading" class="md:w-3/4 pt-10 p-4 pl-2">
+        <div class="flex justify-between items-center mb-6">
+          <h1 id="blogs-heading" class="text-3xl font-bold text-center">
+            Our Blog List
+          </h1>
+          <button
+            onclick="openBlogModal('add')"
+            class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 flex items-center"
+            aria-label="Add New Blog Post"
+          >
+            <svg
+              class="w-5 h-5 mr-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+              />
+            </svg>
+            Add New Post
+          </button>
+        </div>
         <div class="flex justify-center items-start w-full">
           <div id="dashboard-blog-list" class="space-y-4 w-full">
             <!-- Placeholder for dynamic blog content -->
@@ -95,10 +117,240 @@
         </div>
       </section>
     </main>
-    <script>
-      window.onload = function () {
-        fetchBlogs("dashboard-blog-list", "dashboard");
-      };
-    </script>
+
+    <!-- Modal for Add/Edit Blog -->
+    <div
+      id="blog-modal"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4"
+    >
+      <div
+        class="bg-white p-4 sm:p-6 rounded-xl shadow-lg border border-gray-100 w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+      >
+        <div class="flex justify-between items-center mb-4">
+          <h2
+            id="modal-title"
+            class="text-xl sm:text-2xl font-bold text-gray-900"
+          >
+            Create New Blog Post
+          </h2>
+          <button
+            onclick="closeBlogModal()"
+            class="text-gray-500 hover:text-gray-700"
+          >
+            <svg
+              class="w-5 h-5 sm:w-6 sm:h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+        </div>
+        <form id="blog-form" class="space-y-6" aria-labelledby="modal-title">
+          <input type="hidden" id="blog-id" name="blog-id" />
+          <!-- Blog Title -->
+          <div class="space-y-2">
+            <label for="title" class="block text-sm font-medium text-gray-700"
+              >Blog Title</label
+            >
+            <div class="relative">
+              <input
+                type="text"
+                id="title"
+                name="title"
+                placeholder="Enter a compelling title"
+                required
+                aria-required="true"
+                class="w-full px-3 py-2 sm:px-4 sm:py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 placeholder-gray-400"
+              />
+              <div
+                class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none"
+              >
+                <svg
+                  class="h-4 w-4 sm:h-5 sm:w-5 text-gray-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                  />
+                </svg>
+              </div>
+            </div>
+            <p class="text-xs text-gray-500">
+              Keep it concise but descriptive (60-70 characters ideal)
+            </p>
+          </div>
+          <!-- Author Name -->
+          <div class="space-y-2">
+            <label for="author" class="block text-sm font-medium text-gray-700"
+              >Author Name</label
+            >
+            <div class="relative">
+              <input
+                type="text"
+                id="author"
+                name="author"
+                placeholder="Your name or pen name"
+                required
+                aria-required="true"
+                class="w-full px-3 py-2 sm:px-4 sm:py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 placeholder-gray-400"
+              />
+              <div
+                class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none"
+              >
+                <svg
+                  class="h-4 w-4 sm:h-5 sm:w-5 text-gray-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <!-- Blog Image -->
+          <div class="space-y-3">
+            <label for="image" class="block text-sm font-medium text-gray-700"
+              >Featured Image</label
+            >
+            <div class="flex flex-col sm:flex-row gap-3">
+              <div class="flex-1">
+                <input
+                  type="file"
+                  id="image"
+                  name="image"
+                  accept="image/*"
+                  class="w-full px-3 py-2 sm:px-4 sm:py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-sm"
+                />
+                <input
+                  type="hidden"
+                  id="existing-image"
+                  name="existing-image"
+                />
+              </div>
+              <button
+                type="button"
+                class="px-3 py-2 sm:px-4 sm:py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center text-sm"
+              >
+                <svg
+                  class="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
+                </svg>
+                Upload
+              </button>
+            </div>
+            <div class="mt-2 hidden" id="image-preview">
+              <img
+                src=""
+                alt="Preview"
+                class="object-contain max-h-20 w-auto justify-start items-start mx-auto rounded-lg border border-gray-200"
+                id="preview-image"
+              />
+            </div>
+          </div>
+          <!-- Blog Content -->
+          <div class="space-y-2">
+            <div class="flex justify-between items-center">
+              <label
+                for="content"
+                class="block text-sm font-medium text-gray-700"
+                >Blog Content</label
+              >
+              <div class="text-xs text-gray-500" id="char-count">
+                0/2000 characters
+              </div>
+            </div>
+            <textarea
+              id="content"
+              name="content"
+              rows="6"
+              placeholder="Write your blog content here..."
+              required
+              aria-required="true"
+              class="w-full px-3 py-2 sm:px-4 sm:py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 placeholder-gray-400 resize-y min-h-[100px] text-sm"
+            ></textarea>
+            <div class="flex justify-end">
+              <button
+                type="button"
+                class="text-xs sm:text-sm text-blue-600 hover:text-blue-800 font-medium flex items-center"
+                onclick="document.getElementById('content').value += '\n\n---\n\n'"
+              >
+                <svg
+                  class="w-3 h-3 sm:w-4 sm:h-4 mr-1"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                  />
+                </svg>
+                Add separator
+              </button>
+            </div>
+          </div>
+          <!-- Submit Button -->
+          <div class="pt-2 flex flex-col sm:flex-row justify-end gap-2">
+            <button
+              type="button"
+              onclick="closeBlogModal()"
+              class="px-4 py-2 sm:px-5 sm:py-2 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors duration-200 text-sm"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              id="submit-blog"
+              class="px-4 py-2 sm:px-5 sm:py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-center text-sm"
+              aria-label="Publish Blog Post"
+            >
+              <svg
+                class="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                />
+              </svg>
+              <span id="submit-text">Publish Post</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   </body>
 </html>

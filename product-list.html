@@ -32,6 +32,7 @@
         animation: modalFadeIn 0.3s ease;
         max-width: 800px;
         width: 100%;
+        height: 95%;
         margin: 1rem auto;
         background: white;
         border-radius: 0.5rem;
@@ -91,10 +92,16 @@
         justify-content: center;
         cursor: pointer;
       }
-      .feature-input, .spec-color, .spec-capacity, .spec-material, .spec-dimensions, .spec-package {
+      .feature-input,
+      .spec-color,
+      .spec-capacity,
+      .spec-material,
+      .spec-dimensions,
+      .spec-package {
         width: 100%;
       }
-      .remove-feature-btn, .remove-spec-btn {
+      .remove-feature-btn,
+      .remove-spec-btn {
         flex-shrink: 0;
       }
       .specification-row {
@@ -111,21 +118,34 @@
   <body class="bg-gray-100 h-full">
     <div class="flex h-full">
       <div class="md:w-64 h-full bg-white shadow-md">
-        <special-sidebar class="w-1/4 h-screen" aria-label="Product Filters"></special-sidebar>
+        <special-sidebar
+          class="w-1/4 h-screen"
+          aria-label="Product Filters"
+        ></special-sidebar>
       </div>
 
       <div class="flex-1 flex flex-col overflow-auto">
         <header class="bg-white shadow-sm">
-          <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex justify-between items-center">
-            <h1 class="text-2xl font-bold text-gray-900">Products Management</h1>
-            <button id="add-product-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center">
+          <div
+            class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex justify-between items-center"
+          >
+            <h1 class="text-2xl font-bold text-gray-900">
+              Products Management
+            </h1>
+            <button
+              id="add-product-btn"
+              class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center"
+            >
               <i class="fas fa-plus mr-2"></i> Add Product
             </button>
           </div>
         </header>
 
         <main class="flex-1 p-6 overflow-auto">
-          <div id="dashboard-products-list" class="space-y-4 max-w-7xl mx-auto"></div>
+          <div
+            id="dashboard-products-list"
+            class="space-y-4 max-w-7xl mx-auto"
+          ></div>
         </main>
       </div>
     </div>
@@ -135,7 +155,10 @@
       <div class="modal-content p-6">
         <div class="flex justify-between items-center mb-6">
           <h3 class="text-xl font-bold text-gray-800">Add New Product</h3>
-          <button id="close-add-product-modal" class="text-gray-500 hover:text-gray-700">
+          <button
+            id="close-add-product-modal"
+            class="text-gray-500 hover:text-gray-700"
+          >
             <i class="fas fa-times text-lg"></i>
           </button>
         </div>
@@ -143,59 +166,141 @@
           <input type="hidden" id="csrf-token" value="YOUR_CSRF_TOKEN_HERE" />
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div class="form-field">
-              <label for="add-product-name" class="block text-gray-700 font-medium mb-2 text-center">Product Name*</label>
-              <input type="text" id="add-product-name" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required />
+              <label
+                for="add-product-name"
+                class="block text-gray-700 font-medium mb-2 text-center"
+                >Product Name*</label
+              >
+              <input
+                type="text"
+                id="add-product-name"
+                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                required
+              />
             </div>
             <div class="form-field">
-              <label for="add-product-category" class="block text-gray-700 font-medium mb-2 text-center">Category*</label>
-              <select id="add-product-category" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+              <label
+                for="add-product-category"
+                class="block text-gray-700 font-medium mb-2 text-center"
+                >Category*</label
+              >
+              <select
+                id="add-product-category"
+                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                required
+              >
                 <option value="" disabled selected>Select Category</option>
               </select>
             </div>
             <div class="form-field">
-              <label for="add-product-price" class="block text-gray-700 font-medium mb-2 text-center">Price*</label>
-              <input type="number" step="0.01" id="add-product-price" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required />
+              <label
+                for="add-product-price"
+                class="block text-gray-700 font-medium mb-2 text-center"
+                >Price*</label
+              >
+              <input
+                type="number"
+                step="0.01"
+                id="add-product-price"
+                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                required
+              />
             </div>
             <div class="form-field">
-              <label for="add-product-sizes" class="block text-gray-700 font-medium mb-2 text-center">Sizes (comma separated)</label>
-              <input type="text" id="add-product-sizes" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g., Small, Medium, Large" />
+              <label
+                for="add-product-sizes"
+                class="block text-gray-700 font-medium mb-2 text-center"
+                >Sizes (comma separated)</label
+              >
+              <input
+                type="text"
+                id="add-product-sizes"
+                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="e.g., Small, Medium, Large"
+              />
             </div>
             <div class="col-span-1 sm:col-span-2 form-field">
-              <label for="add-product-cover-image" class="block text-gray-700 font-medium mb-2 text-center">Cover Image</label>
-              <input type="file" id="add-product-cover-image" class="w-full p-2 border border-gray-300 rounded-lg file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:bg-blue-100 file:text-blue-700 hover:file:bg-blue-200" accept="image/*" />
-              <div id="add-cover-image-preview" class="image-preview-container mt-2"></div>
+              <label
+                for="add-product-cover-image"
+                class="block text-gray-700 font-medium mb-2 text-center"
+                >Cover Image</label
+              >
+              <input
+                type="file"
+                id="add-product-cover-image"
+                class="w-full p-2 border border-gray-300 rounded-lg file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:bg-blue-100 file:text-blue-700 hover:file:bg-blue-200"
+                accept="image/*"
+              />
+              <div
+                id="add-cover-image-preview"
+                class="image-preview-container mt-2"
+              ></div>
             </div>
-            <div class="col-span-1 sm:col-span-2 space-y-4 p-4 border border-gray-200 rounded-lg bg-gray-50">
-              <label class="block text-gray-700 font-medium mb-2 text-center">Product Colors & Images*</label>
+            <div
+              class="col-span-1 sm:col-span-2 space-y-4 p-4 border border-gray-200 rounded-lg bg-gray-50"
+            >
+              <label class="block text-gray-700 font-medium mb-2 text-center"
+                >Product Colors & Images*</label
+              >
               <div id="add-color-image-inputs" class="space-y-4"></div>
-              <button type="button" id="add-new-color-field-btn" class="w-full bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition-colors">
+              <button
+                type="button"
+                id="add-new-color-field-btn"
+                class="w-full bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition-colors"
+              >
                 <i class="fas fa-plus mr-2"></i> Add New Color
               </button>
             </div>
-            <div class="col-span-1 sm:col-span-2 space-y-4 p-4 border border-gray-200 rounded-lg bg-gray-50">
-              <label class="block text-gray-700 font-medium mb-2 text-center">Detailed Description*</label>
+            <div
+              class="col-span-1 sm:col-span-2 space-y-4 p-4 border border-gray-200 rounded-lg bg-gray-50"
+            >
+              <label class="block text-gray-700 font-medium mb-2 text-center"
+                >Detailed Description*</label
+              >
               <div class="space-y-2">
                 <label class="block text-gray-700 font-medium">Features</label>
                 <div id="add-features-container" class="space-y-2"></div>
-                <button type="button" id="add-new-feature-btn" class="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors">
+                <button
+                  type="button"
+                  id="add-new-feature-btn"
+                  class="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors"
+                >
                   <i class="fas fa-plus mr-2"></i> Add Feature
                 </button>
               </div>
               <div class="space-y-2">
-                <label class="block text-gray-700 font-medium">Specifications</label>
+                <label class="block text-gray-700 font-medium"
+                  >Specifications</label
+                >
                 <div id="add-specifications-container" class="space-y-2"></div>
-                <button type="button" id="add-new-specification-btn" class="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors">
+                <button
+                  type="button"
+                  id="add-new-specification-btn"
+                  class="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors"
+                >
                   <i class="fas fa-plus mr-2"></i> Add Specification
                 </button>
               </div>
             </div>
             <div class="col-span-1 sm:col-span-2 form-field">
-              <label for="add-product-description" class="block text-gray-700 font-medium mb-2 text-center">Description*</label>
-              <textarea id="add-product-description" class="w-full p-6 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" rows="4" required></textarea>
+              <label
+                for="add-product-description"
+                class="block text-gray-700 font-medium mb-2 text-center"
+                >Description*</label
+              >
+              <textarea
+                id="add-product-description"
+                class="w-full p-6 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                rows="4"
+                required
+              ></textarea>
             </div>
           </div>
           <div class="col-span-1 sm:col-span-2">
-            <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors">
+            <button
+              type="submit"
+              class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors"
+            >
               Add Product
             </button>
           </div>
@@ -208,7 +313,10 @@
       <div class="modal-content p-6">
         <div class="flex justify-between items-center mb-6">
           <h3 class="text-xl font-bold text-gray-800">Update Product</h3>
-          <button id="close-update-product-modal" class="text-gray-500 hover:text-gray-700">
+          <button
+            id="close-update-product-modal"
+            class="text-gray-500 hover:text-gray-700"
+          >
             <i class="fas fa-times text-lg"></i>
           </button>
         </div>
@@ -217,59 +325,144 @@
           <input type="hidden" id="update-product-id" />
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div class="form-field">
-              <label for="update-product-name" class="block text-gray-700 font-medium mb-2 text-center">Product Name*</label>
-              <input type="text" id="update-product-name" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required />
+              <label
+                for="update-product-name"
+                class="block text-gray-700 font-medium mb-2 text-center"
+                >Product Name*</label
+              >
+              <input
+                type="text"
+                id="update-product-name"
+                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                required
+              />
             </div>
             <div class="form-field">
-              <label for="update-product-category" class="block text-gray-700 font-medium mb-2 text-center">Category*</label>
-              <select id="update-product-category" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+              <label
+                for="update-product-category"
+                class="block text-gray-700 font-medium mb-2 text-center"
+                >Category*</label
+              >
+              <select
+                id="update-product-category"
+                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                required
+              >
                 <option value="" disabled selected>Select Category</option>
               </select>
             </div>
             <div class="form-field">
-              <label for="update-product-price" class="block text-gray-700 font-medium mb-2 text-center">Price*</label>
-              <input type="number" step="0.01" id="update-product-price" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required />
+              <label
+                for="update-product-price"
+                class="block text-gray-700 font-medium mb-2 text-center"
+                >Price*</label
+              >
+              <input
+                type="number"
+                step="0.01"
+                id="update-product-price"
+                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                required
+              />
             </div>
             <div class="form-field">
-              <label for="update-product-sizes" class="block text-gray-700 font-medium mb-2 text-center">Sizes (comma separated)</label>
-              <input type="text" id="update-product-sizes" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="e.g., Small, Medium, Large" />
+              <label
+                for="update-product-sizes"
+                class="block text-gray-700 font-medium mb-2 text-center"
+                >Sizes (comma separated)</label
+              >
+              <input
+                type="text"
+                id="update-product-sizes"
+                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="e.g., Small, Medium, Large"
+              />
             </div>
             <div class="col-span-1 sm:col-span-2 form-field">
-              <label for="update-product-cover-image" class="block text-gray-700 font-medium mb-2 text-center">Cover Image</label>
-              <input type="file" id="update-product-cover-image" class="w-full p-2 border border-gray-300 rounded-lg file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:bg-blue-100 file:text-blue-700 hover:file:bg-blue-200" accept="image/*" />
-              <div id="update-cover-image-preview" class="image-preview-container mt-2"></div>
+              <label
+                for="update-product-cover-image"
+                class="block text-gray-700 font-medium mb-2 text-center"
+                >Cover Image</label
+              >
+              <input
+                type="file"
+                id="update-product-cover-image"
+                class="w-full p-2 border border-gray-300 rounded-lg file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:bg-blue-100 file:text-blue-700 hover:file:bg-blue-200"
+                accept="image/*"
+              />
+              <div
+                id="update-cover-image-preview"
+                class="image-preview-container mt-2"
+              ></div>
             </div>
-            <div class="col-span-1 sm:col-span-2 space-y-4 p-4 border border-gray-200 rounded-lg bg-gray-50">
-              <label class="block text-gray-700 font-medium mb-2 text-center">Product Colors & Images*</label>
+            <div
+              class="col-span-1 sm:col-span-2 space-y-4 p-4 border border-gray-200 rounded-lg bg-gray-50"
+            >
+              <label class="block text-gray-700 font-medium mb-2 text-center"
+                >Product Colors & Images*</label
+              >
               <div id="update-color-image-inputs" class="space-y-4"></div>
-              <button type="button" id="update-add-new-color-field-btn" class="w-full bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition-colors">
+              <button
+                type="button"
+                id="update-add-new-color-field-btn"
+                class="w-full bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition-colors"
+              >
                 <i class="fas fa-plus mr-2"></i> Add New Color
               </button>
             </div>
-            <div class="col-span-1 sm:col-span-2 space-y-4 p-4 border border-gray-200 rounded-lg bg-gray-50">
-              <label class="block text-gray-700 font-medium mb-2 text-center">Detailed Description*</label>
+            <div
+              class="col-span-1 sm:col-span-2 space-y-4 p-4 border border-gray-200 rounded-lg bg-gray-50"
+            >
+              <label class="block text-gray-700 font-medium mb-2 text-center"
+                >Detailed Description*</label
+              >
               <div class="space-y-2">
                 <label class="block text-gray-700 font-medium">Features</label>
                 <div id="update-features-container" class="space-y-2"></div>
-                <button type="button" id="update-add-new-feature-btn" class="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors">
+                <button
+                  type="button"
+                  id="update-add-new-feature-btn"
+                  class="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors"
+                >
                   <i class="fas fa-plus mr-2"></i> Add Feature
                 </button>
               </div>
               <div class="space-y-2">
-                <label class="block text-gray-700 font-medium">Specifications</label>
-                <div id="update-specifications-container" class="space-y-2"></div>
-                <button type="button" id="update-add-new-specification-btn" class="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors">
+                <label class="block text-gray-700 font-medium"
+                  >Specifications</label
+                >
+                <div
+                  id="update-specifications-container"
+                  class="space-y-2"
+                ></div>
+                <button
+                  type="button"
+                  id="update-add-new-specification-btn"
+                  class="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors"
+                >
                   <i class="fas fa-plus mr-2"></i> Add Specification
                 </button>
               </div>
             </div>
             <div class="col-span-1 sm:col-span-2 form-field">
-              <label for="update-product-description" class="block text-gray-700 font-medium mb-2 text-center">Description*</label>
-              <textarea id="update-product-description" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" rows="4" required></textarea>
+              <label
+                for="update-product-description"
+                class="block text-gray-700 font-medium mb-2 text-center"
+                >Description*</label
+              >
+              <textarea
+                id="update-product-description"
+                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                rows="4"
+                required
+              ></textarea>
             </div>
           </div>
           <div class="col-span-1 sm:col-span-2">
-            <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors">
+            <button
+              type="submit"
+              class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors"
+            >
               Update Product
             </button>
           </div>
@@ -281,8 +474,14 @@
     <div id="product-details-modal" class="modal hidden">
       <div class="modal-content p-6">
         <div class="flex justify-between items-center mb-6">
-          <h3 class="text-xl font-bold text-gray-800" id="detail-product-name"></h3>
-          <button id="close-product-details-modal" class="text-gray-500 hover:text-gray-700">
+          <h3
+            class="text-xl font-bold text-gray-800"
+            id="detail-product-name"
+          ></h3>
+          <button
+            id="close-product-details-modal"
+            class="text-gray-500 hover:text-gray-700"
+          >
             <i class="fas fa-times text-lg"></i>
           </button>
         </div>
@@ -291,10 +490,18 @@
             <strong>Cover Image:</strong>
             <div id="detail-product-cover-image" class="mt-2"></div>
           </div>
-          <p><strong>Category:</strong> <span id="detail-product-category"></span></p>
+          <p>
+            <strong>Category:</strong>
+            <span id="detail-product-category"></span>
+          </p>
           <p><strong>Price:</strong> <span id="detail-product-price"></span></p>
-          <p><strong>Description:</strong> <span id="detail-product-description"></span></p>
-          <p><strong>Status:</strong> <span id="detail-product-status"></span></p>
+          <p>
+            <strong>Description:</strong>
+            <span id="detail-product-description"></span>
+          </p>
+          <p>
+            <strong>Status:</strong> <span id="detail-product-status"></span>
+          </p>
           <p><strong>Sizes:</strong> <span id="detail-product-sizes"></span></p>
           <div>
             <strong>Colors & Images:</strong>
@@ -302,7 +509,10 @@
           </div>
           <div>
             <strong>Detailed Description:</strong>
-            <div id="detail-product-detailed-description" class="space-y-2 mt-2"></div>
+            <div
+              id="detail-product-detailed-description"
+              class="space-y-2 mt-2"
+            ></div>
           </div>
         </div>
       </div>

@@ -1391,6 +1391,8 @@ class ProductDetailManager {
   }
 
   renderRelatedProducts() {
+    const params = new URLSearchParams(window.location.search);
+    const categoryId = params.get("id");
     return `
           <div class="max-w-6xl mx-auto">
             <h2 class="text-2xl font-bold text-gray-800 mb-8">
@@ -1486,9 +1488,9 @@ class ProductDetailManager {
                                 : ""
                             }
                           </div>
-                          <a href="type-detail.html?id=${type.id}&category_id=${
-                        type.category_id
-                      }"
+                          <a    href="type-detail.html?id=${
+                            type.id
+                          }&category_id=${categoryId}"
                              class="flex items-center justify-center bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg transition">
                             <span>View Details</span>
                             <i class="fas fa-arrow-right ml-2"></i>
