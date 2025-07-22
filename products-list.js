@@ -388,7 +388,7 @@ function createProductCard(product) {
     <div class="flex-1 text-center sm:text-left">
       <h3 class="text-xl font-semibold text-gray-800">${product.name}</h3>
       <p class="text-gray-600 text-sm">Category: ${product.category ? product.category.name : 'N/A'}</p>
-      <p class="text-gray-700 font-bold mt-1">Price: $${priceText}</p>
+      <p class="text-gray-700 font-bold mt-1">Price: ₹${priceText}</p>
       <p class="text-gray-600 text-sm">Sizes: ${sizesText}</p>
       <p class="text-gray-600 text-sm">Colors: ${colorsText}</p>
     </div>

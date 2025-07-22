@@ -41,11 +41,6 @@ async function fetchProducts(containerId = "product-grid", view = "default") {
           <h3 class="text-xl font-medium text-gray-600">No ${
             view === "default" ? "active " : ""
           }categories found</h3>
-          ${
-            view === "dashboard"
-              ? '<button id="add-category-btn" class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">Add New Category</button>'
-              : ""
-          }
         </div>
       `;
 
@@ -851,6 +846,8 @@ class ProductDetailManager {
     const typeId = params.get("id");
     const categoryId = params.get("category_id");
 
+    console.log("Type ID:", typeId, "Category ID:", categoryId);
+
     if (!typeId || !categoryId) {
       this.renderError("Product not found. Invalid product ID or category.");
       return;
@@ -874,6 +871,7 @@ class ProductDetailManager {
         );
       }
       const product = await productResponse.json();
+      console.log("Fetched Product:", product);
 
       if (!this.validateProduct(product, categoryId)) {
         this.renderError(
@@ -922,8 +920,14 @@ class ProductDetailManager {
   validateProduct(product, expectedCategoryId) {
     const productCategoryId = String(
       product.category?.id || product.category_id || ""
+    ).trim();
+    const categoryId = String(expectedCategoryId).trim();
+    console.log(
+      "Validating Product Category ID:",
+      productCategoryId,
+      "Expected:",
+      categoryId
     );
-    const categoryId = String(expectedCategoryId);
     return productCategoryId === categoryId;
   }
 
@@ -933,8 +937,6 @@ class ProductDetailManager {
       sizes: this.processSizes(rawProduct.sizes),
       colors: this.processColorsWithImages(rawProduct.colors || []),
       price: this.formatPrice(rawProduct.price),
-      rating: this.calculateRating(rawProduct.reviews || []),
-      availability: this.checkAvailability(rawProduct.stock || 0),
       description: rawProduct.description || "No description available",
       features:
         Array.isArray(rawProduct.features) && rawProduct.features.length
@@ -1064,12 +1066,45 @@ class ProductDetailManager {
       pink: "#ec4899",
       purple: "#8b5cf6",
       orange: "#f97316",
+      teal: "#14b8a6",
+      cyan: "#06b6d4",
+      indigo: "#4f46e5",
+      violet: "#a855f7",
+      lime: "#84cc16",
+      emerald: "#10b981",
+      amber: "#f59e0b",
+      rose: "#f43f5e",
+      sky: "#0ea5e9",
+      fuchsia: "#d946ef",
+      brown: "#8d5524",
+      gold: "#f1c40f",
+      silver: "#bdc3c7",
+      bronze: "#cd7f32",
+      navy: "#1e3a8a",
+      maroon: "#800000",
+      olive: "#6b7280",
+      coral: "#ff7f50",
+      turquoise: "#40e0d0",
+      lavender: "#e6e6fa",
     };
     return colorMap[colorName.toLowerCase()] || "#6b7280";
   }
 
   getTextColor(colorName) {
-    const lightColors = ["white", "yellow", "lightgray", "pink", "orange"];
+    const lightColors = [
+      "white",
+      "yellow",
+      "lightgray",
+      "pink",
+      "orange",
+      "lime",
+      "amber",
+      "gold",
+      "silver",
+      "lavender",
+      "turquoise",
+      "sky",
+    ];
     return lightColors.includes(colorName.toLowerCase())
       ? "#000000"
       : "#ffffff";
@@ -1082,21 +1117,6 @@ class ProductDetailManager {
       currency: "INR",
       minimumFractionDigits: 0,
     }).format(price);
-  }
-
-  calculateRating(reviews) {
-    if (!Array.isArray(reviews) || reviews.length === 0) return 0;
-    const total = reviews.reduce(
-      (sum, review) => sum + (review.rating || 0),
-      0
-    );
-    return Math.round((total / reviews.length) * 10) / 10;
-  }
-
-  checkAvailability(stock) {
-    if (!stock || stock === 0) return "out-of-stock";
-    if (stock < 10) return "low-stock";
-    return "in-stock";
   }
 
   showLoadingState() {
@@ -1238,15 +1258,7 @@ class ProductDetailManager {
                 <span class="text-2xl font-semibold text-gray-900">${
                   product.price || "N/A"
                 }</span>
-                <span class="${this.getAvailabilityClass(
-                  product.availability
-                )} text-sm font-medium px-2 py-1 rounded-full">
-                  ${this.getAvailabilityText(product.availability)}
-                </span>
               </div>
-              <div class="flex items-center mt-2">${this.renderStarRating(
-                product.rating
-              )}</div>
             </div>
             ${
               product.sizes.length > 0
@@ -1392,7 +1404,8 @@ class ProductDetailManager {
 
   renderRelatedProducts() {
     const params = new URLSearchParams(window.location.search);
-    const categoryId = params.get("id");
+    const categoryId = params.get("category_id");
+    console.log("Related Products Category ID:", categoryId);
     return `
           <div class="max-w-6xl mx-auto">
             <h2 class="text-2xl font-bold text-gray-800 mb-8">
@@ -1488,7 +1501,7 @@ class ProductDetailManager {
                                 : ""
                             }
                           </div>
-                          <a    href="type-detail.html?id=${
+                          <a href="type-detail.html?id=${
                             type.id
                           }&category_id=${categoryId}"
                              class="flex items-center justify-center bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg transition">
@@ -1794,11 +1807,6 @@ class ProductDetailManager {
 document.addEventListener("DOMContentLoaded", () => {
   new ProductDetailManager();
 });
-
-// Remove redundant fetchTypeDetail function
-// async function fetchTypeDetail() {
-//   new ProductDetailManager();
-// }
 
 if (typeof module !== "undefined" && module.exports) {
   module.exports = ProductDetailManager;
@@ -2191,15 +2199,15 @@ document.addEventListener("DOMContentLoaded", () => {
   const updateModal = document.getElementById("update-category-modal");
 
   // Initialize page-specific functionality
-  if (path.includes("products.html") || path === "/") {
+  if (path.includes("products") || path === "/") {
     fetchProducts("product-grid", "default");
-  } else if (path.includes("dashboard.html")) {
+  } else if (path.includes("dashboard")) {
     fetchProducts("dashboard-product-list", "dashboard");
-  } else if (path.includes("product-detail.html")) {
+  } else if (path.includes("product-detail")) {
     fetchProductDetail();
-  } else if (path.includes("type-detail.html")) {
+  } else if (path.includes("type-detail")) {
     fetchTypeDetail();
-  } else if (path.includes("update-product.html")) {
+  } else if (path.includes("update-product")) {
     fetchProductForUpdate();
   }
 
