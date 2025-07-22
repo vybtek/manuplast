@@ -812,7 +812,7 @@ async function fetchProductDetail() {
 class ProductDetailManager {
   constructor() {
     this.currentImageIndex = 0;
-    this.currentSelectedColorIndex = 0;
+    this.currentSelectedColorIndex = -1; // No color selected initially
     this.imageViewMode = "gallery";
     this.product = null;
     this.isLoading = false;
@@ -939,6 +939,7 @@ class ProductDetailManager {
   }
 
   processProductData(rawProduct) {
+    console.log("Raw Product Data:", rawProduct); // Debug log
     const processedProduct = {
       ...rawProduct,
       sizes: this.processSizes(rawProduct.sizes),
@@ -984,12 +985,17 @@ class ProductDetailManager {
                     : "Multiple",
               },
             ],
+      // Set cover image similar to fetchProductDetail
+      cover_image:
+        rawProduct.main_image_url ||
+        (Array.isArray(rawProduct.colors) &&
+        rawProduct.colors[0]?.images?.[0]?.image_url) ||
+        "./images/placeholder.jpg",
     };
 
-    processedProduct.displayImages =
-      processedProduct.colors.length > 0
-        ? processedProduct.colors[this.currentSelectedColorIndex].images
-        : [rawProduct.main_image_url || "./images/placeholder.jpg"];
+    // Initially display the cover image
+    processedProduct.displayImages = [processedProduct.cover_image];
+    console.log("Cover Image Set:", processedProduct.cover_image); // Debug log
 
     return processedProduct;
   }
@@ -1102,7 +1108,7 @@ class ProductDetailManager {
       turquoise: "#40e0d0",
       lavender: "#e6e6fa",
     };
-    return colorMap[colorName.toLowerCase()] || "#6b7280";
+    return colorMap[colorName?.toLowerCase()] || "#6b7280";
   }
 
   getTextColor(colorName) {
@@ -1120,7 +1126,7 @@ class ProductDetailManager {
       "turquoise",
       "sky",
     ];
-    return lightColors.includes(colorName.toLowerCase())
+    return lightColors.includes(colorName?.toLowerCase())
       ? "#000000"
       : "#ffffff";
   }
@@ -1169,6 +1175,7 @@ class ProductDetailManager {
     if (!typeDetail) return;
 
     const product = this.product;
+    console.log("Rendering Product Detail with Cover Image:", product.cover_image); // Debug log
     typeDetail.innerHTML = `
           <div class="bg-white rounded-2xl shadow-2xl overflow-hidden animate-slide-in">
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-0">
@@ -1193,6 +1200,7 @@ class ProductDetailManager {
     const product = this.product;
     const imagesToDisplay = product.displayImages;
 
+    console.log("Images to Display in Gallery:", imagesToDisplay); // Debug log
     return `
           <div class="space-y-4">
             <div class="relative group">
@@ -1202,7 +1210,7 @@ class ProductDetailManager {
                        imagesToDisplay[this.currentImageIndex] ||
                        "./images/placeholder.jpg"
                      }"
-                     alt="${product.name}"
+                     alt="${product.name || "Product"}"
                      class="w-full h-96 object-cover cursor-zoom-in transition-transform duration-300 group-hover:scale-105">
               </div>
               <div class="absolute top-4 right-4 space-y-2">
@@ -1237,7 +1245,7 @@ class ProductDetailManager {
                     .map(
                       (image, index) => `
                       <img src="${image || "./images/placeholder.jpg"}"
-                           alt="${product.name} ${index + 1}"
+                           alt="${product.name || "Product"} ${index + 1}"
                            class="thumbnail w-16 h-16 object-cover rounded-lg cursor-pointer border-2 border-transparent hover:border-blue-500 transition-all duration-300 flex-shrink-0 ${
                              index === this.currentImageIndex
                                ? "border-blue-500"
@@ -1645,13 +1653,19 @@ class ProductDetailManager {
 
     this.currentSelectedColorIndex = index;
     this.currentImageIndex = 0;
-    this.product.displayImages = this.product.colors[
-      this.currentSelectedColorIndex
-    ]?.images || [this.product.main_image_url || "./images/placeholder.jpg"];
+    // Switch to the selected color's images, or revert to cover image if no color is selected
+    this.product.displayImages =
+      index >= 0 && this.product.colors[index]
+        ? this.product.colors[index].images
+        : [this.product.cover_image];
+    console.log(
+      "Selected Color Index:",
+      index,
+      "Display Images:",
+      this.product.displayImages
+    ); // Debug log
 
-    const imageGallerySection = document.getElementById(
-      "image-gallery-section"
-    );
+    const imageGallerySection = document.getElementById("image-gallery-section");
     if (imageGallerySection) {
       imageGallerySection.innerHTML = this.renderImageGallery();
       this.setupImageGallery();
@@ -1720,7 +1734,7 @@ class ProductDetailManager {
               imagesToDisplay[this.currentImageIndex] ||
               "./images/placeholder.jpg"
             }"
-                 alt="${this.product.name}"
+                 alt="${this.product.name || "Product"}"
                  class="max-w-full max-h-full object-contain">
             <button id="close-lightbox" class="absolute top-4 right-4 text-white bg-black bg-opacity-50 p-2 rounded-full hover:bg-opacity-75 transition-all">
               <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1801,7 +1815,7 @@ class ProductDetailManager {
           <div class="bg-white rounded-2xl p-12 shadow-xl text-center animate-slide-in">
             <div class="mx-auto w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-6">
               <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.728-.833-2.498 0L3.334 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" strike-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.728-.833-2.498 0L3.334 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
               </svg>
             </div>
             <h2 class="text-2xl font-bold text-gray-900 mb-4">Oops! Something went wrong</h2>
