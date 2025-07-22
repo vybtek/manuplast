@@ -122,7 +122,7 @@ async function fetchProducts(containerId = "product-grid", view = "default") {
         categoryCard.className =
           "group relative overflow-hidden rounded-2xl shadow-md transition-all duration-300 hover:shadow-2xl border border-gray-100 hover:border-blue-200";
         categoryCard.innerHTML = `
-          <a href="product-detail.html?id=${
+          <a href="product-detail?id=${
             category.id
           }" class="block relative ">
             <div class="aspect-w-4 aspect-h-3 overflow-hidden">
@@ -520,7 +520,7 @@ async function fetchProductDetail() {
               </div>
               <h2 class="text-2xl font-bold text-red-800 mb-2">Category Not Found</h2>
               <p class="text-gray-600 mb-6">The requested category could not be located.</p>
-              <a href="products.html" class="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
+              <a href="products" class="inline-flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
                 <i class="fas fa-arrow-left mr-2"></i> Back to Categories
               </a>
             </div>
@@ -555,7 +555,7 @@ async function fetchProductDetail() {
                 </div>
                 <h2 class="text-2xl font-bold text-red-800 mb-2">Category Inactive</h2>
                 <p class="text-gray-600 mb-6">This category is currently not available for viewing.</p>
-                <a href="products.html" class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition">
+                <a href="products" class="inline-flex items-center px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition">
                   <i class="fas fa-arrow-left mr-2"></i> Back to Categories
                 </a>
               </div>
@@ -748,7 +748,7 @@ async function fetchProductDetail() {
                               : ""
                           }
                         </div>
-                        <a href="type-detail.html?id=${
+                        <a href="type-detail?id=${
                           type.id
                         }&category_id=${categoryId}"
                            class="flex items-center justify-center bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg transition">
@@ -773,7 +773,7 @@ async function fetchProductDetail() {
               `
               }
               <div class="text-center mt-8">
-                <a href="products.html"
+                <a href="products"
                    class="inline-flex items-center px-4 py-2 border border-red-600 text-red-600 rounded-lg hover:bg-red-600 hover:text-white transition">
                   <i class="fas fa-arrow-left mr-2"></i>
                   Back to Categories
@@ -1501,7 +1501,7 @@ class ProductDetailManager {
                                 : ""
                             }
                           </div>
-                          <a href="type-detail.html?id=${
+                          <a href="type-detail?id=${
                             type.id
                           }&category_id=${categoryId}"
                              class="flex items-center justify-center bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg transition">
