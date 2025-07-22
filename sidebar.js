@@ -2,7 +2,7 @@ class SpecialSidebar extends HTMLElement {
   connectedCallback() {
     this.innerHTML = `
       <div class="w-64 bg-gradient-to-br from-gray-900/95 to-gray-800/95 backdrop-blur-lg text-white p-6 fixed h-full transform transition-transform duration-300 ease-in-out md:translate-x-0 -translate-x-full md:flex flex-col z-20 shadow-2xl border-r border-gray-700/30">
-        <h2 class="text-2xl font-extrabold mb-8 cursor-pointer flex items-center gap-3 hover:text-indigo-400 transition-colors duration-200 group relative" onclick="window.location.href='dashboard.html'">
+        <h2 class="text-2xl font-extrabold mb-8 cursor-pointer flex items-center gap-3 hover:text-indigo-400 transition-colors duration-200 group relative" onclick="window.location.href='dashboard'">
           <i class="fa-solid fa-house text-indigo-400 group-hover:scale-110 transition-transform duration-200"></i> 
           Dashboard
           <span class="absolute left-0 bottom-0 h-0.5 w-0 bg-indigo-400 transition-all duration-300 group-hover:w-full"></span>
@@ -14,10 +14,10 @@ class SpecialSidebar extends HTMLElement {
             </div>
             <div class="hidden mt-2 space-y-2 pl-6" id="product-menu">
            
-              <a href="category-list.html" class="block px-4 py-2 bg-gray-700/40 rounded-lg hover:bg-indigo-600/50 transition-all duration-200 hover:pl-6">
+              <a href="category-list" class="block px-4 py-2 bg-gray-700/40 rounded-lg hover:bg-indigo-600/50 transition-all duration-200 hover:pl-6">
                 <i class="fa-solid fa-eye mr-2 text-indigo-400"></i>View Category
               </a>
-               <a href="product-list.html" class="block px-4 py-2 bg-gray-700/40 rounded-lg hover:bg-indigo-600/50 transition-all duration-200 hover:pl-6">
+               <a href="product-list" class="block px-4 py-2 bg-gray-700/40 rounded-lg hover:bg-indigo-600/50 transition-all duration-200 hover:pl-6">
                 <i class="fa-solid fa-eye mr-2 text-indigo-400"></i>View Products
               </a>
             </div>
@@ -28,7 +28,7 @@ class SpecialSidebar extends HTMLElement {
               <i class="fa-solid fa-cubes mr-2 text-indigo-400"></i>Blog
             </div>
             <div class="hidden mt-2 space-y-2 pl-6" id="blog-menu">
-              <a href="blog-list.html" class="block px-4 py-2 bg-gray-700/40 rounded-lg hover:bg-indigo-600/50 transition-all duration-200 hover:pl-6">
+              <a href="blog-list" class="block px-4 py-2 bg-gray-700/40 rounded-lg hover:bg-indigo-600/50 transition-all duration-200 hover:pl-6">
                 <i class="fa-solid fa-eye mr-2 text-indigo-400"></i>View Blogs
               </a>
             </div>
@@ -39,7 +39,7 @@ class SpecialSidebar extends HTMLElement {
               <i class="fa-solid fa-address-book mr-2 text-indigo-400"></i>Contacts
             </div>
             <div class="hidden mt-2 space-y-2 pl-6" id="contact-menu">
-              <a href="contact-list.html" class="block px-4 py-2 bg-gray-700/40 rounded-lg hover:bg-indigo-600/50 transition-all duration-200 hover:pl-6">
+              <a href="contact-list" class="block px-4 py-2 bg-gray-700/40 rounded-lg hover:bg-indigo-600/50 transition-all duration-200 hover:pl-6">
                 <i class="fa-solid fa-eye mr-2 text-indigo-400"></i>View Contacts
               </a>
             </div>
@@ -93,7 +93,7 @@ customElements.define("special-sidebar", SpecialSidebar);
 
 function logout() {
   localStorage.removeItem("isLoggedIn");
-  window.location.href = "login.html";
+  window.location.href = "login";
 }
   //  <a href="add-product.html" class="block px-4 py-2 bg-gray-700/40 rounded-lg hover:bg-indigo-600/50 transition-all duration-200 hover:pl-6">
   //               <i class="fa-solid fa-plus mr-2 text-indigo-400"></i>Add Product

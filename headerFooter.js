@@ -31,11 +31,11 @@ class SpecialHeader extends HTMLElement {
                 <span>Products</span>
                 <span class="nav-underline"></span>
               </a></li>
-              <li><a href="blog.html" class="nav-link relative px-3 py-2 text-gray-700 transition-all duration-200 group">
+              <li><a href="blog" class="nav-link relative px-3 py-2 text-gray-700 transition-all duration-200 group">
                 <span>Blog</span>
                 <span class="nav-underline"></span>
               </a></li>
-              <li><a href="contact.html" class="nav-link relative px-3 py-2 text-gray-700 transition-all duration-200 group">
+              <li><a href="contact" class="nav-link relative px-3 py-2 text-gray-700 transition-all duration-200 group">
                 <span>Contact</span>
                 <span class="nav-underline"></span>
               </a></li>
@@ -47,19 +47,19 @@ class SpecialHeader extends HTMLElement {
           </div>
 
           <div id="mobile-menu" class="hidden md:hidden bg-white/95 backdrop-blur-sm border-t border-gray-200/50 px-6 py-3 space-y-3 max-h-0 overflow-hidden transition-all duration-300">
-            <a href="about.html" class="nav-link block py-3 px-4 rounded-lg transition-all duration-200 flex items-center">
+            <a href="about" class="nav-link block py-3 px-4 rounded-lg transition-all duration-200 flex items-center">
               <span class="mobile-indicator"></span>
               <span>About</span>
             </a>
-            <a href="products.html" class="nav-link block py-3 px-4 rounded-lg transition-all duration-200 flex items-center">
+            <a href="products" class="nav-link block py-3 px-4 rounded-lg transition-all duration-200 flex items-center">
               <span class="mobile-indicator"></span>
               <span>Products</span>
             </a>
-            <a href="blog.html" class="nav-link block py-3 px-4 rounded-lg transition-all duration-200 flex items-center">
+            <a href="blog" class="nav-link block py-3 px-4 rounded-lg transition-all duration-200 flex items-center">
               <span class="mobile-indicator"></span>
               <span>Blog</span>
             </a>
-            <a href="contact.html" class="nav-link block py-3 px-4 rounded-lg transition-all duration-200 flex items-center">
+            <a href="contact" class="nav-link block py-3 px-4 rounded-lg transition-all duration-200 flex items-center">
               <span class="mobile-indicator"></span>
               <span>Contact</span>
             </a>
@@ -284,7 +284,7 @@ class SpecialFooter extends HTMLElement {
                   .map(
                     (product) => `
                   <li>
-                    <a href="product-detail.html?id=${product.id}" class="footer-link hover:text-red-600 hover:translate-x-1 transition-all duration-300">
+                    <a href="product-detail?id=${product.id}" class="footer-link hover:text-red-600 hover:translate-x-1 transition-all duration-300">
                       ${product.name}
                     </a>
                   </li>
@@ -330,9 +330,9 @@ class SpecialFooter extends HTMLElement {
           <!-- Footer Bottom -->
           <div class="mt-12 pt-8 border-t border-gray-300 text-center">
             <nav class="flex justify-center space-x-8 text-gray-600 text-sm mb-6">
-              <a href="index.html" class="footer-link hover:text-red-600 hover:underline transition-all duration-300">Home</a>
-              <a href="products.html" class="footer-link hover:text-red-600 hover:underline transition-all duration-300">Products</a>
-              <a href="contact.html" class="footer-link hover:text-red-600 hover:underline transition-all duration-300">Contact</a>
+              <a href="/" class="footer-link hover:text-red-600 hover:underline transition-all duration-300">Home</a>
+              <a href="products" class="footer-link hover:text-red-600 hover:underline transition-all duration-300">Products</a>
+              <a href="contact" class="footer-link hover:text-red-600 hover:underline transition-all duration-300">Contact</a>
             </nav>
             <p class="text-gray-500 text-xs">© 2025 ManuPlast. All Rights Reserved.</p>
           </div>

@@ -122,9 +122,7 @@ async function fetchProducts(containerId = "product-grid", view = "default") {
         categoryCard.className =
           "group relative overflow-hidden rounded-2xl shadow-md transition-all duration-300 hover:shadow-2xl border border-gray-100 hover:border-blue-200";
         categoryCard.innerHTML = `
-          <a href="product-detail?id=${
-            category.id
-          }" class="block relative ">
+          <a href="product-detail?id=${category.id}" class="block relative ">
             <div class="aspect-w-4 aspect-h-3 overflow-hidden">
               <img src="${category.image_url || "./images/placeholder.jpg"}" 
                    alt="${category.name || "Unnamed"}" 
