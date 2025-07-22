@@ -75,7 +75,7 @@ async function fetchBlogs(containerId = "blog-grid", view = "default") {
               </p>
             </div>
             <div>
-              <a href="blog-detail.html?id=${blog.id}" class="inline-block text-blue-600 hover:text-blue-800 text-sm font-semibold transition-all duration-300 underline-offset-2 hover:underline">
+              <a href="blog-detail?id=${blog.id}" class="inline-block text-blue-600 hover:text-blue-800 text-sm font-semibold transition-all duration-300 underline-offset-2 hover:underline">
                 Read More →
               </a>
             </div>

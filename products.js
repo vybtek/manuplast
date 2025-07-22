@@ -893,7 +893,16 @@ class ProductDetailManager {
       this.product = this.processProductData(product);
       this.relatedProducts = this.processRelatedProducts(
         relatedProducts,
-        typeId
+        typeId,
+        categoryId
+      );
+      console.log(
+        "Processed Related Products:",
+        this.relatedProducts.map((p) => ({
+          id: p.id,
+          name: p.name,
+          categoryId: p.category?.id || p.category_id,
+        }))
       );
       this.renderProductDetail();
       this.initializeInteractions();
@@ -980,16 +989,24 @@ class ProductDetailManager {
     processedProduct.displayImages =
       processedProduct.colors.length > 0
         ? processedProduct.colors[this.currentSelectedColorIndex].images
-        : [rawProduct.cover_image_url || "./images/placeholder.jpg"];
+        : [rawProduct.main_image_url || "./images/placeholder.jpg"];
 
     return processedProduct;
   }
 
-  processRelatedProducts(productTypes, currentTypeId) {
+  processRelatedProducts(productTypes, currentTypeId, expectedCategoryId) {
     if (!Array.isArray(productTypes)) return [];
 
     return productTypes
-      .filter((type) => String(type.id) !== String(currentTypeId))
+      .filter((type) => {
+        const productCategoryId = String(
+          type.category?.id || type.category_id || ""
+        ).trim();
+        return (
+          String(type.id) !== String(currentTypeId) &&
+          productCategoryId === String(expectedCategoryId).trim()
+        );
+      })
       .map((type) => ({
         ...type,
         images: Array.isArray(type.colors)
@@ -998,7 +1015,7 @@ class ProductDetailManager {
                 ? color.images.map((img) => img.image_url).filter(Boolean)
                 : []
             )
-          : [type.cover_image_url || "./images/placeholder.jpg"],
+          : [type.main_image_url || "./images/placeholder.jpg"],
         sizes: Array.isArray(type.sizes)
           ? type.sizes
               .map((s) => (typeof s === "string" ? s : s.size))
@@ -1630,7 +1647,7 @@ class ProductDetailManager {
     this.currentImageIndex = 0;
     this.product.displayImages = this.product.colors[
       this.currentSelectedColorIndex
-    ]?.images || [this.product.cover_image_url || "./images/placeholder.jpg"];
+    ]?.images || [this.product.main_image_url || "./images/placeholder.jpg"];
 
     const imageGallerySection = document.getElementById(
       "image-gallery-section"
