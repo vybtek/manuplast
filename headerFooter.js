@@ -17,17 +17,17 @@ class SpecialHeader extends HTMLElement {
       <header class="fixed top-0 left-0 w-full bg-white/95 backdrop-blur-sm shadow-md z-50 transition-all duration-300" id="main-header">
         <nav class="border-b border-gray-200/50">
           <div class="container mx-auto flex justify-between items-center px-4 py-2">
-            <a href="index.html" class="flex items-center space-x-0 font-serif italic group relative">
+            <a href="/" class="flex items-center space-x-0 font-serif italic group relative">
               <div class="absolute -inset-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               <img src="./images/logo1.png" alt="Logo" class="w-30 h-16 transition-all duration-500 group-hover:scale-105 z-10" />
             </a>
 
             <ul id="nav-menu" class="hidden md:flex space-x-6 items-center">
-              <li><a href="about.html" class="nav-link relative px-3 py-2 text-gray-700 transition-all duration-200 group">
+              <li><a href="about" class="nav-link relative px-3 py-2 text-gray-700 transition-all duration-200 group">
                 <span>About</span>
                 <span class="nav-underline"></span>
               </a></li>
-              <li><a href="products.html" class="nav-link relative px-3 py-2 text-gray-700 transition-all duration-200 group">
+              <li><a href="products" class="nav-link relative px-3 py-2 text-gray-700 transition-all duration-200 group">
                 <span>Products</span>
                 <span class="nav-underline"></span>
               </a></li>
