@@ -1,9 +1,17 @@
-// Base API URL
 const API_BASE_URL = "https://api.vybtek.com/api/manuplast";
+
+// Load SortableJS from CDN
+const script = document.createElement('script');
+script.src = 'https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js';
+script.onload = initializeSortable;
+document.head.appendChild(script);
+
+let sortableInstances = new WeakMap();
 
 // DOM Elements
 const dashboardProductsList = document.getElementById("dashboard-products-list");
 const addProductBtn = document.getElementById("add-product-btn");
+const categoryFilterSelect = document.getElementById("category-filter");
 const addProductModal = document.getElementById("add-product-modal");
 const closeAddProductModalBtn = document.getElementById("close-add-product-modal");
 const addProductForm = document.getElementById("add-product-form");
@@ -50,6 +58,20 @@ const detailProductCoverImage = document.getElementById("detail-product-cover-im
 const detailProductDetailedDescription = document.getElementById("detail-product-detailed-description");
 
 let allCategories = [];
+
+function initializeSortable() {
+  document.querySelectorAll('.image-preview-container').forEach(container => {
+    const row = container.closest('.border.border-gray-300.p-3.rounded-lg.bg-white.relative');
+    if (row && !sortableInstances.has(row)) {
+      sortableInstances.set(row, new Sortable(container, {
+        animation: 150,
+        onEnd: (event) => {
+          console.log('Items reordered:', Array.from(container.children));
+        },
+      }));
+    }
+  });
+}
 
 // --- Helper Functions ---
 
@@ -111,11 +133,11 @@ function createColorImageInputRow(containerId, colorName = '', images = [], isEx
         <i class="fas fa-times"></i>
       </button>
     </div>
-    <label class="block text-gray-700 font-medium mb-2">Images for this color:</label>
+    <label class="block text-gray-700 font-medium mb-2">Images for this color (drag to reorder):</label>
     <input type="file" class="color-image-input w-full p-2 border border-gray-300 rounded-lg file:mr-4 file:py-1 file:px-3 file:rounded file:border-0 file:bg-blue-100 file:text-blue-700 hover:file:bg-blue-200" accept="image/*" multiple />
-    <div class="image-preview-container mt-2">
+    <div class="image-preview-container mt-2 flex flex-wrap gap-2">
       ${images.map(img => `
-        <div class="image-preview-item" data-image-url="${img.image_url || img.url || ''}" data-is-existing="true">
+        <div class="image-preview-item" data-image-url="${img.image_url || img.url || ''}" data-is-existing="true" draggable="true">
           <img src="${img.image_url || img.url}" alt="Image Preview" />
           <button type="button" class="remove-image-btn"><i class="fas fa-times"></i></button>
         </div>
@@ -138,6 +160,15 @@ function createColorImageInputRow(containerId, colorName = '', images = [], isEx
   const colorImageInput = rowDiv.querySelector('.color-image-input');
   const imagePreviewContainer = rowDiv.querySelector('.image-preview-container');
 
+  if (typeof Sortable !== 'undefined' && !sortableInstances.has(rowDiv)) {
+    sortableInstances.set(rowDiv, new Sortable(imagePreviewContainer, {
+      animation: 150,
+      onEnd: (event) => {
+        console.log('Items reordered:', Array.from(imagePreviewContainer.children));
+      },
+    }));
+  }
+
   colorImageInput.addEventListener('change', (event) => {
     Array.from(event.target.files).forEach(file => {
       const reader = new FileReader();
@@ -145,6 +176,7 @@ function createColorImageInputRow(containerId, colorName = '', images = [], isEx
         const previewItem = document.createElement('div');
         previewItem.className = 'image-preview-item';
         previewItem.dataset.isExisting = 'false';
+        previewItem.draggable = true;
         previewItem.innerHTML = `
           <img src="${e.target.result}" alt="Image Preview" />
           <button type="button" class="remove-image-btn"><i class="fas fa-times"></i></button>
@@ -154,8 +186,27 @@ function createColorImageInputRow(containerId, colorName = '', images = [], isEx
         previewItem.dataset.fileName = file.name;
         previewItem.dataset.fileType = file.type;
 
+        if (typeof Sortable !== 'undefined' && sortableInstances.has(rowDiv)) {
+          sortableInstances.get(rowDiv).destroy();
+          sortableInstances.set(rowDiv, new Sortable(imagePreviewContainer, {
+            animation: 150,
+            onEnd: (event) => {
+              console.log('Items reordered:', Array.from(imagePreviewContainer.children));
+            },
+          }));
+        }
+
         previewItem.querySelector('.remove-image-btn').addEventListener('click', () => {
           previewItem.remove();
+          if (typeof Sortable !== 'undefined' && sortableInstances.has(rowDiv)) {
+            sortableInstances.get(rowDiv).destroy();
+            sortableInstances.set(rowDiv, new Sortable(imagePreviewContainer, {
+              animation: 150,
+              onEnd: (event) => {
+                console.log('Items reordered:', Array.from(imagePreviewContainer.children));
+              },
+            }));
+          }
         });
       };
       reader.readAsDataURL(file);
@@ -165,6 +216,15 @@ function createColorImageInputRow(containerId, colorName = '', images = [], isEx
   rowDiv.querySelectorAll('.remove-image-btn').forEach(btn => {
     btn.addEventListener('click', (event) => {
       event.target.closest('.image-preview-item').remove();
+      if (typeof Sortable !== 'undefined' && sortableInstances.has(rowDiv)) {
+        sortableInstances.get(rowDiv).destroy();
+        sortableInstances.set(rowDiv, new Sortable(imagePreviewContainer, {
+          animation: 150,
+          onEnd: (event) => {
+            console.log('Items reordered:', Array.from(imagePreviewContainer.children));
+          },
+        }));
+      }
     });
   });
 
@@ -295,6 +355,7 @@ async function populateCategories(selectElement, selectedCategoryId = null) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     allCategories = await response.json();
+    console.log('Categories loaded:', allCategories); // Debugging
     selectElement.innerHTML = '<option value="" disabled selected>Select Category</option>';
 
     allCategories.forEach((category) => {
@@ -312,7 +373,40 @@ async function populateCategories(selectElement, selectedCategoryId = null) {
   }
 }
 
-async function loadProducts() {
+async function populateCategoryFilter() {
+  if (!categoryFilterSelect) {
+    console.error('Category filter select element not found');
+    return;
+  }
+  try {
+    const response = await fetch(`${API_BASE_URL}/categories`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token') || 'YOUR_TOKEN_HERE'}`,
+      },
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    allCategories = await response.json();
+    console.log('Categories for filter loaded:', allCategories); // Debugging
+    categoryFilterSelect.innerHTML = '<option value="">All Categories</option>';
+
+    allCategories.forEach((category) => {
+      const option = document.createElement("option");
+      option.value = category.id;
+      option.textContent = category.name;
+      categoryFilterSelect.appendChild(option);
+    });
+
+    // Trigger initial load with the default (empty) category
+    loadProducts(categoryFilterSelect.value);
+  } catch (error) {
+    console.error("Error loading categories for filter:", error);
+    alert("Failed to load categories for filter. Please try again.");
+  }
+}
+
+async function loadProducts(categoryId = '') {
   if (!dashboardProductsList) {
     console.error('Dashboard products list element not found');
     return;
@@ -324,21 +418,36 @@ async function loadProducts() {
     <p class="text-center text-gray-600 mt-4">Loading products...</p>
   `;
   try {
-    const response = await fetch(`${API_BASE_URL}/producttypes`, {
+    // Always fetch all products and filter client-side if necessary
+    const url = `${API_BASE_URL}/producttypes`;
+    console.log('Fetching products from:', url, 'with categoryId:', categoryId);
+    const response = await fetch(url, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token') || 'YOUR_TOKEN_HERE'}`,
       },
     });
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const errorData = await response.json();
+      throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
     }
-    const products = await response.json();
+    let products = await response.json();
+    console.log('Products received:', products);
+
+    // Client-side filtering if categoryId is provided
+    if (categoryId) {
+      products = products.filter(product => 
+        product.category_id === categoryId || 
+        (product.category && product.category.id === categoryId)
+      );
+      console.log('Filtered products for category', categoryId, ':', products);
+    }
+
     dashboardProductsList.innerHTML = "";
 
     if (products.length === 0) {
       dashboardProductsList.innerHTML = `
         <div class="text-center p-8 bg-white rounded-lg shadow-md">
-          <p class="text-gray-600 text-lg">No products found. Add a new product to get started!</p>
+          <p class="text-gray-600 text-lg">${categoryId ? 'No products found for this category.' : 'No products found. Add a new product to get started!'}</p>
         </div>
       `;
       return;
@@ -509,7 +618,8 @@ function initializeAddProductModal() {
 
     for (const row of colorRows) {
       const colorInput = row.querySelector('.color-input');
-      const fileInput = row.querySelector('.color-image-input');
+      const imagePreviewContainer = row.querySelector('.image-preview-container');
+      const previewItems = imagePreviewContainer.querySelectorAll('.image-preview-item');
 
       const colorName = colorInput.value.trim();
       if (!colorName) {
@@ -518,20 +628,28 @@ function initializeAddProductModal() {
       }
 
       const imageIndices = [];
-      Array.from(fileInput.files).forEach(file => {
-        const fileIndex = allFilesForUpload.push(file) - 1;
-        imageIndices.push(fileIndex);
+      previewItems.forEach(item => {
+        if (item.dataset.isExisting === 'false' && item.dataset.fileName) {
+          const fileIndex = allFilesForUpload.length;
+          allFilesForUpload.push({
+            name: item.dataset.fileName,
+            type: item.dataset.fileType,
+            base64: item.dataset.fileBase64
+          });
+          imageIndices.push(fileIndex);
+        }
       });
 
       colorsData.push({
         color: colorName,
-        imageIndices: imageIndices,
+        imageIndices: imageIndices
       });
     }
 
     formData.append("colors", JSON.stringify(colorsData));
     allFilesForUpload.forEach(file => {
-      formData.append("images", file);
+      const blob = dataURLtoBlob(file.base64);
+      formData.append("images", blob, file.name);
     });
 
     try {
@@ -550,12 +668,22 @@ function initializeAddProductModal() {
 
       alert("Product added successfully!");
       closeModal(addProductModal);
-      loadProducts();
+      loadProducts(categoryFilterSelect?.value || '');
     } catch (error) {
       console.error("Error adding product:", error);
       alert(`Failed to add product: ${error.message}`);
     }
   });
+}
+
+// Helper function to convert base64 to Blob
+function dataURLtoBlob(dataurl) {
+  const arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
+        bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+  for (let i = 0; i < n; i++) {
+    u8arr[i] = bstr.charCodeAt(i);
+  }
+  return new Blob([u8arr], { type: mime });
 }
 
 async function openUpdateProductModal(productId) {
@@ -712,8 +840,8 @@ function initializeUpdateProductModal() {
 
     for (const row of colorRows) {
       const colorInput = row.querySelector('.color-input');
-      const fileInput = row.querySelector('.color-image-input');
-      const previewItems = row.querySelectorAll('.image-preview-item');
+      const imagePreviewContainer = row.querySelector('.image-preview-container');
+      const previewItems = Array.from(imagePreviewContainer.querySelectorAll('.image-preview-item'));
 
       const colorName = colorInput.value.trim();
       if (!colorName) {
@@ -727,13 +855,15 @@ function initializeUpdateProductModal() {
       previewItems.forEach(item => {
         if (item.dataset.isExisting === 'true' && item.dataset.imageUrl) {
           imageUrls.push(item.dataset.imageUrl);
+        } else if (item.dataset.isExisting === 'false' && item.dataset.fileName) {
+          const fileIndex = allFilesForUpload.length;
+          allFilesForUpload.push({
+            name: item.dataset.fileName,
+            type: item.dataset.fileType,
+            base64: item.dataset.fileBase64
+          });
+          imageIndices.push(fileIndex);
         }
-      });
-
-      Array.from(fileInput.files).forEach(file => {
-        const fileIndex = allFilesForUpload.length;
-        allFilesForUpload.push(file);
-        imageIndices.push(fileIndex);
       });
 
       colorsData.push({
@@ -745,7 +875,8 @@ function initializeUpdateProductModal() {
 
     formData.append("colors", JSON.stringify(colorsData));
     allFilesForUpload.forEach(file => {
-      formData.append("images", file);
+      const blob = dataURLtoBlob(file.base64);
+      formData.append("images", blob, file.name);
     });
 
     try {
@@ -764,7 +895,7 @@ function initializeUpdateProductModal() {
 
       alert("Product updated successfully!");
       closeModal(updateProductModal);
-      loadProducts();
+      loadProducts(categoryFilterSelect?.value || '');
     } catch (error) {
       console.error("Error updating product:", error);
       alert(`Failed to update product: ${error.message}`);
@@ -790,7 +921,7 @@ async function deleteProduct(productId, productName) {
     }
 
     alert(`Product "${productName}" deleted successfully!`);
-    loadProducts();
+    loadProducts(categoryFilterSelect?.value || '');
   } catch (error) {
     console.error("Error deleting product:", error);
     alert(`Failed to delete product: ${error.message}`);
@@ -822,7 +953,7 @@ async function toggleProductStatus(productId, currentStatus) {
     }
 
     alert(`Product status changed to ${newStatus ? 'active' : 'inactive'} successfully!`);
-    loadProducts();
+    loadProducts(categoryFilterSelect?.value || '');
   } catch (error) {
     console.error("Error changing product status:", error);
     alert(`Failed to change product status: ${error.message}`);
@@ -954,7 +1085,7 @@ function initializeProductDetailsModal() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  if (!addProductBtn || !addProductForm || !updateProductForm || !dashboardProductsList) {
+  if (!addProductBtn || !addProductForm || !updateProductForm || !dashboardProductsList || !categoryFilterSelect) {
     console.error('One or more critical DOM elements not found');
     alert('Error: Page not loaded correctly. Please refresh.');
     return;
@@ -962,5 +1093,9 @@ document.addEventListener("DOMContentLoaded", () => {
   initializeAddProductModal();
   initializeUpdateProductModal();
   initializeProductDetailsModal();
-  loadProducts();
+  populateCategoryFilter();
+  categoryFilterSelect.addEventListener('change', () => {
+    console.log('Category filter changed to:', categoryFilterSelect.value);
+    loadProducts(categoryFilterSelect.value);
+  });
 });

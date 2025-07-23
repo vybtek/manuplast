@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (response.ok) {
         localStorage.setItem('isLoggedIn', 'true');
         localStorage.setItem('token', data.token);
-        window.location.href = 'dashboard.html';
+        window.location.href = 'dashboard';
       } else {
         showError(data.message || 'Invalid credentials');
       }
@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
         resetForm.reset();
         // Redirect to dashboard after 2 seconds
         setTimeout(() => {
-          window.location.href = "dashboard.html";
+          window.location.href = "dashboard";
         }, 2000);
       } else {
         showError(data.message || "Failed to update password");

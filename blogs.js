@@ -112,6 +112,42 @@ async function fetchBlogDetail() {
       return;
     }
 
+    // Update page title and meta description
+    document.title = `${blog.title} | Manu Plast Blog`;
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      const description = blog.content
+        ? blog.content.replace(/\n/g, " ").substring(0, 160) + (blog.content.length > 160 ? "..." : "")
+        : `Read the latest insights on sustainable drinkware from Manu Plast in our blog post: ${blog.title}.`;
+      metaDescription.setAttribute("content", description);
+    }
+
+    // Optionally update Open Graph and Twitter Card meta tags
+    const ogTitle = document.querySelector('meta[property="og:title"]');
+    const ogDescription = document.querySelector('meta[property="og:description"]');
+    const twitterTitle = document.querySelector('meta[name="twitter:title"]');
+    const twitterDescription = document.querySelector('meta[name="twitter:description"]');
+
+    if (ogTitle) {
+      ogTitle.setAttribute("content", `${blog.title} | Manu Plast Blog`);
+    }
+    if (ogDescription) {
+      const description = blog.content
+        ? blog.content.replace(/\n/g, " ").substring(0, 160) + (blog.content.length > 160 ? "..." : "")
+        : `Read the latest insights on sustainable drinkware from Manu Plast in our blog post: ${blog.title}.`;
+      ogDescription.setAttribute("content", description);
+    }
+    if (twitterTitle) {
+      twitterTitle.setAttribute("content", `${blog.title} | Manu Plast Blog`);
+    }
+    if (twitterDescription) {
+      const description = blog.content
+        ? blog.content.replace(/\n/g, " ").substring(0, 160) + (blog.content.length > 160 ? "..." : "")
+        : `Read the latest insights on sustainable drinkware from Manu Plast in our blog post: ${blog.title}.`;
+      twitterDescription.setAttribute("content", description);
+    }
+
+    // Render the blog content
     detailContainer.innerHTML = `
       <div class="bg-white p-6 space-y-6 max-w-4xl mx-auto">
         <div class="text-sm text-gray-400 flex items-center gap-2">

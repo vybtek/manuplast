@@ -500,7 +500,6 @@ async function fetchProductDetail() {
         <div class="flex items-center justify-center min-h-screen bg-red-50">
           <div class="text-center">
             <div class="w-12 h-12 border-4 border-red-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
-            <p class="mt-4 text-red-800 font-medium">Loading product details...</p>
           </div>
         </div>
       `;
@@ -541,6 +540,44 @@ async function fetchProductDetail() {
       throw new Error(`Failed to fetch category: ${categoryResponse.status}`);
     }
     const category = await categoryResponse.json();
+
+    // Update page title and meta description
+    document.title = `${category.name} - Manu Plast`;
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute(
+        "content",
+        category.description ||
+          `Explore our premium ${category.name} products at Manu Plast, designed for quality and excellence.`
+      );
+    }
+
+    // Optionally update Open Graph and Twitter Card meta tags
+    const ogTitle = document.querySelector('meta[property="og:title"]');
+    const ogDescription = document.querySelector('meta[property="og:description"]');
+    const twitterTitle = document.querySelector('meta[name="twitter:title"]');
+    const twitterDescription = document.querySelector('meta[name="twitter:description"]');
+    
+    if (ogTitle) {
+      ogTitle.setAttribute("content", `${category.name} - Manu Plast`);
+    }
+    if (ogDescription) {
+      ogDescription.setAttribute(
+        "content",
+        category.description ||
+          `Explore our premium ${category.name} products at Manu Plast, designed for quality and excellence.`
+      );
+    }
+    if (twitterTitle) {
+      twitterTitle.setAttribute("content", `${category.name} - Manu Plast`);
+    }
+    if (twitterDescription) {
+      twitterDescription.setAttribute(
+        "content",
+        category.description ||
+          `Explore our premium ${category.name} products at Manu Plast, designed for quality and excellence.`
+      );
+    }
 
     const isFromDashboard =
       document.referrer.includes("dashboard") || source === "dashboard";
@@ -614,7 +651,7 @@ async function fetchProductDetail() {
             <!-- Hero Section -->
             <div class="bg-gradient-to-r from-red-600 to-red-800 text-white py-16 px-4 text-center">
               <nav class="flex justify-center items-center mb-8">
-                <a href="products.html" class="text-red-100 hover:text-white transition">
+                <a href="products" class="text-red-100 hover:text-white transition">
                   <i class="fas fa-home mr-1"></i> Categories
                 </a>
                 <span class="mx-2">/</span>
@@ -648,119 +685,118 @@ async function fetchProductDetail() {
               </div>
             </div>
 
-            <!-- Products Section -->
-            <div class="max-w-6xl mx-auto px-4 py-8">
-              <div class="flex justify-between items-center mb-8">
-                <h2 class="text-2xl font-bold text-gray-800">
-                  <i class="fas fa-box-open mr-2"></i>
-                  Product Collection
-                </h2>
-                <span class="bg-red-600 text-white px-3 py-1 rounded-full text-sm">
-                  ${filteredProductTypes.length} ${
+           <!-- Products Section -->
+<div class="max-w-6xl mx-auto px-4 py-8">
+  <div class="flex justify-between items-center mb-8">
+    <h2 class="text-2xl font-bold text-gray-800">
+      <i class="fas fa-box-open mr-2"></i>
+      Product Collection
+    </h2>
+    <span class="bg-red-600 text-white px-3 py-1 rounded-full text-sm">
+      ${filteredProductTypes.length} ${
       filteredProductTypes.length === 1 ? "Product" : "Products"
     }
-                </span>
-              </div>
-              ${
-                filteredProductTypes.length
-                  ? `
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  ${filteredProductTypes
-                    .map(
-                      (type, index) => `
-                    <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition duration-300">
-                      <div class="relative h-48 overflow-hidden">
-                        <img src="${type.cover_image}"
-                             alt="${type.name}"
-                             class="w-full h-full object-cover" />
-                        <div class="absolute top-0 right-0 p-2">
-                          ${
-                            type.colors.length
-                              ? `<span class="bg-white text-red-600 text-xs px-2 py-1 rounded-full">${type.colors.length} Colors</span>`
-                              : ""
-                          }
-                          ${
-                            type.sizes.length
-                              ? `<span class="bg-white text-red-600 text-xs px-2 py-1 rounded-full ml-1">${type.sizes.length} Sizes</span>`
-                              : ""
-                          }
-                        </div>
-                      </div>
-                      <div class="p-4">
-                        <h3 class="text-xl font-bold text-gray-600 mb-2">${
-                          type.name
-                        }</h3>
-                        <div class="mb-4">
-                          ${
-                            type.colors.length
-                              ? `
-                            <div class="flex items-center mb-2">
-                              <span class="text-sm font-medium text-gray-700 mr-2">Colors:</span>
-                              <div class="flex">
-                                ${type.colors
-                                  .slice(0, 4)
-                                  .map(
-                                    (color) => `
+    </span>
+  </div>
+  ${
+    filteredProductTypes.length
+      ? `
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        ${filteredProductTypes
+          .map(
+            (type, index) => `
+              <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition duration-300 flex flex-col items-center">
+                <div class="relative w-60 h-60 overflow-hidden">
+                  <img src="${type.cover_image_url}"
+                       alt="${type.name}"
+                       class="w-full h-full object-cover aspect-square" />
+                  <div class="absolute top-0 right-0 p-2">
+                    ${
+                      type.colors.length
+                        ? `<span class="bg-white text-red-600 text-xs px-2 py-1 rounded-full">${type.colors.length} Colors</span>`
+                        : ""
+                    }
+                    ${
+                      type.sizes.length
+                        ? `<span class="bg-white text-red-600 text-xs px-2 py-1 rounded-full ml-1">${type.sizes.length} Sizes</span>`
+                        : ""
+                    }
+                  </div>
+                </div>
+                <div class="p-4 w-full">
+                  <h3 class="text-xl font-bold text-gray-600 mb-2 text-center">${
+                    type.name
+                  }</h3>
+                  <div class="mb-4">
+                    ${
+                      type.colors.length
+                        ? `
+                        <div class="flex items-start mb-2 justify-start">
+                          <span class="text-sm font-medium text-gray-700 mr-2">Colors:</span>
+                          <div class="flex">
+                            ${type.colors
+                              .slice(0, 4)
+                              .map(
+                                (color) => `
                                   <div class="w-5 h-5 rounded-full border border-gray-200 ml-1"
                                        style="background-color: ${color.toLowerCase()}"
                                        title="${color}"></div>
                                 `
-                                  )
-                                  .join("")}
-                                ${
-                                  type.colors.length > 4
-                                    ? `<span class="text-xs text-red-600 ml-1">+${
-                                        type.colors.length - 4
-                                      }</span>`
-                                    : ""
-                                }
-                              </div>
-                            </div>
-                          `
-                              : ""
-                          }
-                          ${
-                            type.sizes.length
-                              ? `
-                            <div class="flex items-center">
-                              <span class="text-sm font-medium text-gray-700 mr-2">Sizes:</span>
-                              <div class="flex flex-wrap">
-                                ${type.sizes
-                                  .slice(0, 3)
-                                  .map(
-                                    (size) => `
+                              )
+                              .join("")}
+                            ${
+                              type.colors.length > 4
+                                ? `<span class="text-xs text-red-600 ml-1">+${
+                                    type.colors.length - 4
+                                  }</span>`
+                                : ""
+                            }
+                          </div>
+                        </div>
+                      `
+                        : ""
+                    }
+                    ${
+                      type.sizes.length
+                        ? `
+                        <div class="flex items-start justify-start">
+                          <span class="text-sm font-medium text-gray-700 mr-2">Sizes:</span>
+                          <div class="flex flex-wrap">
+                            ${type.sizes
+                              .slice(0, 3)
+                              .map(
+                                (size) => `
                                   <span class="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded mr-1 mb-1">${size}</span>
                                 `
-                                  )
-                                  .join("")}
-                                ${
-                                  type.sizes.length > 3
-                                    ? `<span class="text-xs text-red-600 ml-1">+${
-                                        type.sizes.length - 3
-                                      }</span>`
-                                    : ""
-                                }
-                              </div>
-                            </div>
-                          `
-                              : ""
-                          }
+                              )
+                              .join("")}
+                            ${
+                              type.sizes.length > 3
+                                ? `<span class="text-xs text-red-600 ml-1">+${
+                                    type.sizes.length - 3
+                                  }</span>`
+                                : ""
+                            }
+                          </div>
                         </div>
-                        <a href="type-detail?id=${
-                          type.id
-                        }&category_id=${categoryId}"
-                           class="flex items-center justify-center bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg transition">
-                          <span>View Details</span>
-                          <i class="fas fa-arrow-right ml-2"></i>
-                        </a>
-                      </div>
-                    </div>
-                  `
-                    )
-                    .join("")}
+                      `
+                        : ""
+                    }
+                  </div>
+                  <a href="type-detail?id=${type.id}&category_id=${categoryId}"
+                     class="flex items-center justify-center bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg transition w-full">
+                    <span>View Details</span>
+                    <i class="fas fa-arrow-right ml-2"></i>
+                  </a>
                 </div>
+              </div>
+            `
+          )
+          .join("")}
+      </div>
+
               `
-                  : `
+      : `
                 <div class="text-center py-12">
                   <div class="text-red-500 text-5xl mb-4">
                     <i class="fas fa-box-open"></i>
@@ -769,7 +805,7 @@ async function fetchProductDetail() {
                   <p class="text-gray-600">This category doesn't have any products yet. Check back later for updates.</p>
                 </div>
               `
-              }
+  }
               <div class="text-center mt-8">
                 <a href="products"
                    class="inline-flex items-center px-4 py-2 border border-red-600 text-red-600 rounded-lg hover:bg-red-600 hover:text-white transition">
@@ -869,7 +905,7 @@ class ProductDetailManager {
         );
       }
       const product = await productResponse.json();
-      console.log("Fetched Product:", product);
+      console.log("Fetched Product:", JSON.stringify(product, null, 2));
 
       if (!this.validateProduct(product, categoryId)) {
         this.renderError(
@@ -901,6 +937,7 @@ class ProductDetailManager {
         this.relatedProducts.map((p) => ({
           id: p.id,
           name: p.name,
+          cover_image_url: p.images[0],
           categoryId: p.category?.id || p.category_id,
         }))
       );
@@ -939,7 +976,20 @@ class ProductDetailManager {
   }
 
   processProductData(rawProduct) {
-    console.log("Raw Product Data:", rawProduct); // Debug log
+    console.log("Raw Product Data:", JSON.stringify(rawProduct, null, 2));
+    // Calculate images first to ensure cover_image_url can use them if needed
+    const allImages = Array.isArray(rawProduct.colors)
+      ? rawProduct.colors
+          .flatMap((color) =>
+            Array.isArray(color.images)
+              ? color.images
+                  .map((img) => (typeof img === "string" ? img : img.image_url))
+                  .filter(Boolean)
+              : []
+          )
+          .filter((url) => url && typeof url === "string" && url.trim() !== "")
+      : [];
+
     const processedProduct = {
       ...rawProduct,
       sizes: this.processSizes(rawProduct.sizes),
@@ -985,17 +1035,27 @@ class ProductDetailManager {
                     : "Multiple",
               },
             ],
-      // Set cover image similar to fetchProductDetail
-      cover_image:
-        rawProduct.main_image_url ||
-        (Array.isArray(rawProduct.colors) &&
-        rawProduct.colors[0]?.images?.[0]?.image_url) ||
-        "./images/placeholder.jpg",
+      cover_image_url:
+        rawProduct.cover_image_url ||
+        allImages[0] ||
+        "https://via.placeholder.com/300",
+      allImages:
+        allImages.length > 0
+          ? allImages
+          : [rawProduct.cover_image_url || "https://via.placeholder.com/300"],
     };
 
-    // Initially display the cover image
-    processedProduct.displayImages = [processedProduct.cover_image];
-    console.log("Cover Image Set:", processedProduct.cover_image); // Debug log
+    // Ensure cover_image_url is in allImages
+    if (
+      processedProduct.cover_image_url &&
+      !processedProduct.allImages.includes(processedProduct.cover_image_url)
+    ) {
+      processedProduct.allImages.unshift(processedProduct.cover_image_url);
+    }
+
+    processedProduct.displayImages = [processedProduct.cover_image_url];
+    console.log("Cover Image Set:", processedProduct.cover_image_url);
+    console.log("All Images Set:", processedProduct.allImages);
 
     return processedProduct;
   }
@@ -1021,7 +1081,7 @@ class ProductDetailManager {
                 ? color.images.map((img) => img.image_url).filter(Boolean)
                 : []
             )
-          : [type.main_image_url || "./images/placeholder.jpg"],
+          : [type.cover_image_url || "https://via.placeholder.com/300"],
         sizes: Array.isArray(type.sizes)
           ? type.sizes
               .map((s) => (typeof s === "string" ? s : s.size))
@@ -1048,7 +1108,11 @@ class ProductDetailManager {
         const processedImages = rawImages
           .map((img) => (typeof img === "string" ? img : img?.image_url))
           .filter((url) => url && typeof url === "string" && url.trim() !== "")
-          .map((url) => (url.startsWith("http") ? url : `./images/${url}`));
+          .map((url) =>
+            url.startsWith("http")
+              ? url
+              : `https://api.vybtek.com/images/${url}`
+          ); // Adjust base URL
 
         return {
           name: colorName,
@@ -1057,7 +1121,7 @@ class ProductDetailManager {
           images:
             processedImages.length > 0
               ? processedImages
-              : ["./images/placeholder.jpg"],
+              : ["https://via.placeholder.com/300"],
         };
       })
       .filter((color) => color.name);
@@ -1170,102 +1234,222 @@ class ProductDetailManager {
         `;
   }
 
+  // Helper method to truncate description for meta tags
+  truncateDescription(description, maxLength = 160) {
+    if (!description || typeof description !== "string")
+      return "Explore our premium product details, including sizes, colors, and features.";
+    const cleanDescription = description.replace(/\r\n/g, " ").trim();
+    if (cleanDescription.length <= maxLength) return cleanDescription;
+    const truncated = cleanDescription.substring(0, maxLength);
+    return truncated.substring(0, truncated.lastIndexOf(" ")) + "...";
+  }
+
   renderProductDetail() {
     const typeDetail = document.getElementById("type-detail");
     if (!typeDetail) return;
 
     const product = this.product;
-    console.log("Rendering Product Detail with Cover Image:", product.cover_image); // Debug log
+    console.log(
+      "Rendering Product Detail with Cover Image:",
+      product.cover_image
+    );
+
+    // Update page title
+    document.title = product.name
+      ? `${product.name} - Manuplast`
+      : "Product Type Details - Manuplast";
+
+    // Update meta description
+    const metaDescription = document.querySelector('meta[name="description"]');
+    const descriptionText = this.truncateDescription(product.description);
+    if (metaDescription) {
+      metaDescription.setAttribute("content", descriptionText);
+    } else {
+      const newMeta = document.createElement("meta");
+      newMeta.name = "description";
+      newMeta.content = descriptionText;
+      document.head.appendChild(newMeta);
+    }
+
+    // Update Open Graph meta tags
+    const ogTitle = document.querySelector('meta[property="og:title"]');
+    if (ogTitle) {
+      ogTitle.setAttribute(
+        "content",
+        product.name
+          ? `${product.name} - Manuplast`
+          : "Product Type Details - Manuplast"
+      );
+    }
+    const ogDescription = document.querySelector(
+      'meta[property="og:description"]'
+    );
+    if (ogDescription) {
+      ogDescription.setAttribute("content", descriptionText);
+    }
+    const ogImage = document.querySelector('meta[property="og:image"]');
+    if (ogImage && product.cover_image) {
+      ogImage.setAttribute("content", product.cover_image);
+    }
+
+    // Update Twitter meta tags
+    const twitterTitle = document.querySelector('meta[name="twitter:title"]');
+    if (twitterTitle) {
+      twitterTitle.setAttribute(
+        "content",
+        product.name
+          ? `${product.name} - Manuplast`
+          : "Product Type Details - Manuplast"
+      );
+    }
+    const twitterDescription = document.querySelector(
+      'meta[name="twitter:description"]'
+    );
+    if (twitterDescription) {
+      twitterDescription.setAttribute("content", descriptionText);
+    }
+    const twitterImage = document.querySelector('meta[name="twitter:image"]');
+    if (twitterImage && product.cover_image) {
+      twitterImage.setAttribute("content", product.cover_image);
+    }
+
+    // Update Schema.org JSON-LD
+    const schemaScript = document.querySelector(
+      'script[type="application/ld+json"]'
+    );
+    if (schemaScript && product.name) {
+      const schemaData = {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        name: product.name || "Product Type Details",
+        image:
+          product.cover_image || "https://www.manuplast.com/images/logo.png",
+        description: descriptionText,
+        sku: product.id || "PRODUCT123",
+        mpn: product.id || "MPN123",
+        brand: { "@type": "Brand", name: "manuplast" },
+        offers: {
+          "@type": "Offer",
+          url: window.location.href,
+          priceCurrency: "INR",
+          price: product.price
+            ? parseFloat(product.price.replace(/[^\d.]/g, ""))
+            : "0.00",
+          priceValidUntil: "2026-07-22",
+          availability:
+            product.status === "active"
+              ? "https://schema.org/InStock"
+              : "https://schema.org/OutOfStock",
+          seller: { "@type": "Organization", name: "manuplast" },
+        },
+      };
+      schemaScript.textContent = JSON.stringify(schemaData, null, 2);
+    }
+
     typeDetail.innerHTML = `
-          <div class="bg-white rounded-2xl shadow-2xl overflow-hidden animate-slide-in">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-0">
-              <div id="image-gallery-section" class="p-8 bg-gradient-to-br from-gray-50 to-gray-100">
-                ${this.renderImageGallery()}
-              </div>
-              <div id="product-info-section" class="p-8 sticky top-20">
-                ${this.renderProductInfo()}
-              </div>
-            </div>
-            <div class="border-t border-gray-200 p-8 bg-gray-50">
-              ${this.renderAdditionalDetails()}
-            </div>
-            <div class="p-8">
-              ${this.renderRelatedProducts()}
-            </div>
+      <div class="bg-white rounded-2xl shadow-2xl overflow-hidden animate-slide-in">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-0">
+          <div id="image-gallery-section" class="p-8 bg-gradient-to-br from-gray-50 to-gray-100">
+            ${this.renderImageGallery()}
           </div>
-        `;
+          <div id="product-info-section" class="p-8 sticky top-20">
+            ${this.renderProductInfo()}
+          </div>
+        </div>
+        <div class="border-t border-gray-200 p-8 bg-gray-50">
+          ${this.renderAdditionalDetails()}
+        </div>
+        <div class="p-8">
+          ${this.renderRelatedProducts()}
+        </div>
+      </div>
+    `;
+    if (!document.querySelector('link[href*="font-awesome"]')) {
+      const fontAwesome = document.createElement("link");
+      fontAwesome.rel = "stylesheet";
+      fontAwesome.href =
+        "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css";
+      document.head.appendChild(fontAwesome);
+    }
   }
 
   renderImageGallery() {
     const product = this.product;
-    const imagesToDisplay = product.displayImages;
+    const imagesToDisplay =
+      this.currentSelectedColorIndex >= 0
+        ? product.colors[this.currentSelectedColorIndex].images
+        : product.allImages;
 
-    console.log("Images to Display in Gallery:", imagesToDisplay); // Debug log
+    console.log("Images to Display in Gallery:", imagesToDisplay);
     return `
-          <div class="space-y-4">
-            <div class="relative group">
-              <div class="aspect-w-1 aspect-h-1 bg-white rounded-xl overflow-hidden shadow-lg">
-                <img id="main-image"
-                     src="${
-                       imagesToDisplay[this.currentImageIndex] ||
-                       "./images/placeholder.jpg"
-                     }"
-                     alt="${product.name || "Product"}"
-                     class="w-full h-96 object-cover cursor-zoom-in transition-transform duration-300 group-hover:scale-105">
-              </div>
-              <div class="absolute top-4 right-4 space-y-2">
-                <button id="fullscreen-image" class="bg-white bg-opacity-80 hover:bg-opacity-100 p-2 rounded-full shadow-md transition-all duration-300">
+      <div class="space-y-4">
+        <div class="relative group">
+          <div class="aspect-square bg-white rounded-xl overflow-hidden shadow-lg max-w-[400px] mx-auto">
+            <img id="main-image"
+                 src="${
+                   this.currentSelectedColorIndex >= 0
+                     ? imagesToDisplay[this.currentImageIndex] ||
+                       "https://via.placeholder.com/300"
+                     : product.cover_image ||
+                       product.allImages[0] ||
+                       "https://via.placeholder.com/300"
+                 }"
+                 alt="${product.name || "Product"}"
+                 class="w-full h-full object-contain cursor-zoom-in transition-transform duration-300 group-hover:scale-105">
+          </div>
+          <div class="absolute top-4 right-4 space-y-2">
+            <button id="fullscreen-image" class="bg-white bg-opacity-80 hover:bg-opacity-100 p-2 rounded-full shadow-md transition-all duration-300">
+              <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
+              </svg>
+            </button>
+          </div>
+          ${
+            imagesToDisplay.length > 1
+              ? `
+                <button id="prev-image" class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100 p-2 rounded-full shadow-md transition-all duration-300">
                   <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                   </svg>
                 </button>
-              </div>
-              ${
-                imagesToDisplay.length > 1
-                  ? `
-                  <button id="prev-image" class="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100 p-2 rounded-full shadow-md transition-all duration-300">
-                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                    </svg>
-                  </button>
-                  <button id="next-image" class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100 p-2 rounded-full shadow-md transition-all duration-300">
-                    <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                    </svg>
-                  </button>
-                  `
-                  : ""
-              }
-            </div>
-            ${
-              imagesToDisplay.length > 1
-                ? `
-                <div class="flex space-x-2 overflow-x-auto pb-2">
-                  ${imagesToDisplay
-                    .map(
-                      (image, index) => `
-                      <img src="${image || "./images/placeholder.jpg"}"
-                           alt="${product.name || "Product"} ${index + 1}"
-                           class="thumbnail w-16 h-16 object-cover rounded-lg cursor-pointer border-2 border-transparent hover:border-blue-500 transition-all duration-300 flex-shrink-0 ${
-                             index === this.currentImageIndex
-                               ? "border-blue-500"
-                               : ""
-                           }"
-                           data-index="${index}">
-                    `
-                    )
-                    .join("")}
-                </div>
+                <button id="next-image" class="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white bg-opacity-80 hover:bg-opacity-100 p-2 rounded-full shadow-md transition-all duration-300">
+                  <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                  </svg>
+                </button>
                 `
-                : ""
-            }
-            <div class="text-center text-sm text-gray-500">
-              <span id="image-counter">${this.currentImageIndex + 1}</span> / ${
+              : ""
+          }
+        </div>
+        ${
+          imagesToDisplay.length > 0
+            ? `
+              <div class="flex space-x-2 overflow-x-auto pb-2 justify-center">
+                ${imagesToDisplay
+                  .map(
+                    (image, index) => `
+                    <img src="${image || "https://via.placeholder.com/300"}"
+                         alt="${product.name || "Product"} ${index + 1}"
+                         class="thumbnail w-16 h-16 object-contain rounded-lg cursor-pointer border-2 border-transparent hover:border-blue-500 transition-all duration-300 flex-shrink-0 ${
+                           index === this.currentImageIndex
+                             ? "border-blue-500"
+                             : ""
+                         }"
+                         data-index="${index}">
+                  `
+                  )
+                  .join("")}
+              </div>
+              `
+            : ""
+        }
+        <div class="text-center text-sm text-gray-500">
+          <span id="image-counter">${this.currentImageIndex + 1}</span> / ${
       imagesToDisplay.length || 1
     }
-            </div>
-          </div>
-        `;
+        </div>
+      </div>
+    `;
   }
 
   renderProductInfo() {
@@ -1277,11 +1461,7 @@ class ProductDetailManager {
               <h1 class="text-3xl font-bold text-gray-900 mb-2">${
                 product.name || "Unnamed Product"
               }</h1>
-              <div class="flex items-center space-x-2">
-                <span class="text-2xl font-semibold text-gray-900">${
-                  product.price || "N/A"
-                }</span>
-              </div>
+              
             </div>
             ${
               product.sizes.length > 0
@@ -1442,97 +1622,91 @@ class ProductDetailManager {
                   ${this.relatedProducts
                     .map(
                       (type) => `
-                      <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition duration-300">
-                        <div class="relative h-48 overflow-hidden">
-                          <img src="${
-                            type.images[0] || "./images/placeholder.jpg"
-                          }"
-                               alt="${type.name}"
-                               class="w-full h-full object-cover hover:scale-105 transition duration-300">
-                          <div class="absolute top-2 right-2">
+                      <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition duration-300 flex flex-col items-center">
+                <div class="relative w-60 h-60 overflow-hidden">
+                  <img src="${type.cover_image_url}"
+                       alt="${type.name}"
+                       class="w-full h-full object-cover aspect-square" />
+                  <div class="absolute top-0 right-0 p-2">
+                    ${
+                      type.colors.length
+                        ? `<span class="bg-white text-red-600 text-xs px-2 py-1 rounded-full">${type.colors.length} Colors</span>`
+                        : ""
+                    }
+                    ${
+                      type.sizes.length
+                        ? `<span class="bg-white text-red-600 text-xs px-2 py-1 rounded-full ml-1">${type.sizes.length} Sizes</span>`
+                        : ""
+                    }
+                  </div>
+                </div>
+                <div class="p-4 w-full">
+                  <h3 class="text-xl font-bold text-gray-600 mb-2 text-center">${
+                    type.name
+                  }</h3>
+                  <div class="mb-4">
+                    ${
+                      type.colors.length
+                        ? `
+                        <div class="flex items-start mb-2 justify-start">
+                          <span class="text-sm font-medium text-gray-700 mr-2">Colors:</span>
+                          <div class="flex">
+                            ${type.colors
+                              .slice(0, 4)
+                              .map(
+                                (color) => `
+                                  <div class="w-5 h-5 rounded-full border border-gray-200 ml-1"
+                                       style="background-color: ${color.toLowerCase()}"
+                                       title="${color}"></div>
+                                `
+                              )
+                              .join("")}
                             ${
-                              type.colors.length
-                                ? `<span class="bg-white text-red-600 text-xs px-2 py-1 rounded-full">${type.colors.length} Colors</span>`
-                                : ""
-                            }
-                            ${
-                              type.sizes.length
-                                ? `<span class="bg-white text-red-600 text-xs px-2 py-1 rounded-full ml-1">${type.sizes.length} Sizes</span>`
+                              type.colors.length > 4
+                                ? `<span class="text-xs text-red-600 ml-1">+${
+                                    type.colors.length - 4
+                                  }</span>`
                                 : ""
                             }
                           </div>
                         </div>
-                        <div class="p-4">
-                          <h3 class="text-xl font-bold text-gray-800 mb-2">${
-                            type.name
-                          }</h3>
-                          <div class="mb-4">
-                            ${
-                              type.colors.length
-                                ? `
-                                <div class="flex items-center mb-2">
-                                  <span class="text-sm font-medium text-gray-700 mr-2">Colors:</span>
-                                  <div class="flex">
-                                    ${type.colors
-                                      .slice(0, 4)
-                                      .map(
-                                        (color) => `
-                                        <div class="w-5 h-5 rounded-full border border-gray-200 ml-1"
-                                             style="background-color: ${this.getColorHex(
-                                               color
-                                             )}"
-                                             title="${color}"></div>
-                                      `
-                                      )
-                                      .join("")}
-                                    ${
-                                      type.colors.length > 4
-                                        ? `<span class="text-xs text-blue-600 ml-1">+${
-                                            type.colors.length - 4
-                                          }</span>`
-                                        : ""
-                                    }
-                                  </div>
-                                </div>
+                      `
+                        : ""
+                    }
+                    ${
+                      type.sizes.length
+                        ? `
+                        <div class="flex items-start justify-start">
+                          <span class="text-sm font-medium text-gray-700 mr-2">Sizes:</span>
+                          <div class="flex flex-wrap">
+                            ${type.sizes
+                              .slice(0, 3)
+                              .map(
+                                (size) => `
+                                  <span class="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded mr-1 mb-1">${size}</span>
                                 `
-                                : ""
-                            }
+                              )
+                              .join("")}
                             ${
-                              type.sizes.length
-                                ? `
-                                <div class="flex items-center">
-                                  <span class="text-sm font-medium text-gray-700 mr-2">Sizes:</span>
-                                  <div class="flex flex-wrap">
-                                    ${type.sizes
-                                      .slice(0, 3)
-                                      .map(
-                                        (size) => `
-                                        <span class="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded mr-1 mb-1">${size}</span>
-                                      `
-                                      )
-                                      .join("")}
-                                    ${
-                                      type.sizes.length > 3
-                                        ? `<span class="text-xs text-blue-600 ml-1">+${
-                                            type.sizes.length - 3
-                                          }</span>`
-                                        : ""
-                                    }
-                                  </div>
-                                </div>
-                                `
+                              type.sizes.length > 3
+                                ? `<span class="text-xs text-red-600 ml-1">+${
+                                    type.sizes.length - 3
+                                  }</span>`
                                 : ""
                             }
                           </div>
-                          <a href="type-detail?id=${
-                            type.id
-                          }&category_id=${categoryId}"
-                             class="flex items-center justify-center bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg transition">
-                            <span>View Details</span>
-                            <i class="fas fa-arrow-right ml-2"></i>
-                          </a>
                         </div>
-                      </div>
+                      `
+                        : ""
+                    }
+                  </div>
+                  <a href="type-detail?id=${type.id}&category_id=${categoryId}"
+                     class="flex items-center justify-center bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg transition w-full">
+                    <span>View Details</span>
+                    <i class="fas fa-arrow-right ml-2"></i>
+                  </a>
+                </div>
+                 </div>
                     `
                     )
                     .join("")}
@@ -1552,46 +1726,6 @@ class ProductDetailManager {
         `;
   }
 
-  renderStarRating(rating) {
-    const stars = [];
-    for (let i = 1; i <= 5; i++) {
-      stars.push(`
-            <svg class="w-5 h-5 ${
-              i <= rating ? "text-yellow-400" : "text-gray-300"
-            }" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-            </svg>
-          `);
-    }
-    return stars.join("");
-  }
-
-  getAvailabilityClass(availability) {
-    switch (availability) {
-      case "in-stock":
-        return "bg-green-100 text-green-800";
-      case "low-stock":
-        return "bg-yellow-100 text-yellow-800";
-      case "out-of-stock":
-        return "bg-red-100 text-red-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  }
-
-  getAvailabilityText(availability) {
-    switch (availability) {
-      case "in-stock":
-        return "In Stock";
-      case "low-stock":
-        return "Low Stock";
-      case "out-of-stock":
-        return "Out of Stock";
-      default:
-        return "Unknown";
-    }
-  }
-
   initializeInteractions() {
     this.setupImageGallery();
     this.setupColorSwatches();
@@ -1608,6 +1742,11 @@ class ProductDetailManager {
 
     thumbnails.forEach((thumb, index) => {
       thumb.addEventListener("click", () => this.changeImage(index));
+      // Add error handling for thumbnails
+      thumb.onerror = () => {
+        console.error("Failed to load thumbnail:", thumb.src);
+        thumb.src = "https://via.placeholder.com/300";
+      };
     });
 
     if (prevBtn) {
@@ -1621,6 +1760,10 @@ class ProductDetailManager {
     }
     if (mainImage) {
       mainImage.addEventListener("click", () => this.openLightbox());
+      mainImage.onerror = () => {
+        console.error("Failed to load main image:", mainImage.src);
+        mainImage.src = "https://via.placeholder.com/300";
+      };
     }
   }
 
@@ -1630,7 +1773,9 @@ class ProductDetailManager {
       colorContainer.querySelectorAll(".color-swatch").forEach((swatch) => {
         swatch.addEventListener("click", (event) => {
           const colorIndex = parseInt(event.currentTarget.dataset.colorIndex);
-          this.selectColor(colorIndex);
+          const newIndex =
+            this.currentSelectedColorIndex === colorIndex ? -1 : colorIndex;
+          this.selectColor(newIndex);
         });
       });
     }
@@ -1653,19 +1798,20 @@ class ProductDetailManager {
 
     this.currentSelectedColorIndex = index;
     this.currentImageIndex = 0;
-    // Switch to the selected color's images, or revert to cover image if no color is selected
     this.product.displayImages =
       index >= 0 && this.product.colors[index]
         ? this.product.colors[index].images
-        : [this.product.cover_image];
+        : this.product.allImages;
     console.log(
       "Selected Color Index:",
       index,
       "Display Images:",
       this.product.displayImages
-    ); // Debug log
+    );
 
-    const imageGallerySection = document.getElementById("image-gallery-section");
+    const imageGallerySection = document.getElementById(
+      "image-gallery-section"
+    );
     if (imageGallerySection) {
       imageGallerySection.innerHTML = this.renderImageGallery();
       this.setupImageGallery();
@@ -1683,10 +1829,18 @@ class ProductDetailManager {
     const mainImage = document.getElementById("main-image");
     const thumbnails = document.querySelectorAll(".thumbnail");
     const imageCounter = document.getElementById("image-counter");
-    const imagesToDisplay = this.product.displayImages;
+    const imagesToDisplay =
+      this.currentSelectedColorIndex >= 0
+        ? this.product.colors[this.currentSelectedColorIndex].images
+        : this.product.allImages;
 
     if (mainImage) {
-      mainImage.src = imagesToDisplay[index] || "./images/placeholder.jpg";
+      mainImage.src =
+        this.currentSelectedColorIndex >= 0
+          ? imagesToDisplay[index] || "https://via.placeholder.com/300"
+          : index === 0
+          ? this.product.cover_image_url || "https://via.placeholder.com/300"
+          : imagesToDisplay[index] || "https://via.placeholder.com/300";
     }
 
     thumbnails.forEach((thumb, i) => {
@@ -1700,7 +1854,10 @@ class ProductDetailManager {
   }
 
   previousImage() {
-    const imagesToDisplay = this.product.displayImages;
+    const imagesToDisplay =
+      this.currentSelectedColorIndex >= 0
+        ? this.product.colors[this.currentSelectedColorIndex].images
+        : this.product.allImages;
     if (imagesToDisplay.length === 0) return;
     const newIndex =
       this.currentImageIndex > 0
@@ -1710,7 +1867,10 @@ class ProductDetailManager {
   }
 
   nextImage() {
-    const imagesToDisplay = this.product.displayImages;
+    const imagesToDisplay =
+      this.currentSelectedColorIndex >= 0
+        ? this.product.colors[this.currentSelectedColorIndex].images
+        : this.product.allImages;
     if (imagesToDisplay.length === 0) return;
     const newIndex =
       this.currentImageIndex < imagesToDisplay.length - 1
@@ -1720,7 +1880,10 @@ class ProductDetailManager {
   }
 
   openLightbox() {
-    const imagesToDisplay = this.product.displayImages;
+    const imagesToDisplay =
+      this.currentSelectedColorIndex >= 0
+        ? this.product.colors[this.currentSelectedColorIndex].images
+        : this.product.allImages;
     if (imagesToDisplay.length === 0) return;
 
     const lightbox = document.createElement("div");
@@ -1731,8 +1894,14 @@ class ProductDetailManager {
     lightbox.innerHTML = `
           <div class="relative max-w-4xl h-80 p-4">
             <img src="${
-              imagesToDisplay[this.currentImageIndex] ||
-              "./images/placeholder.jpg"
+              this.currentSelectedColorIndex >= 0
+                ? imagesToDisplay[this.currentImageIndex] ||
+                  "https://via.placeholder.com/300"
+                : this.currentImageIndex === 0
+                ? this.product.cover_image_url ||
+                  "https://via.placeholder.com/300"
+                : imagesToDisplay[this.currentImageIndex] ||
+                  "https://via.placeholder.com/300"
             }"
                  alt="${this.product.name || "Product"}"
                  class="max-w-full max-h-full object-contain">

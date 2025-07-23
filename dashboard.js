@@ -91,13 +91,21 @@ class DashboardManager {
       try {
         console.debug("Fetching recent products...");
         const response = await this.fetchWithTimeout(
-          `https://api.vybtek.com/api/manuplast/producttypes?sort_by=created_at&order=desc&limit=2`,
+          `https://api.vybtek.com/api/manuplast/producttypes?sort_by=created_at&order=desc&limit=2&_=${Date.now()}`,
           { headers }
         );
         if (response.ok) {
           const data = await response.json();
           recentProducts = Array.isArray(data) ? data : data.data || [];
-          console.debug("Recent products:", recentProducts);
+          // Validate and sort products
+          recentProducts = recentProducts
+            .filter(p => p.created_at)
+            .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+          console.debug("Recent products after validation:", recentProducts.map(p => ({
+            id: p.id,
+            name: p.name,
+            created_at: p.created_at
+          })));
         }
       } catch (error) {
         console.warn("Recent products fetch failed:", error.message);
@@ -232,6 +240,12 @@ class DashboardManager {
       return;
     }
 
+    console.debug("Rendering recent products:", products.map(p => ({
+      id: p.id,
+      name: p.name,
+      created_at: p.created_at
+    })));
+
     const params = new URLSearchParams(window.location.search);
     const categoryId =
       params.get("category_id") ||
@@ -251,7 +265,7 @@ class DashboardManager {
               product.id || ""
             }&category_id=${categoryId}" class="text-indigo-600 hover:underline font-medium">${
               product.name || "Unnamed Product"
-            }</a>
+            } (Added: ${product.created_at || "Unknown"})</a>
           </li>
         `
           )
