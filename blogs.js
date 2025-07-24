@@ -60,7 +60,7 @@ async function fetchBlogs(containerId = "blog-grid", view = "default") {
 
         blogCard.innerHTML = `
           <div class="md:w-1/3 w-full h-64 overflow-hidden">
-            <img src="${blog.image}" alt="${blog.title}" class="w-[90%] h-full object-cover transition-transform duration-500 hover:scale-105">
+            <img src="${blog.image}" alt="${blog.title}" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">
           </div>
           <div class="md:w-2/3 w-full p-6 flex flex-col justify-between">
             <div>
@@ -71,7 +71,7 @@ async function fetchBlogs(containerId = "blog-grid", view = "default") {
                 ${blog.title}
               </h3>
               <p class="text-gray-600 text-sm leading-relaxed mb-4">
-                ${blog.content.substring(0, 200)}...
+                ${blog.content.substring(0, 470)}...
               </p>
             </div>
             <div>
