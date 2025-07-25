@@ -853,7 +853,7 @@ async function fetchProductDetail() {
 class ProductDetailManager {
   constructor() {
     this.currentImageIndex = 0;
-    this.currentSelectedColorIndex = -1; // No color selected initially
+    this.currentSelectedColorIndex = -1;
     this.imageViewMode = "gallery";
     this.product = null;
     this.isLoading = false;
@@ -863,12 +863,15 @@ class ProductDetailManager {
   }
 
   init() {
+    console.log("ProductDetailManager initialized");
     this.fetchProductDetail();
     this.setupEventListeners();
   }
 
   setupEventListeners() {
-    document.addEventListener("keydown", (e) => this.handleKeyboardNavigation(e));
+    document.addEventListener("keydown", (e) =>
+      this.handleKeyboardNavigation(e)
+    );
     window.addEventListener("resize", () => this.handleWindowResize());
   }
 
@@ -883,7 +886,7 @@ class ProductDetailManager {
     const typeId = params.get("id");
     const categoryId = params.get("category_id");
 
-    console.log("Type ID:", typeId, "Category ID:", categoryId);
+    console.log("Fetching with Type ID:", typeId, "Category ID:", categoryId);
 
     if (!typeId || !categoryId) {
       this.renderError("Product not found. Invalid product ID or category.");
@@ -897,10 +900,9 @@ class ProductDetailManager {
       const token = this.getAuthToken();
       const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
-      // Fetch product details
       const productResponse = await fetch(
         `https://api.vybtek.com/api/manuplast/producttypes/${typeId}`,
-        { headers, timeout: 1500 } // Reduced timeout for faster execution
+        { headers, timeout: 5000 } // Increased timeout for reliability
       );
       if (!productResponse.ok) {
         throw new Error(
@@ -917,10 +919,9 @@ class ProductDetailManager {
         return;
       }
 
-      // Fetch related products
       const relatedResponse = await fetch(
         `https://api.vybtek.com/api/manuplast/producttypes?category_id=${categoryId}`,
-        { headers, timeout: 1500 }
+        { headers, timeout: 5000 }
       );
       if (!relatedResponse.ok) {
         throw new Error(
@@ -935,17 +936,8 @@ class ProductDetailManager {
         typeId,
         categoryId
       );
-      console.log(
-        "Processed Related Products:",
-        this.relatedProducts.map((p) => ({
-          id: p.id,
-          name: p.name,
-          cover_image_url: p.images[0],
-          categoryId: p.category?.id || p.category_id,
-        }))
-      );
+      console.log("Meta tags to be updated with:", this.product);
 
-      // Update meta tags in the <head>
       this.updateMetaTags();
 
       this.renderProductDetail();
@@ -1250,7 +1242,12 @@ class ProductDetailManager {
     const product = this.product;
     const descriptionText = this.truncateDescription(product.description);
 
-    // Update or create meta tags
+    console.log("Updating meta tags with:", {
+      name: product.name,
+      description: descriptionText,
+      image: product.cover_image_url,
+    });
+
     let metaDescription = document.querySelector('meta[name="description"]');
     if (!metaDescription) {
       metaDescription = document.createElement("meta");
@@ -1265,9 +1262,14 @@ class ProductDetailManager {
       ogTitle.setAttribute("property", "og:title");
       document.head.appendChild(ogTitle);
     }
-    ogTitle.setAttribute("content", product.name ? `${product.name} - manuplast` : "");
+    ogTitle.setAttribute(
+      "content",
+      product.name ? `${product.name} - manuplast` : ""
+    );
 
-    let ogDescription = document.querySelector('meta[property="og:description"]');
+    let ogDescription = document.querySelector(
+      'meta[property="og:description"]'
+    );
     if (!ogDescription) {
       ogDescription = document.createElement("meta");
       ogDescription.setAttribute("property", "og:description");
@@ -1291,9 +1293,14 @@ class ProductDetailManager {
       twitterTitle.setAttribute("name", "twitter:title");
       document.head.appendChild(twitterTitle);
     }
-    twitterTitle.setAttribute("content", product.name ? `${product.name} - manuplast` : "");
+    twitterTitle.setAttribute(
+      "content",
+      product.name ? `${product.name} - manuplast` : ""
+    );
 
-    let twitterDescription = document.querySelector('meta[name="twitter:description"]');
+    let twitterDescription = document.querySelector(
+      'meta[name="twitter:description"]'
+    );
     if (!twitterDescription) {
       twitterDescription = document.createElement("meta");
       twitterDescription.setAttribute("name", "twitter:description");
@@ -1308,7 +1315,6 @@ class ProductDetailManager {
         product.cover_image_url || "https://www.manuplast.co/images/logo.png"
       );
 
-    // Update title
     document.title = product.name ? `${product.name} - Manuplast` : "";
   }
 
@@ -1411,7 +1417,6 @@ class ProductDetailManager {
         shareMenu.classList.toggle("hidden");
       });
 
-      // Close menu when clicking outside
       document.addEventListener("click", (e) => {
         if (!shareButton.contains(e.target) && !shareMenu.contains(e.target)) {
           shareMenu.classList.add("hidden");
@@ -1477,7 +1482,6 @@ class ProductDetailManager {
         });
       }
 
-      // Web Share API for native sharing
       if (navigator.share) {
         shareButton.addEventListener("click", (e) => {
           e.preventDefault();
@@ -1492,7 +1496,6 @@ class ProductDetailManager {
             })
             .catch((error) => {
               console.error("Error sharing product:", error);
-              // Fallback to custom share menu
               shareMenu.classList.toggle("hidden");
             });
         });
@@ -1957,7 +1960,6 @@ class ProductDetailManager {
       this.setupTabNavigation();
     }
 
-    // Update meta tags when color changes
     this.updateMetaTags();
   }
 
@@ -2145,7 +2147,6 @@ document.addEventListener("DOMContentLoaded", () => {
 if (typeof module !== "undefined" && module.exports) {
   module.exports = ProductDetailManager;
 }
-
 
 async function fetchProductForUpdate() {
   const params = new URLSearchParams(window.location.search);
