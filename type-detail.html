@@ -3,19 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- Fallback meta tags -->
-    <meta
-      name="description"
-      content="Explore premium products at Manuplast. Check product details now!"
-    />
-    <meta
-      property="og:title"
-      content="Product Type Details - Manuplast"
-    />
-    <meta
-      property="og:description"
-      content="Explore premium products at Manuplast. Check product details now!"
-    />
+    <!-- No fallback meta tags for title or description -->
     <meta
       property="og:image"
       content="https://www.manuplast.co/images/logo.png"
@@ -28,18 +16,11 @@
     <meta property="og:site_name" content="manuplast" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta
-      name="twitter:title"
-      content="Product Type Details - Manuplast"
-    />
-    <meta
-      name="twitter:description"
-      content="Explore premium products at Manuplast. Check product details now!"
-    />
-    <meta
       name="twitter:image"
       content="https://www.manuplast.co/images/logo.png"
     />
-    <title>Product Type Details - Manuplast</title>
+    <title></title>
+    <!-- Empty title initially -->
     <link href="style.css" rel="stylesheet" />
     <link rel="icon" type="image/png" href="./images/logo.png" />
     <link
@@ -55,45 +36,41 @@
         const categoryId = params.get("category_id");
 
         if (typeId && categoryId) {
-          fetch(
-            `https://api.vybtek.com/api/manuplast/producttypes/${typeId}`,
-            {
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
-              },
-              timeout: 5000, // Short timeout for crawler compatibility
-            }
-          )
+          fetch(`https://api.vybtek.com/api/manuplast/producttypes/${typeId}`, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
+            },
+            timeout: 5000, // Short timeout for crawler compatibility
+          })
             .then((response) => response.json())
             .then((product) => {
               const truncateDescription = (desc, maxLength = 160) => {
-                if (!desc || typeof desc !== "string")
-                  return "Explore our premium product details.";
+                if (!desc || typeof desc !== "string") return ""; // Return empty string instead of default
                 const cleanDesc = desc.replace(/\r\n/g, " ").trim();
                 if (cleanDesc.length <= maxLength) return cleanDesc;
                 const truncated = cleanDesc.substring(0, maxLength);
-                return truncated.substring(0, truncated.lastIndexOf(" ")) + "...";
+                return (
+                  truncated.substring(0, truncated.lastIndexOf(" ")) + "..."
+                );
               };
 
               const descriptionText = truncateDescription(product.description);
               document.title = product.name
                 ? `${product.name} - Manuplast`
-                : "Product Type Details - Manuplast";
+                : ""; // Empty title if no name
 
               document
                 .querySelector('meta[name="description"]')
-                ?.setAttribute("content", descriptionText);
+                ?.setAttribute("content", descriptionText || "");
               document
                 .querySelector('meta[property="og:title"]')
                 ?.setAttribute(
                   "content",
-                  product.name
-                    ? `${product.name} - manuplast`
-                    : "Product Type Details - manuplast"
+                  product.name ? `${product.name} - manuplast` : ""
                 );
               document
                 .querySelector('meta[property="og:description"]')
-                ?.setAttribute("content", descriptionText);
+                ?.setAttribute("content", descriptionText || "");
               document
                 .querySelector('meta[property="og:image"]')
                 ?.setAttribute(
@@ -108,13 +85,11 @@
                 .querySelector('meta[name="twitter:title"]')
                 ?.setAttribute(
                   "content",
-                  product.name
-                    ? `${product.name} - manuplast`
-                    : "Product Type Details - manuplast"
+                  product.name ? `${product.name} - manuplast` : ""
                 );
               document
                 .querySelector('meta[name="twitter:description"]')
-                ?.setAttribute("content", descriptionText);
+                ?.setAttribute("content", descriptionText || "");
               document
                 .querySelector('meta[name="twitter:image"]')
                 ?.setAttribute(
@@ -130,11 +105,11 @@
                 const schemaData = {
                   "@context": "https://schema.org",
                   "@type": "Product",
-                  name: product.name || "Product Type Details",
+                  name: product.name || "",
                   image:
                     product.cover_image_url ||
                     "https://www.manuplast.co/images/logo.png",
-                  description: descriptionText,
+                  description: descriptionText || "",
                   sku: product.id || "PRODUCT123",
                   mpn: product.id || "MPN123",
                   brand: { "@type": "Brand", name: "manuplast" },
@@ -206,33 +181,7 @@
         }
       }
     </style>
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "Product",
-        "name": "Product Type Details",
-        "image": "https://www.manuplast.co/images/logo.png",
-        "description": "Explore premium products at Manuplast. Check product details now!",
-        "sku": "PRODUCT123",
-        "mpn": "MPN123",
-        "brand": {
-          "@type": "Brand",
-          "name": "manuplast"
-        },
-        "offers": {
-          "@type": "Offer",
-          "url": "https://www.manuplast.co/type-detail.html",
-          "priceCurrency": "INR",
-          "price": "0.00",
-          "priceValidUntil": "2026-07-22",
-          "availability": "https://schema.org/InStock",
-          "seller": {
-            "@type": "Organization",
-            "name": "manuplast"
-          }
-        }
-      }
-    </script>
+    <!-- Removed default schema script to avoid fallback data -->
   </head>
 
   <body>
