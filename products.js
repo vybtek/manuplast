@@ -729,8 +729,8 @@ async function fetchProductDetail() {
                 </div>
                 <div class="p-4 w-full">
                   <h3 class="text-xl font-bold text-gray-600 mb-2 text-start">${
-                    type.name
-                  }
+                    type.name?.slice(0, 50) || ""
+                  }...
                   </h3>
                   <div class="mb-4">
                     ${
@@ -1781,8 +1781,8 @@ class ProductDetailManager {
                       </div>
                       <div class="p-4 w-full text-start">
                         <h3 class="text-lg font-semibold text-gray-800 mb-2">${
-                          type.name
-                        }</h3>
+                          type.name.slice(0, 50) || ""
+                        }...</h3>
                         <div class="mb-4">
                           ${
                             type.colors.length

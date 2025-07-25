@@ -302,10 +302,10 @@ class SpecialFooter extends HTMLElement {
               </h3>
               <ul class="space-y-4 text-gray-600 text-sm">
                 <li>
-                  <a href="https://maps.google.com" target="_blank" class="flex items-center space-x-3 hover:text-red-600 transition-all duration-300" aria-label="Our Location">
+                  <p class="flex items-center space-x-3 hover:text-red-600 transition-all duration-300" aria-label="Our Location">
                     <svg class="w-5 h-5 text-red-700" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" /></svg>
-                    <span>Palghar, Maharashtra – 401208, India</span>
-                  </a>
+                    <span>Vasai, Maharashtra – 401208, India</span>
+                  </p>
                 </li>
                 <li>
                   <a href="tel:+919833922750" class="flex items-center space-x-3 hover:text-red-600 transition-all duration-300" aria-label="Phone Number">
