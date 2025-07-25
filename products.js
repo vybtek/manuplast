@@ -869,9 +869,7 @@ class ProductDetailManager {
   }
 
   setupEventListeners() {
-    document.addEventListener("keydown", (e) =>
-      this.handleKeyboardNavigation(e)
-    );
+    document.addEventListener("keydown", (e) => this.handleKeyboardNavigation(e));
     window.addEventListener("resize", () => this.handleWindowResize());
   }
 
@@ -1242,11 +1240,7 @@ class ProductDetailManager {
     const product = this.product;
     const descriptionText = this.truncateDescription(product.description);
 
-    console.log("Updating meta tags with:", {
-      name: product.name,
-      description: descriptionText,
-      image: product.cover_image_url,
-    });
+    console.log("Updating meta tags with:", { name: product.name, description: descriptionText, image: product.cover_image_url });
 
     let metaDescription = document.querySelector('meta[name="description"]');
     if (!metaDescription) {
@@ -1262,14 +1256,9 @@ class ProductDetailManager {
       ogTitle.setAttribute("property", "og:title");
       document.head.appendChild(ogTitle);
     }
-    ogTitle.setAttribute(
-      "content",
-      product.name ? `${product.name} - manuplast` : ""
-    );
+    ogTitle.setAttribute("content", product.name ? `${product.name} - manuplast` : "");
 
-    let ogDescription = document.querySelector(
-      'meta[property="og:description"]'
-    );
+    let ogDescription = document.querySelector('meta[property="og:description"]');
     if (!ogDescription) {
       ogDescription = document.createElement("meta");
       ogDescription.setAttribute("property", "og:description");
@@ -1293,14 +1282,9 @@ class ProductDetailManager {
       twitterTitle.setAttribute("name", "twitter:title");
       document.head.appendChild(twitterTitle);
     }
-    twitterTitle.setAttribute(
-      "content",
-      product.name ? `${product.name} - manuplast` : ""
-    );
+    twitterTitle.setAttribute("content", product.name ? `${product.name} - manuplast` : "");
 
-    let twitterDescription = document.querySelector(
-      'meta[name="twitter:description"]'
-    );
+    let twitterDescription = document.querySelector('meta[name="twitter:description"]');
     if (!twitterDescription) {
       twitterDescription = document.createElement("meta");
       twitterDescription.setAttribute("name", "twitter:description");
@@ -2147,6 +2131,7 @@ document.addEventListener("DOMContentLoaded", () => {
 if (typeof module !== "undefined" && module.exports) {
   module.exports = ProductDetailManager;
 }
+
 
 async function fetchProductForUpdate() {
   const params = new URLSearchParams(window.location.search);
