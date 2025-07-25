@@ -35,37 +35,54 @@ async function fetchBlogs(containerId = "blog-grid", view = "default") {
         blogCard.innerHTML = `
           <div class="bg-white p-4 rounded-lg shadow flex flex-col gap-2 sm:flex-row sm:items-center justify-between">
             <div class="flex items-center space-x-4">
-              <img src="${blog.image}" alt="${blog.title}" class="w-20 h-20 object-cover rounded" />
+              <img src="${blog.image}" alt="${
+          blog.title
+        }" class="w-20 h-20 object-cover rounded" />
               <div>
                 <h4 class="font-semibold text-gray-800">${blog.title}</h4>
-                <p class="text-sm text-gray-500 truncate max-w-xs">${blog.content?.slice(0, 80) || ""}</p>
+                <p class="text-sm text-gray-500 truncate max-w-xs">${
+                  blog.content?.slice(0, 80) || ""
+                }</p>
               </div>
             </div>
             <div class="flex gap-2 mt-2 sm:mt-0 flex-wrap">
-              <button onclick="openBlogModal('edit', '${blog.id}')" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm">Edit</button>
-              <button onclick="confirmDelete('${blog.id}')" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm">Delete</button>
-              <button onclick="confirmToggleActive('${blog.id}', '${blog.status}')" class="${
-                blog.status === "ACTIVE"
-                  ? "bg-yellow-500 hover:bg-yellow-600"
-                  : "bg-green-500 hover:bg-green-600"
-              } text-white px-3 py-1 rounded text-sm">
+              <button onclick="openBlogModal('edit', '${
+                blog.id
+              }')" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-sm">Edit</button>
+              <button onclick="confirmDelete('${
+                blog.id
+              }')" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm">Delete</button>
+              <button onclick="confirmToggleActive('${blog.id}', '${
+          blog.status
+        }')" class="${
+          blog.status === "ACTIVE"
+            ? "bg-yellow-500 hover:bg-yellow-600"
+            : "bg-green-500 hover:bg-green-600"
+        } text-white px-3 py-1 rounded text-sm">
                 ${blog.status === "ACTIVE" ? "Deactivate" : "Activate"}
               </button>
-              <a href="blog-detail.html?id=${blog.id}&source=dashboard" class="bg-gray-200 text-black px-3 py-1 rounded text-sm">View</a>
+              <a href="blog-detail.html?id=${
+                blog.id
+              }&source=dashboard" class="bg-gray-200 text-black px-3 py-1 rounded text-sm">View</a>
             </div>
           </div>
         `;
       } else {
-        blogCard.className = "flex flex-col md:flex-row gap-6 bg-white rounded-2xl shadow-md hover:shadow-xl transition duration-300 overflow-hidden";
+        blogCard.className =
+          "flex flex-col md:flex-row gap-6 bg-white rounded-2xl shadow-md hover:shadow-xl transition duration-300 overflow-hidden";
 
         blogCard.innerHTML = `
           <div class="md:w-1/3 w-full h-64 overflow-hidden">
-            <img src="${blog.image}" alt="${blog.title}" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">
+            <img src="${blog.image}" alt="${
+          blog.title
+        }" class="w-full h-full object-cover transition-transform duration-500 hover:scale-105">
           </div>
           <div class="md:w-2/3 w-full p-6 flex flex-col justify-between">
             <div>
               <div class="text-sm text-gray-400 mb-1">
-                <span class="text-yellow-500 font-semibold">•</span> ${blog.author}
+                <span class="text-yellow-500 font-semibold">•</span> ${
+                  blog.author
+                }
               </div>
               <h3 class="text-2xl font-bold text-gray-800 hover:text-red-600 transition-colors duration-300 mb-2">
                 ${blog.title}
@@ -75,7 +92,9 @@ async function fetchBlogs(containerId = "blog-grid", view = "default") {
               </p>
             </div>
             <div>
-              <a href="blog-detail?id=${blog.id}" class="inline-block text-blue-600 hover:text-blue-800 text-sm font-semibold transition-all duration-300 underline-offset-2 hover:underline">
+              <a href="blog-detail?id=${
+                blog.id
+              }" class="inline-block text-blue-600 hover:text-blue-800 text-sm font-semibold transition-all duration-300 underline-offset-2 hover:underline">
                 Read More →
               </a>
             </div>
@@ -117,23 +136,29 @@ async function fetchBlogDetail() {
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
       const description = blog.content
-        ? blog.content.replace(/\n/g, " ").substring(0, 160) + (blog.content.length > 160 ? "..." : "")
+        ? blog.content.replace(/\n/g, " ").substring(0, 160) +
+          (blog.content.length > 160 ? "..." : "")
         : `Read the latest insights on sustainable drinkware from Manu Plast in our blog post: ${blog.title}.`;
       metaDescription.setAttribute("content", description);
     }
 
     // Optionally update Open Graph and Twitter Card meta tags
     const ogTitle = document.querySelector('meta[property="og:title"]');
-    const ogDescription = document.querySelector('meta[property="og:description"]');
+    const ogDescription = document.querySelector(
+      'meta[property="og:description"]'
+    );
     const twitterTitle = document.querySelector('meta[name="twitter:title"]');
-    const twitterDescription = document.querySelector('meta[name="twitter:description"]');
+    const twitterDescription = document.querySelector(
+      'meta[name="twitter:description"]'
+    );
 
     if (ogTitle) {
       ogTitle.setAttribute("content", `${blog.title} | Manu Plast Blog`);
     }
     if (ogDescription) {
       const description = blog.content
-        ? blog.content.replace(/\n/g, " ").substring(0, 160) + (blog.content.length > 160 ? "..." : "")
+        ? blog.content.replace(/\n/g, " ").substring(0, 160) +
+          (blog.content.length > 160 ? "..." : "")
         : `Read the latest insights on sustainable drinkware from Manu Plast in our blog post: ${blog.title}.`;
       ogDescription.setAttribute("content", description);
     }
@@ -142,20 +167,21 @@ async function fetchBlogDetail() {
     }
     if (twitterDescription) {
       const description = blog.content
-        ? blog.content.replace(/\n/g, " ").substring(0, 160) + (blog.content.length > 160 ? "..." : "")
+        ? blog.content.replace(/\n/g, " ").substring(0, 160) +
+          (blog.content.length > 160 ? "..." : "")
         : `Read the latest insights on sustainable drinkware from Manu Plast in our blog post: ${blog.title}.`;
       twitterDescription.setAttribute("content", description);
     }
 
     // Render the blog content
     detailContainer.innerHTML = `
-      <div class="bg-white p-6 space-y-6 max-w-4xl mx-auto">
+      <div class="bg-white p-6 space-y-6 max-w-6xl mx-auto">
         <div class="text-sm text-gray-400 flex items-center gap-2">
           <span class="text-yellow-500 font-semibold tracking-wide">by ${blog.author}</span>
         </div>
         <h1 class="text-4xl font-extrabold text-gray-900 leading-tight tracking-tight">${blog.title}</h1>
         <div class="overflow-hidden rounded-xl shadow-md">
-          <img src="${blog.image}" alt="${blog.title}" class="w-full object-cover transition-transform duration-500 ease-in-out" />
+          <img src="${blog.image}" alt="${blog.title}" class="w-full h-100 object-cover transition-transform duration-500 ease-in-out" />
         </div>
         <div class="prose prose-lg max-w-none text-gray-800">
           <p class="whitespace-pre-line">${blog.content}</p>

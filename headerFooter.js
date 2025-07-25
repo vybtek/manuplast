@@ -258,7 +258,7 @@ class SpecialFooter extends HTMLElement {
                 <h2 class="text-3xl font-extrabold text-red-700 tracking-tight">MANU PLAST</h2>
               </a>
               <p class="text-gray-600 text-sm leading-relaxed max-w-xs">
-                Crafting premium bottles and jars with innovation and sustainability.
+                Crafting premium, innovative, and sustainable hydration and storage solutions that elevate your daily living.
               </p>
               <div class="flex space-x-5">
                 <a href="https://www.instagram.com/manuplastco" target="_blank" class="text-gray-600 hover:text-red-700 transition-colors duration-300" aria-label="Instagram">

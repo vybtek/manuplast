@@ -728,7 +728,9 @@ async function fetchProductDetail() {
                   </div>
                 </div>
                 <div class="p-4 w-full">
-                  <h3 class="text-xl font-bold text-gray-600 mb-2 text-start">${type.name}
+                  <h3 class="text-xl font-bold text-gray-600 mb-2 text-start">${
+                    type.name
+                  }
                   </h3>
                   <div class="mb-4">
                     ${
@@ -998,40 +1000,45 @@ class ProductDetailManager {
       colors: this.processColorsWithImages(rawProduct.colors || []),
       price: this.formatPrice(rawProduct.price),
       description: rawProduct.description || "No description available",
-      features: Array.isArray(rawProduct.features) && rawProduct.features.length
-        ? rawProduct.features
-        : [
-            "High-quality durable material",
-            "Ergonomic design for comfort",
-            "Water-resistant coating",
-            "Easy to clean and maintain",
-            "Eco-friendly production",
-          ],
-      specifications: Array.isArray(rawProduct.specifications) &&
+      features:
+        Array.isArray(rawProduct.features) && rawProduct.features.length
+          ? rawProduct.features
+          : [
+              "High-quality durable material",
+              "Ergonomic design for comfort",
+              "Water-resistant coating",
+              "Easy to clean and maintain",
+              "Eco-friendly production",
+            ],
+      specifications:
+        Array.isArray(rawProduct.specifications) &&
         rawProduct.specifications.length
-        ? rawProduct.specifications.map((spec, index) => ({
-            id: `spec-${index}`,
-            items: [
-              { key: "Color", value: spec.color || "N/A" },
-              { key: "Capacity", value: spec.capacity || "N/A" },
-              { key: "Material", value: spec.material || "N/A" },
-              { key: "Dimensions", value: spec.dimensions_cm || "N/A" },
-              { key: "Package Content", value: spec.package_content || "N/A" },
-            ].filter((item) => item.value !== "N/A"),
-          }))
-        : [
-            { key: "Material", value: "Premium Synthetic Fabric" },
-            { key: "Weight", value: "1.2 kg" },
-            { key: "Dimensions", value: "30 x 20 x 10 cm" },
-            { key: "Warranty", value: "2 Years" },
-            {
-              key: "Color Options",
-              value:
-                (rawProduct.colors?.length || 0) > 0
-                  ? rawProduct.colors.length
-                  : "Multiple",
-            },
-          ],
+          ? rawProduct.specifications.map((spec, index) => ({
+              id: `spec-${index}`,
+              items: [
+                { key: "Color", value: spec.color || "N/A" },
+                { key: "Capacity", value: spec.capacity || "N/A" },
+                { key: "Material", value: spec.material || "N/A" },
+                { key: "Dimensions", value: spec.dimensions_cm || "N/A" },
+                {
+                  key: "Package Content",
+                  value: spec.package_content || "N/A",
+                },
+              ].filter((item) => item.value !== "N/A"),
+            }))
+          : [
+              { key: "Material", value: "Premium Synthetic Fabric" },
+              { key: "Weight", value: "1.2 kg" },
+              { key: "Dimensions", value: "30 x 20 x 10 cm" },
+              { key: "Warranty", value: "2 Years" },
+              {
+                key: "Color Options",
+                value:
+                  (rawProduct.colors?.length || 0) > 0
+                    ? rawProduct.colors.length
+                    : "Multiple",
+              },
+            ],
       cover_image_url:
         rawProduct.cover_image_url ||
         allImages[0] ||
@@ -1312,7 +1319,7 @@ class ProductDetailManager {
         "@type": "Product",
         name: product.name || "Product Type Details",
         image:
-          product.cover_image || "https://www.manuplast.com/images/logo.png",
+          product.cover_image || "https://www.manuplast.co/images/logo.png",
         description: descriptionText,
         sku: product.id || "PRODUCT123",
         mpn: product.id || "MPN123",
@@ -1340,13 +1347,43 @@ class ProductDetailManager {
     typeDetail.innerHTML = `
       <div class="bg-white rounded-2xl shadow-2xl overflow-hidden animate-slide-in">
         <div class="p-4 bg-red-600 text-white border-b border-gray-200">
-          <nav class="flex items-center space-x-2 text-sm max-w-7xl mx-auto">
-            <a href="/" class="hover:text-blue-200 transition duration-300">Home</a>
-            <span class="text-white">></span>
-            <a href="product-detail?id=${product.category?.id || product.category_id}" class="hover:text-blue-200 transition duration-300">${categoryName}</a>
-            <span class="text-white">></span>
-            <span class="font-semibold">${product.name || "Product"}</span>
-          </nav>
+          <div class="flex items-center justify-between max-w-7xl mx-auto">
+            <nav class="flex items-center space-x-2 text-sm">
+              <a href="/" class="hover:text-blue-200 transition duration-300">Home</a>
+              <span class="text-white">></span>
+              <a href="product-detail?id=${
+                product.category?.id || product.category_id
+              }" class="hover:text-blue-200 transition duration-300">${categoryName}</a>
+              <span class="text-white">></span>
+              <span class="font-semibold">${product.name || "Product"}</span>
+            </nav>
+            <div class="relative">
+              <button id="share-button" class="flex items-center text-white hover:text-blue-200 transition duration-300" title="Share this product">
+                <i class="fas fa-share-alt mr-2"></i>
+                <span>Share</span>
+              </button>
+              <div id="share-menu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50">
+                <div class="py-1">
+                  <a href="#" id="share-whatsapp" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    <i class="fab fa-whatsapp mr-2 text-green-500"></i>
+                    WhatsApp
+                  </a>
+                  <a href="#" id="share-twitter" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    <i class="fab fa-twitter mr-2 text-blue-400"></i>
+                    Twitter
+                  </a>
+                  <a href="#" id="share-facebook" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    <i class="fab fa-facebook mr-2 text-blue-600"></i>
+                    Facebook
+                  </a>
+                  <a href="#" id="share-copy-link" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                    <i class="fas fa-link mr-2 text-gray-500"></i>
+                    Copy Link
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="max-w-7xl mx-auto relative">
           <div class="grid grid-cols-1 lg:grid-cols-[50%,50%] gap-8 p-8">
@@ -1360,7 +1397,9 @@ class ProductDetailManager {
           </div>
           <div class="p-8">
             <h3 class="text-lg font-semibold text-gray-900 mb-2 text-start">Description</h3>
-            <p class="text-gray-600 leading-relaxed">${product.description}</p>
+            <p class="text-gray-600 leading-relaxed text-start">${
+              product.description
+            }</p>
           </div>
           ${this.renderRelatedProducts()}
         </div>
@@ -1372,6 +1411,112 @@ class ProductDetailManager {
       fontAwesome.href =
         "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css";
       document.head.appendChild(fontAwesome);
+    }
+  }
+
+  initializeInteractions() {
+    this.setupImageGallery();
+    this.setupColorSwatches();
+    this.setupTabNavigation();
+    this.setupShareOptions();
+  }
+
+  setupShareOptions() {
+    const shareButton = document.getElementById("share-button");
+    const shareMenu = document.getElementById("share-menu");
+
+    if (shareButton && shareMenu) {
+      shareButton.addEventListener("click", (e) => {
+        e.preventDefault();
+        shareMenu.classList.toggle("hidden");
+      });
+
+      // Close menu when clicking outside
+      document.addEventListener("click", (e) => {
+        if (!shareButton.contains(e.target) && !shareMenu.contains(e.target)) {
+          shareMenu.classList.add("hidden");
+        }
+      });
+
+      const shareWhatsApp = document.getElementById("share-whatsapp");
+      const shareTwitter = document.getElementById("share-twitter");
+      const shareFacebook = document.getElementById("share-facebook");
+      const shareCopyLink = document.getElementById("share-copy-link");
+
+      const shareUrl = window.location.href;
+      const shareText = `Check out this product: ${
+        this.product.name
+      } - ${this.truncateDescription(this.product.description, 100)}`;
+
+      if (shareWhatsApp) {
+        shareWhatsApp.addEventListener("click", (e) => {
+          e.preventDefault();
+          window.open(
+            `https://api.whatsapp.com/send?text=${encodeURIComponent(
+              `${shareText} ${shareUrl}`
+            )}`,
+            "_blank"
+          );
+          shareMenu.classList.add("hidden");
+        });
+      }
+
+      if (shareTwitter) {
+        shareTwitter.addEventListener("click", (e) => {
+          e.preventDefault();
+          window.open(
+            `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+              shareText
+            )}&url=${encodeURIComponent(shareUrl)}`,
+            "_blank"
+          );
+          shareMenu.classList.add("hidden");
+        });
+      }
+
+      if (shareFacebook) {
+        shareFacebook.addEventListener("click", (e) => {
+          e.preventDefault();
+          window.open(
+            `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+              shareUrl
+            )}`,
+            "_blank"
+          );
+          shareMenu.classList.add("hidden");
+        });
+      }
+
+      if (shareCopyLink) {
+        shareCopyLink.addEventListener("click", (e) => {
+          e.preventDefault();
+          navigator.clipboard.writeText(shareUrl).then(() => {
+            alert("Link copied to clipboard!");
+          });
+          shareMenu.classList.add("hidden");
+        });
+      }
+
+      // Web Share API for native sharing
+      if (navigator.share) {
+        shareButton.addEventListener("click", (e) => {
+          e.preventDefault();
+          navigator
+            .share({
+              title: this.product.name,
+              text: shareText,
+              url: shareUrl,
+            })
+            .then(() => {
+              console.log("Product shared successfully");
+            })
+            .catch((error) => {
+              console.error("Error sharing product:", error);
+              // Fallback to custom share menu
+              shareMenu.classList.toggle("hidden");
+            });
+        });
+      }
     }
   }
 
@@ -1700,7 +1845,9 @@ class ProductDetailManager {
                               : ""
                           }
                         </div>
-                        <a href="type-detail?id=${type.id}&category_id=${categoryId}"
+                        <a href="type-detail?id=${
+                          type.id
+                        }&category_id=${categoryId}"
                            class="flex items-center justify-center bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg transition w-full text-sm">
                           <span>View Details</span>
                           <i class="fas fa-arrow-right ml-2"></i>
@@ -1724,12 +1871,6 @@ class ProductDetailManager {
         }
       </div>
     `;
-  }
-
-  initializeInteractions() {
-    this.setupImageGallery();
-    this.setupColorSwatches();
-    this.setupTabNavigation();
   }
 
   setupImageGallery() {
@@ -1794,7 +1935,7 @@ class ProductDetailManager {
         this.updateActiveTab();
       });
     });
-    this.updateActiveTab(); // Ensure initial active tab is set
+    this.updateActiveTab();
   }
 
   updateActiveTab() {
@@ -1911,8 +2052,7 @@ class ProductDetailManager {
             ? imagesToDisplay[this.currentImageIndex] ||
               "https://via.placeholder.com/300"
             : this.currentImageIndex === 0
-            ? this.product.cover_image_url ||
-              "https://via.placeholder.com/300"
+            ? this.product.cover_image_url || "https://via.placeholder.com/300"
             : imagesToDisplay[this.currentImageIndex] ||
               "https://via.placeholder.com/300"
         }"
@@ -2022,7 +2162,6 @@ document.addEventListener("DOMContentLoaded", () => {
 if (typeof module !== "undefined" && module.exports) {
   module.exports = ProductDetailManager;
 }
-
 async function fetchProductForUpdate() {
   const params = new URLSearchParams(window.location.search);
   const categoryId = params.get("id");
