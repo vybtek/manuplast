@@ -868,9 +868,7 @@ class ProductDetailManager {
   }
 
   setupEventListeners() {
-    document.addEventListener("keydown", (e) =>
-      this.handleKeyboardNavigation(e)
-    );
+    document.addEventListener("keydown", (e) => this.handleKeyboardNavigation(e));
     window.addEventListener("resize", () => this.handleWindowResize());
   }
 
@@ -917,6 +915,77 @@ class ProductDetailManager {
           "This product does not belong to the specified category."
         );
         return;
+      }
+
+      // Update meta tags and schema immediately
+      document.title = product.name
+        ? `${product.name} - Manuplast`
+        : "Product Type Details - Manuplast";
+
+      const metaDescription = document.querySelector('meta[name="description"]');
+      const descriptionText = this.truncateDescription(product.description);
+      if (metaDescription) {
+        metaDescription.setAttribute("content", descriptionText);
+      }
+
+      const ogTitle = document.querySelector('meta[property="og:title"]');
+      if (ogTitle) {
+        ogTitle.setAttribute(
+          "content",
+          product.name ? `${product.name} - manuplast` : "Product Type Details - manuplast"
+        );
+      }
+      const ogDescription = document.querySelector('meta[property="og:description"]');
+      if (ogDescription) {
+        ogDescription.setAttribute("content", descriptionText);
+      }
+      const ogImage = document.querySelector('meta[property="og:image"]');
+      if (ogImage && product.cover_image_url) {
+        ogImage.setAttribute("content", product.cover_image_url);
+      }
+      const ogUrl = document.querySelector('meta[property="og:url"]');
+      if (ogUrl) {
+        ogUrl.setAttribute("content", window.location.href);
+      }
+
+      const twitterTitle = document.querySelector('meta[name="twitter:title"]');
+      if (twitterTitle) {
+        twitterTitle.setAttribute(
+          "content",
+          product.name ? `${product.name} - manuplast` : "Product Type Details - manuplast"
+        );
+      }
+      const twitterDescription = document.querySelector('meta[name="twitter:description"]');
+      if (twitterDescription) {
+        twitterDescription.setAttribute("content", descriptionText);
+      }
+      const twitterImage = document.querySelector('meta[name="twitter:image"]');
+      if (twitterImage && product.cover_image_url) {
+        twitterImage.setAttribute("content", product.cover_image_url);
+      }
+
+      const schemaScript = document.querySelector('script[type="application/ld+json"]');
+      if (schemaScript && product.name) {
+        const schemaData = {
+          "@context": "https://schema.org",
+          "@type": "Product",
+          name: product.name || "Product Type Details",
+          image: product.cover_image_url || "https://www.manuplast.co/images/logo.png",
+          description: descriptionText,
+          sku: product.id || "PRODUCT123",
+          mpn: product.id || "MPN123",
+          brand: { "@type": "Brand", name: "manuplast" },
+          offers: {
+            "@type": "Offer",
+            url: window.location.href,
+            priceCurrency: "INR",
+            price: product.price ? parseFloat(product.price.replace(/[^\d.]/g, "")) : "0.00",
+            priceValidUntil: "2026-07-22",
+            availability: product.status === "active" ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+            seller: { "@type": "Organization", name: "manuplast" },
+          },
+        };
+        schemaScript.textContent = JSON.stringify(schemaData, null, 2);
       }
 
       // Fetch related products
@@ -1255,95 +1324,6 @@ class ProductDetailManager {
       product.cover_image
     );
 
-    document.title = product.name
-      ? `${product.name} - Manuplast`
-      : "Product Type Details - Manuplast";
-
-    const metaDescription = document.querySelector('meta[name="description"]');
-    const descriptionText = this.truncateDescription(product.description);
-    if (metaDescription) {
-      metaDescription.setAttribute("content", descriptionText);
-    } else {
-      const newMeta = document.createElement("meta");
-      newMeta.name = "description";
-      newMeta.content = descriptionText;
-      document.head.appendChild(newMeta);
-    }
-
-    const ogTitle = document.querySelector('meta[property="og:title"]');
-    if (ogTitle) {
-      ogTitle.setAttribute(
-        "content",
-        product.name
-          ? `${product.name} - Manuplast`
-          : "Product Type Details - Manuplast"
-      );
-    }
-    const ogDescription = document.querySelector(
-      'meta[property="og:description"]'
-    );
-    if (ogDescription) {
-      ogDescription.setAttribute("content", descriptionText);
-    }
-    const ogImage = document.querySelector('meta[property="og:image"]');
-    if (ogImage && product.cover_image) {
-      ogImage.setAttribute("content", product.cover_image);
-    }
-
-    const twitterTitle = document.querySelector('meta[name="twitter:title"]');
-    if (twitterTitle) {
-      twitterTitle.setAttribute(
-        "content",
-        product.name
-          ? `${product.name} - Manuplast`
-          : "Product Type Details - Manuplast"
-      );
-    }
-    const twitterDescription = document.querySelector(
-      'meta[name="twitter:description"]'
-    );
-    if (twitterDescription) {
-      twitterDescription.setAttribute("content", descriptionText);
-    }
-    const twitterImage = document.querySelector('meta[name="twitter:image"]');
-    if (twitterImage && product.cover_image) {
-      twitterImage.setAttribute("content", product.cover_image);
-    }
-
-    const schemaScript = document.querySelector(
-      'script[type="application/ld+json"]'
-    );
-    if (schemaScript && product.name) {
-      const schemaData = {
-        "@context": "https://schema.org",
-        "@type": "Product",
-        name: product.name || "Product Type Details",
-        image:
-          product.cover_image || "https://www.manuplast.co/images/logo.png",
-        description: descriptionText,
-        sku: product.id || "PRODUCT123",
-        mpn: product.id || "MPN123",
-        brand: { "@type": "Brand", name: "manuplast" },
-        offers: {
-          "@type": "Offer",
-          url: window.location.href,
-          priceCurrency: "INR",
-          price: product.price
-            ? parseFloat(product.price.replace(/[^\d.]/g, ""))
-            : "0.00",
-          priceValidUntil: "2026-07-22",
-          availability:
-            product.status === "active"
-              ? "https://schema.org/InStock"
-              : "https://schema.org/OutOfStock",
-          seller: { "@type": "Organization", name: "manuplast" },
-        },
-      };
-      schemaScript.textContent = JSON.stringify(schemaData, null, 2);
-    }
-
-    const categoryName = product.category?.name || "Products";
-
     typeDetail.innerHTML = `
       <div class="bg-white rounded-2xl shadow-2xl overflow-hidden animate-slide-in">
         <div class="p-4 bg-red-600 text-white border-b border-gray-200">
@@ -1353,7 +1333,9 @@ class ProductDetailManager {
               <span class="text-white">></span>
               <a href="product-detail?id=${
                 product.category?.id || product.category_id
-              }" class="hover:text-blue-200 transition duration-300">${categoryName}</a>
+              }" class="hover:text-blue-200 transition duration-300">${
+      product.category?.name || "Products"
+    }</a>
               <span class="text-white">></span>
               <span class="font-semibold">${product.name || "Product"}</span>
             </nav>
@@ -1537,7 +1519,7 @@ class ProductDetailManager {
                    this.currentSelectedColorIndex >= 0
                      ? imagesToDisplay[this.currentImageIndex] ||
                        "https://via.placeholder.com/300"
-                     : product.cover_image ||
+                     : product.cover_image_url ||
                        product.allImages[0] ||
                        "https://via.placeholder.com/300"
                  }"
@@ -2162,6 +2144,8 @@ document.addEventListener("DOMContentLoaded", () => {
 if (typeof module !== "undefined" && module.exports) {
   module.exports = ProductDetailManager;
 }
+
+
 async function fetchProductForUpdate() {
   const params = new URLSearchParams(window.location.search);
   const categoryId = params.get("id");

@@ -3,27 +3,51 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- Dynamic meta tags to be populated by the server -->
-    <meta name="description" content="{{product_description}}" />
+    <!-- Fallback meta tags to be updated by JavaScript -->
+    <meta
+      name="description"
+      content="Explore premium products at Manuplast, including various sizes, colors, and features. Shop now!"
+    />
     <meta
       name="keywords"
-      content="product details, e-commerce, shop online, premium products, {{product_name}}, durable materials, online shopping"
+      content="product details, e-commerce, shop online, premium products, durable materials, online shopping"
     />
     <meta name="author" content="manuplast" />
     <meta name="robots" content="index, follow" />
     <meta name="revisit-after" content="7 days" />
     <meta name="language" content="English" />
-    <meta property="og:title" content="{{product_name}} - manuplast" />
-    <meta property="og:description" content="{{product_description}}" />
-    <meta property="og:image" content="{{product_image}}" />
-    <meta property="og:url" content="{{current_url}}" />
+    <meta
+      property="og:title"
+      content="Premium Products - Manuplast"
+    />
+    <meta
+      property="og:description"
+      content="Explore premium products at Manuplast, including various sizes, colors, and features. Shop now!"
+    />
+    <meta
+      property="og:image"
+      content="https://www.manuplast.co/images/logo.png"
+    />
+    <meta
+      property="og:url"
+      content="https://www.manuplast.co/type-detail.html"
+    />
     <meta property="og:type" content="product" />
     <meta property="og:site_name" content="manuplast" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="{{product_name}} - manuplast" />
-    <meta name="twitter:description" content="{{product_description}}" />
-    <meta name="twitter:image" content="{{product_image}}" />
-    <title>{{product_name}} - Manuplast</title>
+    <meta
+      name="twitter:title"
+      content="Premium Products - Manuplast"
+    />
+    <meta
+      name="twitter:description"
+      content="Explore premium products at Manuplast, including various sizes, colors, and features. Shop now!"
+    />
+    <meta
+      name="twitter:image"
+      content="https://www.manuplast.co/images/logo.png"
+    />
+    <title>Product Type Details - Manuplast</title>
     <link href="style.css" rel="stylesheet" />
     <link rel="icon" type="image/png" href="./images/logo.png" />
     <link
@@ -79,22 +103,22 @@
       {
         "@context": "https://schema.org",
         "@type": "Product",
-        "name": "{{product_name}}",
-        "image": "{{product_image}}",
-        "description": "{{product_description}}",
-        "sku": "{{product_sku}}",
-        "mpn": "{{product_mpn}}",
+        "name": "Product Type Details",
+        "image": "https://www.manuplast.co/images/logo.png",
+        "description": "Explore premium products at Manuplast, including various sizes, colors, and features.",
+        "sku": "PRODUCT123",
+        "mpn": "MPN123",
         "brand": {
           "@type": "Brand",
           "name": "manuplast"
         },
         "offers": {
           "@type": "Offer",
-          "url": "{{current_url}}",
+          "url": "https://www.manuplast.co/type-detail.html",
           "priceCurrency": "INR",
-          "price": "{{product_price}}",
+          "price": "0.00",
           "priceValidUntil": "2026-07-22",
-          "availability": "{{product_availability}}",
+          "availability": "https://schema.org/InStock",
           "seller": {
             "@type": "Organization",
             "name": "manuplast"
