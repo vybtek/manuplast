@@ -912,7 +912,7 @@ class ProductDetailManager {
 
       if (!this.validateProduct(product, categoryId)) {
         this.renderError(
-          "This processProductData product does not belong to the specified category."
+          "This product does not belong to the specified category."
         );
         return;
       }
