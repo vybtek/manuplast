@@ -1782,7 +1782,7 @@ class ProductDetailManager {
                       <div class="p-4 w-full text-start">
                         <h3 class="text-lg font-semibold text-gray-800 mb-2">${
                           type.name.slice(0, 50) || ""
-                        }...</h3>
+                        }</h3>
                         <div class="mb-4">
                           ${
                             type.colors.length
