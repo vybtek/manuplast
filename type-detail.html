@@ -4,23 +4,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- No fallback meta tags for title or description -->
-    <meta
-      property="og:image"
-      content="https://www.manuplast.co/images/logo.png"
-    />
-    <meta
-      property="og:url"
-      content="https://www.manuplast.co/type-detail.html"
-    />
+    <meta property="og:image" content="https://www.manuplast.co/images/logo.png" />
+    <meta property="og:url" content="https://www.manuplast.co/type-detail.html" />
     <meta property="og:type" content="product" />
     <meta property="og:site_name" content="manuplast" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta
-      name="twitter:image"
-      content="https://www.manuplast.co/images/logo.png"
-    />
+    <meta name="twitter:image" content="https://www.manuplast.co/images/logo.png" />
     <title></title>
-    <!-- Empty title initially -->
     <link href="style.css" rel="stylesheet" />
     <link rel="icon" type="image/png" href="./images/logo.png" />
     <link
@@ -29,48 +19,74 @@
     />
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-      // Inline script to pre-fetch meta tags synchronously
+      // Inline script to pre-fetch meta tags synchronously, prioritized for crawlers
       (function () {
         const params = new URLSearchParams(window.location.search);
         const typeId = params.get("id");
         const categoryId = params.get("category_id");
 
         if (typeId && categoryId) {
-          fetch(`https://api.vybtek.com/api/manuplast/producttypes/${typeId}`, {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
-            },
-            timeout: 5000, // Short timeout for crawler compatibility
-          })
-            .then((response) => response.json())
+          // Quick fetch with shorter timeout
+          fetch(
+            `https://api.vybtek.com/api/manuplast/producttypes/${typeId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
+              },
+              timeout: 2000, // Reduced to 2 seconds for faster execution
+            }
+          )
+            .then((response) => {
+              if (!response.ok) throw new Error("Network response was not ok");
+              return response.json();
+            })
             .then((product) => {
               const truncateDescription = (desc, maxLength = 160) => {
-                if (!desc || typeof desc !== "string") return ""; // Return empty string instead of default
+                if (!desc || typeof desc !== "string") return "";
                 const cleanDesc = desc.replace(/\r\n/g, " ").trim();
                 if (cleanDesc.length <= maxLength) return cleanDesc;
                 const truncated = cleanDesc.substring(0, maxLength);
-                return (
-                  truncated.substring(0, truncated.lastIndexOf(" ")) + "..."
-                );
+                return truncated.substring(0, truncated.lastIndexOf(" ")) + "...";
               };
 
               const descriptionText = truncateDescription(product.description);
-              document.title = product.name
-                ? `${product.name} - Manuplast`
-                : ""; // Empty title if no name
+              document.title = product.name ? `${product.name} - Manuplast` : "";
+              const metaDescription = document.querySelector('meta[name="description"]');
+              if (!metaDescription) {
+                const newMeta = document.createElement("meta");
+                newMeta.name = "description";
+                newMeta.content = descriptionText;
+                document.head.appendChild(newMeta);
+              } else {
+                metaDescription.setAttribute("content", descriptionText);
+              }
 
-              document
-                .querySelector('meta[name="description"]')
-                ?.setAttribute("content", descriptionText || "");
-              document
-                .querySelector('meta[property="og:title"]')
-                ?.setAttribute(
+              const ogTitle = document.querySelector('meta[property="og:title"]');
+              if (!ogTitle) {
+                const newOgTitle = document.createElement("meta");
+                newOgTitle.setAttribute("property", "og:title");
+                newOgTitle.setAttribute(
                   "content",
                   product.name ? `${product.name} - manuplast` : ""
                 );
-              document
-                .querySelector('meta[property="og:description"]')
-                ?.setAttribute("content", descriptionText || "");
+                document.head.appendChild(newOgTitle);
+              } else {
+                ogTitle.setAttribute(
+                  "content",
+                  product.name ? `${product.name} - manuplast` : ""
+                );
+              }
+
+              const ogDescription = document.querySelector('meta[property="og:description"]');
+              if (!ogDescription) {
+                const newOgDesc = document.createElement("meta");
+                newOgDesc.setAttribute("property", "og:description");
+                newOgDesc.setAttribute("content", descriptionText);
+                document.head.appendChild(newOgDesc);
+              } else {
+                ogDescription.setAttribute("content", descriptionText);
+              }
+
               document
                 .querySelector('meta[property="og:image"]')
                 ?.setAttribute(
@@ -81,15 +97,33 @@
               document
                 .querySelector('meta[property="og:url"]')
                 ?.setAttribute("content", window.location.href);
-              document
-                .querySelector('meta[name="twitter:title"]')
-                ?.setAttribute(
+
+              const twitterTitle = document.querySelector('meta[name="twitter:title"]');
+              if (!twitterTitle) {
+                const newTwitterTitle = document.createElement("meta");
+                newTwitterTitle.setAttribute("name", "twitter:title");
+                newTwitterTitle.setAttribute(
                   "content",
                   product.name ? `${product.name} - manuplast` : ""
                 );
-              document
-                .querySelector('meta[name="twitter:description"]')
-                ?.setAttribute("content", descriptionText || "");
+                document.head.appendChild(newTwitterTitle);
+              } else {
+                twitterTitle.setAttribute(
+                  "content",
+                  product.name ? `${product.name} - manuplast` : ""
+                );
+              }
+
+              const twitterDescription = document.querySelector('meta[name="twitter:description"]');
+              if (!twitterDescription) {
+                const newTwitterDesc = document.createElement("meta");
+                newTwitterDesc.setAttribute("name", "twitter:description");
+                newTwitterDesc.setAttribute("content", descriptionText);
+                document.head.appendChild(newTwitterDesc);
+              } else {
+                twitterDescription.setAttribute("content", descriptionText);
+              }
+
               document
                 .querySelector('meta[name="twitter:image"]')
                 ?.setAttribute(
@@ -181,7 +215,6 @@
         }
       }
     </style>
-    <!-- Removed default schema script to avoid fallback data -->
   </head>
 
   <body>
