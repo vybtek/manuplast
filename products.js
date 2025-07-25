@@ -900,7 +900,7 @@ class ProductDetailManager {
       // Fetch product details
       const productResponse = await fetch(
         `https://api.vybtek.com/api/manuplast/producttypes/${typeId}`,
-        { headers, timeout: 10000 }
+        { headers, timeout: 1500 } // Reduced timeout for faster execution
       );
       if (!productResponse.ok) {
         throw new Error(
@@ -920,7 +920,7 @@ class ProductDetailManager {
       // Fetch related products
       const relatedResponse = await fetch(
         `https://api.vybtek.com/api/manuplast/producttypes?category_id=${categoryId}`,
-        { headers, timeout: 10000 }
+        { headers, timeout: 1500 }
       );
       if (!relatedResponse.ok) {
         throw new Error(
@@ -944,6 +944,10 @@ class ProductDetailManager {
           categoryId: p.category?.id || p.category_id,
         }))
       );
+
+      // Update meta tags in the <head>
+      this.updateMetaTags();
+
       this.renderProductDetail();
       this.initializeInteractions();
       this.trackProductView();
@@ -1235,12 +1239,77 @@ class ProductDetailManager {
   }
 
   truncateDescription(description, maxLength = 160) {
-    if (!description || typeof description !== "string")
-      return "Explore our premium product details, including sizes, colors, and features.";
+    if (!description || typeof description !== "string") return "";
     const cleanDescription = description.replace(/\r\n/g, " ").trim();
     if (cleanDescription.length <= maxLength) return cleanDescription;
     const truncated = cleanDescription.substring(0, maxLength);
     return truncated.substring(0, truncated.lastIndexOf(" ")) + "...";
+  }
+
+  updateMetaTags() {
+    const product = this.product;
+    const descriptionText = this.truncateDescription(product.description);
+
+    // Update or create meta tags
+    let metaDescription = document.querySelector('meta[name="description"]');
+    if (!metaDescription) {
+      metaDescription = document.createElement("meta");
+      metaDescription.name = "description";
+      document.head.appendChild(metaDescription);
+    }
+    metaDescription.setAttribute("content", descriptionText);
+
+    let ogTitle = document.querySelector('meta[property="og:title"]');
+    if (!ogTitle) {
+      ogTitle = document.createElement("meta");
+      ogTitle.setAttribute("property", "og:title");
+      document.head.appendChild(ogTitle);
+    }
+    ogTitle.setAttribute("content", product.name ? `${product.name} - manuplast` : "");
+
+    let ogDescription = document.querySelector('meta[property="og:description"]');
+    if (!ogDescription) {
+      ogDescription = document.createElement("meta");
+      ogDescription.setAttribute("property", "og:description");
+      document.head.appendChild(ogDescription);
+    }
+    ogDescription.setAttribute("content", descriptionText);
+
+    document
+      .querySelector('meta[property="og:image"]')
+      ?.setAttribute(
+        "content",
+        product.cover_image_url || "https://www.manuplast.co/images/logo.png"
+      );
+    document
+      .querySelector('meta[property="og:url"]')
+      ?.setAttribute("content", window.location.href);
+
+    let twitterTitle = document.querySelector('meta[name="twitter:title"]');
+    if (!twitterTitle) {
+      twitterTitle = document.createElement("meta");
+      twitterTitle.setAttribute("name", "twitter:title");
+      document.head.appendChild(twitterTitle);
+    }
+    twitterTitle.setAttribute("content", product.name ? `${product.name} - manuplast` : "");
+
+    let twitterDescription = document.querySelector('meta[name="twitter:description"]');
+    if (!twitterDescription) {
+      twitterDescription = document.createElement("meta");
+      twitterDescription.setAttribute("name", "twitter:description");
+      document.head.appendChild(twitterDescription);
+    }
+    twitterDescription.setAttribute("content", descriptionText);
+
+    document
+      .querySelector('meta[name="twitter:image"]')
+      ?.setAttribute(
+        "content",
+        product.cover_image_url || "https://www.manuplast.co/images/logo.png"
+      );
+
+    // Update title
+    document.title = product.name ? `${product.name} - Manuplast` : "";
   }
 
   renderProductDetail() {
@@ -1887,6 +1956,9 @@ class ProductDetailManager {
       this.setupColorSwatches();
       this.setupTabNavigation();
     }
+
+    // Update meta tags when color changes
+    this.updateMetaTags();
   }
 
   changeImage(index) {

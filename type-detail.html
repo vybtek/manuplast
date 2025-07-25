@@ -3,22 +3,28 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    
-    <!-- Basic meta tags with fallbacks -->
+    <!-- Minimal initial meta tags -->
     <meta name="description" content="" />
     <meta property="og:title" content="" />
     <meta property="og:description" content="" />
-    <meta property="og:image" content="https://www.manuplast.co/images/logo.png" />
-    <meta property="og:url" content="https://www.manuplast.co/type-detail.html" />
+    <meta
+      property="og:image"
+      content="https://www.manuplast.co/images/logo.png"
+    />
+    <meta
+      property="og:url"
+      content="https://www.manuplast.co/type-detail.html"
+    />
     <meta property="og:type" content="product" />
     <meta property="og:site_name" content="manuplast" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="" />
     <meta name="twitter:description" content="" />
-    <meta name="twitter:image" content="https://www.manuplast.co/images/logo.png" />
-    
-    <title>Manuplast</title>
-    
+    <meta
+      name="twitter:image"
+      content="https://www.manuplast.co/images/logo.png"
+    />
+    <title></title>
     <link href="style.css" rel="stylesheet" />
     <link rel="icon" type="image/png" href="./images/logo.png" />
     <link
@@ -26,161 +32,9 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
     />
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- JSON-LD Schema -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Product",
-      "name": "",
-      "image": "https://www.manuplast.co/images/logo.png",
-      "description": "",
-      "sku": "",
-      "mpn": "",
-      "brand": {
-        "@type": "Brand",
-        "name": "manuplast"
-      },
-      "offers": {
-        "@type": "Offer",
-        "url": "",
-        "priceCurrency": "INR",
-        "price": "0.00",
-        "priceValidUntil": "2026-07-22",
-        "availability": "https://schema.org/InStock",
-        "seller": {
-          "@type": "Organization",
-          "name": "manuplast"
-        }
-      }
-    }
-    </script>
-    
-    <script>
-      // Function to update meta tags and schema
-      function updateMetaTags() {
-        const params = new URLSearchParams(window.location.search);
-        const typeId = params.get("id");
-        const categoryId = params.get("category_id");
-
-        if (typeId && categoryId) {
-          // Get token from localStorage if available
-          const token = localStorage.getItem("token") || "";
-          
-          fetch(`https://api.vybtek.com/api/manuplast/producttypes/${typeId}`, {
-            method: 'GET',
-            headers: {
-              'Authorization': token ? `Bearer ${token}` : '',
-              'Content-Type': 'application/json'
-            }
-          })
-            .then((response) => {
-              if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-              }
-              return response.json();
-            })
-            .then((product) => {
-              // Helper function to truncate description
-              const truncateDescription = (desc, maxLength = 160) => {
-                if (!desc || typeof desc !== "string") return "";
-                const cleanDesc = desc.replace(/\r\n/g, " ").trim();
-                if (cleanDesc.length <= maxLength) return cleanDesc;
-                const truncated = cleanDesc.substring(0, maxLength);
-                const lastSpaceIndex = truncated.lastIndexOf(" ");
-                return lastSpaceIndex > 0 
-                  ? truncated.substring(0, lastSpaceIndex) + "..."
-                  : truncated + "...";
-              };
-
-              const productName = product.name || "";
-              const descriptionText = truncateDescription(product.description);
-              const imageUrl = product.cover_image_url || "https://www.manuplast.co/images/logo.png";
-              const pageTitle = productName ? `${productName} - Manuplast` : "Manuplast";
-
-              // Update document title
-              document.title = pageTitle;
-
-              // Update meta tags
-              const updateMeta = (selector, attribute, value) => {
-                const element = document.querySelector(selector);
-                if (element) {
-                  element.setAttribute(attribute, value);
-                }
-              };
-
-              updateMeta('meta[name="description"]', 'content', descriptionText);
-              updateMeta('meta[property="og:title"]', 'content', pageTitle);
-              updateMeta('meta[property="og:description"]', 'content', descriptionText);
-              updateMeta('meta[property="og:image"]', 'content', imageUrl);
-              updateMeta('meta[property="og:url"]', 'content', window.location.href);
-              updateMeta('meta[name="twitter:title"]', 'content', pageTitle);
-              updateMeta('meta[name="twitter:description"]', 'content', descriptionText);
-              updateMeta('meta[name="twitter:image"]', 'content', imageUrl);
-
-              // Update JSON-LD schema
-              const schemaScript = document.querySelector('script[type="application/ld+json"]');
-              if (schemaScript) {
-                const price = product.price 
-                  ? parseFloat(product.price.toString().replace(/[^\d.]/g, "")) || 0
-                  : 0;
-
-                const schemaData = {
-                  "@context": "https://schema.org",
-                  "@type": "Product",
-                  "name": productName,
-                  "image": imageUrl,
-                  "description": descriptionText,
-                  "sku": product.id?.toString() || "",
-                  "mpn": product.id?.toString() || "",
-                  "brand": {
-                    "@type": "Brand",
-                    "name": "manuplast"
-                  },
-                  "offers": {
-                    "@type": "Offer",
-                    "url": window.location.href,
-                    "priceCurrency": "INR",
-                    "price": price.toFixed(2),
-                    "priceValidUntil": "2026-07-22",
-                    "availability": product.status === "active" 
-                      ? "https://schema.org/InStock" 
-                      : "https://schema.org/OutOfStock",
-                    "seller": {
-                      "@type": "Organization",
-                      "name": "manuplast"
-                    }
-                  }
-                };
-                
-                schemaScript.textContent = JSON.stringify(schemaData, null, 2);
-              }
-            })
-            .catch((error) => {
-              console.error("Error fetching product data:", error);
-              // Set fallback title if fetch fails
-              if (!document.title || document.title === "") {
-                document.title = "Manuplast";
-              }
-            });
-        } else {
-          // No product ID, set default title
-          document.title = "Manuplast";
-        }
-      }
-
-      // Run when DOM is loaded
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', updateMetaTags);
-      } else {
-        updateMetaTags();
-      }
-    </script>
-    
+    <script src="products.js" defer></script>
     <script src="headerFooter.js"></script>
-    <script src="products.js"></script>
     <script defer src="whatsapp.js"></script>
-    
     <style>
       @keyframes slideIn {
         from {
@@ -192,27 +46,22 @@
           transform: translateY(0);
         }
       }
-      
       .sticky {
         position: sticky;
         top: 20px;
       }
-      
       .thumbnail:hover {
         transform: scale(1.1);
         transition: transform 0.3s ease;
       }
-      
       .color-swatch:hover {
         transform: scale(1.1);
         transition: transform 0.3s ease;
       }
-      
       .tab-active {
         border-bottom: 2px solid #3b82f6;
         color: #3b82f6;
       }
-      
       @media (max-width: 640px) {
         .related-product-card {
           width: 100%;
@@ -220,7 +69,6 @@
           margin-left: auto;
           margin-right: auto;
         }
-        
         .related-products-grid {
           display: flex;
           flex-direction: column;
