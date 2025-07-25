@@ -912,80 +912,9 @@ class ProductDetailManager {
 
       if (!this.validateProduct(product, categoryId)) {
         this.renderError(
-          "This product does not belong to the specified category."
+          "This processProductData product does not belong to the specified category."
         );
         return;
-      }
-
-      // Update meta tags and schema immediately
-      document.title = product.name
-        ? `${product.name} - Manuplast`
-        : "Product Type Details - Manuplast";
-
-      const metaDescription = document.querySelector('meta[name="description"]');
-      const descriptionText = this.truncateDescription(product.description);
-      if (metaDescription) {
-        metaDescription.setAttribute("content", descriptionText);
-      }
-
-      const ogTitle = document.querySelector('meta[property="og:title"]');
-      if (ogTitle) {
-        ogTitle.setAttribute(
-          "content",
-          product.name ? `${product.name} - manuplast` : "Product Type Details - manuplast"
-        );
-      }
-      const ogDescription = document.querySelector('meta[property="og:description"]');
-      if (ogDescription) {
-        ogDescription.setAttribute("content", descriptionText);
-      }
-      const ogImage = document.querySelector('meta[property="og:image"]');
-      if (ogImage && product.cover_image_url) {
-        ogImage.setAttribute("content", product.cover_image_url);
-      }
-      const ogUrl = document.querySelector('meta[property="og:url"]');
-      if (ogUrl) {
-        ogUrl.setAttribute("content", window.location.href);
-      }
-
-      const twitterTitle = document.querySelector('meta[name="twitter:title"]');
-      if (twitterTitle) {
-        twitterTitle.setAttribute(
-          "content",
-          product.name ? `${product.name} - manuplast` : "Product Type Details - manuplast"
-        );
-      }
-      const twitterDescription = document.querySelector('meta[name="twitter:description"]');
-      if (twitterDescription) {
-        twitterDescription.setAttribute("content", descriptionText);
-      }
-      const twitterImage = document.querySelector('meta[name="twitter:image"]');
-      if (twitterImage && product.cover_image_url) {
-        twitterImage.setAttribute("content", product.cover_image_url);
-      }
-
-      const schemaScript = document.querySelector('script[type="application/ld+json"]');
-      if (schemaScript && product.name) {
-        const schemaData = {
-          "@context": "https://schema.org",
-          "@type": "Product",
-          name: product.name || "Product Type Details",
-          image: product.cover_image_url || "https://www.manuplast.co/images/logo.png",
-          description: descriptionText,
-          sku: product.id || "PRODUCT123",
-          mpn: product.id || "MPN123",
-          brand: { "@type": "Brand", name: "manuplast" },
-          offers: {
-            "@type": "Offer",
-            url: window.location.href,
-            priceCurrency: "INR",
-            price: product.price ? parseFloat(product.price.replace(/[^\d.]/g, "")) : "0.00",
-            priceValidUntil: "2026-07-22",
-            availability: product.status === "active" ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
-            seller: { "@type": "Organization", name: "manuplast" },
-          },
-        };
-        schemaScript.textContent = JSON.stringify(schemaData, null, 2);
       }
 
       // Fetch related products
