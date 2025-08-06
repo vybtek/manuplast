@@ -119,7 +119,7 @@ async function fetchBlogDetail() {
 
   try {
     const response = await fetch(
-      `https://api.vybtek.com/api/manuplast/blogs/slug/${blogSlug}`
+      `https://api.vybtek.com/api/manuplast/blogs/${blogSlug}`
     );
     if (!response.ok) throw new Error("Blog not found");
     const blog = await response.json();

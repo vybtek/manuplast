@@ -135,9 +135,6 @@ async function fetchProducts(containerId = "product-grid", view = "default") {
               <h3 class="text-2xl font-semibold text-gray-900 mb-3 tracking-tight">${
                 category.name || "Unnamed"
               }</h3>
-               <h3 class="text-2xl font-semibold text-gray-900 mb-3 tracking-tight">${
-                 category.slug || "Unnamed"
-               }</h3>
               <p class="text-gray-500 text-sm line-clamp-2 mb-4 leading-relaxed">${
                 category.description?.slice(0, 160) || "No description"
               }...</p>
@@ -523,6 +520,7 @@ async function fetchProductDetail() {
 
   const params = new URLSearchParams(window.location.search);
   const categorySlug = params.get("slug");
+  const categoryId = params.get("id");
   const source = params.get("source");
 
   if (!categorySlug) {
@@ -550,7 +548,7 @@ async function fetchProductDetail() {
 
     // Fetch category
     const categoryResponse = await fetch(
-      `${API_BASE_URL}/categories/slug/${categorySlug}`,
+      `${API_BASE_URL}/categories/${categorySlug}`,
       { headers }
     );
     if (!categoryResponse.ok) {
@@ -924,7 +922,7 @@ class ProductDetailManager {
       const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
       const productResponse = await fetch(
-        `https://api.vybtek.com/api/manuplast/producttypes/slug/${typeSlug}`,
+        `https://api.vybtek.com/api/manuplast/producttypes/${typeSlug}`,
         { headers, timeout: 5000 }
       );
       if (!productResponse.ok) {
@@ -943,7 +941,7 @@ class ProductDetailManager {
       }
 
       const relatedResponse = await fetch(
-        `https://api.vybtek.com/api/manuplast/producttypes?category_id=${categoryId}`,
+        `https://api.vybtek.com/api/manuplast/producttypes?category_slug=${categoryId}`,
         { headers, timeout: 5000 }
       );
       if (!relatedResponse.ok) {
@@ -2186,7 +2184,7 @@ if (typeof module !== "undefined" && module.exports) {
 
 async function fetchProductForUpdate() {
   const params = new URLSearchParams(window.location.search);
-  const categoryId = params.get("id");
+  const categoryId = params.get("slug");
 
   if (!categoryId) {
     alert("Category not found!");
@@ -2450,6 +2448,7 @@ document
     e.preventDefault();
 
     const name = document.getElementById("name").value;
+    const slug = document.getElementById("slug").value;
     const imageInput = document.getElementById("image");
     const description = document.getElementById("description").value;
     const token = localStorage.getItem("token");
@@ -2468,6 +2467,7 @@ document
 
     const formData = new FormData();
     formData.append("name", name);
+    formData.append("slug", slug);
     formData.append("description", description);
     formData.append("image", imageInput.files[0]);
 
@@ -2505,7 +2505,6 @@ document
     const categoryIdInput = document.getElementById("update-category-id");
     const nameInput = document.getElementById("update-name");
     const slugInput = document.getElementById("update-slug");
-
     const imageInput = document.getElementById("update-image");
     const descriptionInput = document.getElementById("update-description");
     const modal = document.getElementById("update-category-modal");
@@ -2546,6 +2545,7 @@ document
 
     const formData = new FormData();
     formData.append("name", name);
+    formData.append("slug", slug);
     formData.append("description", description);
     if (image) {
       formData.append("image", image);
