@@ -122,7 +122,9 @@ async function fetchProducts(containerId = "product-grid", view = "default") {
         categoryCard.className =
           "group relative overflow-hidden rounded-2xl shadow-md transition-all duration-300 hover:shadow-2xl border border-gray-100 hover:border-blue-200";
         categoryCard.innerHTML = `
-          <a href="product-detail?id=${category.id}" class="block relative ">
+          <a href="product-detail?slug=${
+            category.slug || category.id
+          }" class="block relative ">
             <div class="aspect-w-4 aspect-h-3 overflow-hidden">
               <img src="${category.image_url || "./images/placeholder.jpg"}" 
                    alt="${category.name || "Unnamed"}" 
@@ -133,6 +135,9 @@ async function fetchProducts(containerId = "product-grid", view = "default") {
               <h3 class="text-2xl font-semibold text-gray-900 mb-3 tracking-tight">${
                 category.name || "Unnamed"
               }</h3>
+               <h3 class="text-2xl font-semibold text-gray-900 mb-3 tracking-tight">${
+                 category.slug || "Unnamed"
+               }</h3>
               <p class="text-gray-500 text-sm line-clamp-2 mb-4 leading-relaxed">${
                 category.description?.slice(0, 160) || "No description"
               }...</p>
@@ -229,6 +234,10 @@ function openUpdateModal(categoryId) {
           <label for="update-name" class="block text-gray-700 mb-1">Category Name*</label>
           <input type="text" id="update-name" class="w-full p-2 border rounded" required />
         </div>
+         <div>
+          <label for="update-slug" class="block text-gray-700 mb-1">Category Slug*</label>
+          <input type="text" id="update-slug" class="w-full p-2 border rounded" required />
+        </div>
         <div>
           <label for="update-image" class="block text-gray-700 mb-1">Category Image</label>
           <input type="file" id="update-image" class="w-full p-2 border rounded" accept="image/*" />
@@ -249,6 +258,7 @@ function openUpdateModal(categoryId) {
       // Re-select form elements after re-rendering
       const idInput = document.getElementById("update-category-id");
       const nameInput = document.getElementById("update-name");
+      const slugInput = document.getElementById("update-slug");
       const descriptionInput = document.getElementById("update-description");
       const imagePreview = document.getElementById("current-image-preview");
       const image = document.getElementById("current-image");
@@ -258,6 +268,7 @@ function openUpdateModal(categoryId) {
       if (
         !idInput ||
         !nameInput ||
+        !slugInput ||
         !descriptionInput ||
         !imagePreview ||
         !image ||
@@ -266,6 +277,7 @@ function openUpdateModal(categoryId) {
         console.error("Form elements missing after re-rendering:", {
           idInput,
           nameInput,
+          slugInput,
           descriptionInput,
           imagePreview,
           image,
@@ -299,6 +311,7 @@ function openUpdateModal(categoryId) {
       console.log("Form populated with:", {
         id: idInput.value,
         name: nameInput.value,
+        slug: slugInput.value,
         description: descriptionInput.value,
         image: image.src,
       }); // Debug: Log populated values
@@ -313,6 +326,10 @@ function openUpdateModal(categoryId) {
         <div>
           <label for="update-name" class="block text-gray-700 mb-1">Category Name*</label>
           <input type="text" id="update-name" class="w-full p-2 border rounded" required />
+        </div>
+         <div>
+          <label for="update-slug" class="block text-gray-700 mb-1">Category Slug*</label>
+          <input type="text" id="update-slug" class="w-full p-2 border rounded" required />
         </div>
         <div>
           <label for="update-image" class="block text-gray-700 mb-1">Category Image</label>
@@ -505,10 +522,10 @@ async function fetchProductDetail() {
       `;
 
   const params = new URLSearchParams(window.location.search);
-  const categoryId = params.get("id");
+  const categorySlug = params.get("slug");
   const source = params.get("source");
 
-  if (!categoryId) {
+  if (!categorySlug) {
     productDetail.innerHTML = `
           <div class="flex items-center justify-center min-h-screen bg-red-50">
             <div class="text-center max-w-md p-6 bg-white rounded-xl shadow-lg">
@@ -533,7 +550,7 @@ async function fetchProductDetail() {
 
     // Fetch category
     const categoryResponse = await fetch(
-      `${API_BASE_URL}/categories/${categoryId}`,
+      `${API_BASE_URL}/categories/slug/${categorySlug}`,
       { headers }
     );
     if (!categoryResponse.ok) {
@@ -605,7 +622,7 @@ async function fetchProductDetail() {
 
     // Fetch product types
     const typesResponse = await fetch(
-      `${API_BASE_URL}/producttypes?category_id=${categoryId}`,
+      `${API_BASE_URL}/producttypes?category_slug=${categorySlug}`,
       { headers }
     );
     if (!typesResponse.ok) {
@@ -620,7 +637,7 @@ async function fetchProductDetail() {
     const filteredProductTypes = rawProductTypes
       .filter(
         (type) =>
-          type.category && String(type.category.id) === String(categoryId)
+          type.category && String(type.category.slug) === String(categorySlug)
       )
       .map((type) => ({
         ...type,
@@ -689,128 +706,129 @@ async function fetchProductDetail() {
               </div>
             </div>
 
-           <!-- Products Section -->
-<div class="max-w-6xl mx-auto px-4 py-8">
-  <div class="flex justify-between items-center mb-8">
-    <h2 class="text-2xl font-bold text-gray-800">
-      <i class="fas fa-box-open mr-2"></i>
-      Product Collection
-    </h2>
-    <span class="bg-red-600 text-white px-3 py-1 rounded-full text-sm">
-      ${filteredProductTypes.length} ${
+            <!-- Products Section -->
+            <div class="max-w-6xl mx-auto px-4 py-8">
+              <div class="flex justify-between items-center mb-8">
+                <h2 class="text-2xl font-bold text-gray-800">
+                  <i class="fas fa-box-open mr-2"></i>
+                  Product Collection
+                </h2>
+                <span class="bg-red-600 text-white px-3 py-1 rounded-full text-sm">
+                  ${filteredProductTypes.length} ${
       filteredProductTypes.length === 1 ? "Product" : "Products"
     }
-    </span>
-  </div>
-  ${
-    filteredProductTypes.length
-      ? `
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        ${filteredProductTypes
-          .map(
-            (type, index) => `
-              <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition duration-300 flex flex-col items-center">
-                <div class="relative w-60 h-60 overflow-hidden">
-                  <img src="${type.cover_image_url}"
-                       alt="${type.name}"
-                       class="w-full h-full object-cover aspect-square" />
-                  <div class="absolute top-0 right-0 p-2">
-                    ${
-                      type.colors.length
-                        ? `<span class="bg-white text-red-600 text-xs px-2 py-1 rounded-full">${type.colors.length} Colors</span>`
-                        : ""
-                    }
-                    ${
-                      type.sizes.length
-                        ? `<span class="bg-white text-red-600 text-xs px-2 py-1 rounded-full ml-1">${type.sizes.length} Sizes</span>`
-                        : ""
-                    }
-                  </div>
-                </div>
-                <div class="p-4 w-full">
-                  <h3 class="text-xl font-bold text-gray-600 mb-2 text-start">${
-                    type.name?.slice(0, 50) || ""
-                  }...
-                  </h3>
-                  <div class="mb-4">
-                    ${
-                      type.colors.length
-                        ? `
-                        <div class="flex items-start mb-2 justify-start">
-                          <span class="text-sm font-medium text-gray-700 mr-2">Colors:</span>
-                          <div class="flex">
-                            ${type.colors
-                              .slice(0, 4)
-                              .map(
-                                (color) => `
-                                  <div class="w-5 h-5 rounded-full border border-gray-200 ml-1"
-                                       style="background-color: ${color.toLowerCase()}"
-                                       title="${color}"></div>
-                                `
-                              )
-                              .join("")}
-                            ${
-                              type.colors.length > 4
-                                ? `<span class="text-xs text-red-600 ml-1">+${
-                                    type.colors.length - 4
-                                  }</span>`
-                                : ""
-                            }
-                          </div>
-                        </div>
-                      `
-                        : ""
-                    }
-                    ${
-                      type.sizes.length
-                        ? `
-                        <div class="flex items-start justify-start">
-                          <span class="text-sm font-medium text-gray-700 mr-2">Sizes:</span>
-                          <div class="flex flex-wrap">
-                            ${type.sizes
-                              .slice(0, 3)
-                              .map(
-                                (size) => `
-                                  <span class="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded mr-1 mb-1">${size}</span>
-                                `
-                              )
-                              .join("")}
-                            ${
-                              type.sizes.length > 3
-                                ? `<span class="text-xs text-red-600 ml-1">+${
-                                    type.sizes.length - 3
-                                  }</span>`
-                                : ""
-                            }
-                          </div>
-                        </div>
-                      `
-                        : ""
-                    }
-                  </div>
-                  <a href="type-detail?id=${type.id}&category_id=${categoryId}"
-                     class="flex items-center justify-center bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg transition w-full">
-                    <span>View Details</span>
-                    <i class="fas fa-arrow-right ml-2"></i>
-                  </a>
-                </div>
+                </span>
               </div>
-            `
-          )
-          .join("")}
-      </div>
-
-              `
-      : `
-                <div class="text-center py-12">
-                  <div class="text-red-500 text-5xl mb-4">
-                    <i class="fas fa-box-open"></i>
-                  </div>
-                  <h3 class="text-2xl font-bold text-red-800 mb-2">No Products Available</h3>
-                  <p class="text-gray-600">This category doesn't have any products yet. Check back later for updates.</p>
-                </div>
-              `
-  }
+              ${
+                filteredProductTypes.length
+                  ? `
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      ${filteredProductTypes
+                        .map(
+                          (type, index) => `
+                            <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition duration-300 flex flex-col items-center">
+                              <div class="relative w-60 h-60 overflow-hidden">
+                                <img src="${type.cover_image_url}"
+                                     alt="${type.name}"
+                                     class="w-full h-full object-cover aspect-square" />
+                                <div class="absolute top-0 right-0 p-2">
+                                  ${
+                                    type.colors.length
+                                      ? `<span class="bg-white text-red-600 text-xs px-2 py-1 rounded-full">${type.colors.length} Colors</span>`
+                                      : ""
+                                  }
+                                  ${
+                                    type.sizes.length
+                                      ? `<span class="bg-white text-red-600 text-xs px-2 py-1 rounded-full ml-1">${type.sizes.length} Sizes</span>`
+                                      : ""
+                                  }
+                                </div>
+                              </div>
+                              <div class="p-4 w-full">
+                                <h3 class="text-xl font-bold text-gray-600 mb-2 text-start">${
+                                  type.name?.slice(0, 50) || ""
+                                }...
+                                </h3>
+                                <div class="mb-4">
+                                  ${
+                                    type.colors.length
+                                      ? `
+                                      <div class="flex items-start mb-2 justify-start">
+                                        <span class="text-sm font-medium text-gray-700 mr-2">Colors:</span>
+                                        <div class="flex">
+                                          ${type.colors
+                                            .slice(0, 4)
+                                            .map(
+                                              (color) => `
+                                                <div class="w-5 h-5 rounded-full border border-gray-200 ml-1"
+                                                     style="background-color: ${color.toLowerCase()}"
+                                                     title="${color}"></div>
+                                              `
+                                            )
+                                            .join("")}
+                                          ${
+                                            type.colors.length > 4
+                                              ? `<span class="text-xs text-red-600 ml-1">+${
+                                                  type.colors.length - 4
+                                                }</span>`
+                                              : ""
+                                          }
+                                        </div>
+                                      </div>
+                                    `
+                                      : ""
+                                  }
+                                  ${
+                                    type.sizes.length
+                                      ? `
+                                      <div class="flex items-start justify-start">
+                                        <span class="text-sm font-medium text-gray-700 mr-2">Sizes:</span>
+                                        <div class="flex flex-wrap">
+                                          ${type.sizes
+                                            .slice(0, 3)
+                                            .map(
+                                              (size) => `
+                                                <span class="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded mr-1 mb-1">${size}</span>
+                                              `
+                                            )
+                                            .join("")}
+                                          ${
+                                            type.sizes.length > 3
+                                              ? `<span class="text-xs text-red-600 ml-1">+${
+                                                  type.sizes.length - 3
+                                                }</span>`
+                                              : ""
+                                          }
+                                        </div>
+                                      </div>
+                                    `
+                                      : ""
+                                  }
+                                </div>
+                                <a href="type-detail?slug=${
+                                  type.slug || type.id
+                                }&category_id=${category.id}"
+                                   class="flex items-center justify-center bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg transition w-full">
+                                  <span>View Details</span>
+                                  <i class="fas fa-arrow-right ml-2"></i>
+                                </a>
+                              </div>
+                            </div>
+                          `
+                        )
+                        .join("")}
+                    </div>
+                  `
+                  : `
+                    <div class="text-center py-12">
+                      <div class="text-red-500 text-5xl mb-4">
+                        <i class="fas fa-box-open"></i>
+                      </div>
+                      <h3 class="text-2xl font-bold text-red-800 mb-2">No Products Available</h3>
+                      <p class="text-gray-600">This category doesn't have any products yet. Check back later for updates.</p>
+                    </div>
+                  `
+              }
               <div class="text-center mt-8">
                 <a href="products"
                    class="inline-flex items-center px-4 py-2 border border-red-600 text-red-600 rounded-lg hover:bg-red-600 hover:text-white transition">
@@ -883,13 +901,18 @@ class ProductDetailManager {
     }
 
     const params = new URLSearchParams(window.location.search);
-    const typeId = params.get("id");
-    const categoryId = params.get("category_id");
+    const typeSlug = params.get("slug");
+    const categoryId = params.get("slug");
 
-    console.log("Fetching with Type ID:", typeId, "Category ID:", categoryId);
+    console.log(
+      "Fetching with Type Slug:",
+      typeSlug,
+      "Category ID:",
+      categoryId
+    );
 
-    if (!typeId || !categoryId) {
-      this.renderError("Product not found. Invalid product ID or category.");
+    if (!typeSlug || !categoryId) {
+      this.renderError("Product not found. Invalid product slug or category.");
       return;
     }
 
@@ -901,8 +924,8 @@ class ProductDetailManager {
       const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
       const productResponse = await fetch(
-        `https://api.vybtek.com/api/manuplast/producttypes/${typeId}`,
-        { headers, timeout: 5000 } // Increased timeout for reliability
+        `https://api.vybtek.com/api/manuplast/producttypes/slug/${typeSlug}`,
+        { headers, timeout: 5000 }
       );
       if (!productResponse.ok) {
         throw new Error(
@@ -933,7 +956,7 @@ class ProductDetailManager {
       this.product = this.processProductData(product);
       this.relatedProducts = this.processRelatedProducts(
         relatedProducts,
-        typeId,
+        typeSlug,
         categoryId
       );
       console.log("Meta tags to be updated with:", this.product);
@@ -1057,7 +1080,7 @@ class ProductDetailManager {
     return processedProduct;
   }
 
-  processRelatedProducts(productTypes, currentTypeId, expectedCategoryId) {
+  processRelatedProducts(productTypes, currentTypeSlug, expectedCategoryId) {
     if (!Array.isArray(productTypes)) return [];
 
     return productTypes
@@ -1066,7 +1089,7 @@ class ProductDetailManager {
           type.category?.id || type.category_id || ""
         ).trim();
         return (
-          String(type.id) !== String(currentTypeId) &&
+          String(type.slug) !== String(currentTypeSlug) &&
           productCategoryId === String(expectedCategoryId).trim()
         );
       })
@@ -1294,7 +1317,7 @@ class ProductDetailManager {
       ogUrl.setAttribute("property", "og:url");
       document.head.appendChild(ogUrl);
     }
-    ogUrl.setAttribute("content", window.location.href); // Ensures the live URL is used
+    ogUrl.setAttribute("content", window.location.href);
 
     let twitterTitle = document.querySelector('meta[name="twitter:title"]');
     if (!twitterTitle) {
@@ -1348,8 +1371,8 @@ class ProductDetailManager {
             <nav class="flex items-center space-x-2 text-sm">
               <a href="/" class="hover:text-blue-200 transition duration-300">Home</a>
               <span class="text-white">></span>
-              <a href="product-detail?id=${
-                product.category?.id || product.category_id
+              <a href="product-detail?slug=${
+                product.category?.slug || product.category_id
               }" class="hover:text-blue-200 transition duration-300">${
       product.category?.name || "Products"
     }</a>
@@ -1841,8 +1864,8 @@ class ProductDetailManager {
                               : ""
                           }
                         </div>
-                        <a href="type-detail?id=${
-                          type.id
+                        <a href="type-detail?slug=${
+                          type.slug
                         }&category_id=${categoryId}"
                            class="flex items-center justify-center bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg transition w-full text-sm">
                           <span>View Details</span>
@@ -2215,20 +2238,28 @@ document
 
     const productIdInput = document.getElementById("product-id");
     const nameInput = document.getElementById("name");
+    const slugInput = document.getElementById("slug");
     const imageInput = document.getElementById("image");
     const descriptionInput = document.getElementById("description");
 
-    if (!productIdInput || !nameInput || !imageInput || !descriptionInput) {
+    if (
+      !productIdInput ||
+      !nameInput ||
+      !slugInput ||
+      !imageInput ||
+      !descriptionInput
+    ) {
       alert("Error: Form elements are missing.");
       return;
     }
 
     const categoryId = productIdInput.value;
     const name = nameInput.value;
+    const slug = slugInput.value;
     const image = imageInput.files[0];
     const description = descriptionInput.value;
 
-    if (!categoryId || !name || !image || !description) {
+    if (!categoryId || !name || !slug || !image || !description) {
       alert("Category name, image, and description are required.");
       return;
     }
@@ -2473,11 +2504,19 @@ document
 
     const categoryIdInput = document.getElementById("update-category-id");
     const nameInput = document.getElementById("update-name");
+    const slugInput = document.getElementById("update-slug");
+
     const imageInput = document.getElementById("update-image");
     const descriptionInput = document.getElementById("update-description");
     const modal = document.getElementById("update-category-modal");
 
-    if (!categoryIdInput || !nameInput || !descriptionInput || !modal) {
+    if (
+      !categoryIdInput ||
+      !nameInput ||
+      !slugInput ||
+      !descriptionInput ||
+      !modal
+    ) {
       showNotification(
         "Error: Update form is not properly initialized",
         "error"
@@ -2487,6 +2526,8 @@ document
 
     const categoryId = categoryIdInput.value;
     const name = nameInput.value;
+    const slug = slugInput.value;
+
     const description = descriptionInput.value;
     const image = imageInput?.files[0];
     const token = localStorage.getItem("token");

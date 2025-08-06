@@ -61,8 +61,8 @@ async function fetchBlogs(containerId = "blog-grid", view = "default") {
         } text-white px-3 py-1 rounded text-sm">
                 ${blog.status === "ACTIVE" ? "Deactivate" : "Activate"}
               </button>
-              <a href="blog-detail.html?id=${
-                blog.id
+              <a href="blog-detail.html?slug=${
+                blog.slug || blog.id
               }&source=dashboard" class="bg-gray-200 text-black px-3 py-1 rounded text-sm">View</a>
             </div>
           </div>
@@ -92,8 +92,8 @@ async function fetchBlogs(containerId = "blog-grid", view = "default") {
               </p>
             </div>
             <div>
-              <a href="blog-detail?id=${
-                blog.id
+              <a href="blog-detail?slug=${
+                blog.slug
               }" class="inline-block text-blue-600 hover:text-blue-800 text-sm font-semibold transition-all duration-300 underline-offset-2 hover:underline">
                 Read More →
               </a>
@@ -110,13 +110,16 @@ async function fetchBlogs(containerId = "blog-grid", view = "default") {
 }
 
 async function fetchBlogDetail() {
-  const blogId = getQueryParam("id");
+  const blogSlug = getQueryParam("slug");
   const detailContainer = document.getElementById("blog-detail");
-  if (!blogId || !detailContainer) return;
+  if (!blogSlug || !detailContainer) {
+    detailContainer.innerHTML = `<p class="text-red-500">Error: Blog slug or container not found.</p>`;
+    return;
+  }
 
   try {
     const response = await fetch(
-      `https://api.vybtek.com/api/manuplast/blogs/${blogId}`
+      `https://api.vybtek.com/api/manuplast/blogs/slug/${blogSlug}`
     );
     if (!response.ok) throw new Error("Blog not found");
     const blog = await response.json();
@@ -252,6 +255,7 @@ function openBlogModal(mode, blogId = null) {
   const submitText = document.getElementById("submit-text");
   const blogIdInput = document.getElementById("blog-id");
   const titleInput = document.getElementById("title");
+  const slugInput = document.getElementById("slug");
   const authorInput = document.getElementById("author");
   const imageInput = document.getElementById("image");
   const existingImageInput = document.getElementById("existing-image");
@@ -293,6 +297,7 @@ async function fetchBlogForUpdate(blogId) {
 
     document.getElementById("blog-id").value = blog.id;
     document.getElementById("title").value = blog.title;
+    document.getElementById("slug").value = blog.slug;
     document.getElementById("author").value = blog.author;
     document.getElementById("content").value = blog.content;
     document.getElementById("existing-image").value = blog.image;
@@ -316,6 +321,7 @@ document.getElementById("blog-form")?.addEventListener("submit", async (e) => {
 
   const blogId = document.getElementById("blog-id").value;
   const title = document.getElementById("title").value;
+  const slug = document.getElementById("slug").value;
   const author = document.getElementById("author").value;
   const image = document.getElementById("image").files[0];
   const existingImage = document.getElementById("existing-image").value;
@@ -324,6 +330,7 @@ document.getElementById("blog-form")?.addEventListener("submit", async (e) => {
 
   const formData = new FormData();
   formData.append("title", title);
+  formData.append("slug", slug);
   formData.append("author", author);
   formData.append("content", content);
   if (image) {

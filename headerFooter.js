@@ -255,7 +255,6 @@ class SpecialFooter extends HTMLElement {
             <div class="space-y-6 transform transition-transform duration-300 ">
               <a href="/" class="group flex items-center gap-3" aria-label="ManuPlast Home">
                 <img src="./images/logo1.png" alt="ManuPlast Logo" class="w-18 h-14 object-cover">
-                <h2 class="text-3xl font-extrabold text-red-700 tracking-tight">MANU PLAST</h2>
               </a>
               <p class="text-gray-600 text-sm leading-relaxed max-w-xs">
                 Crafting premium, innovative, and sustainable hydration and storage solutions that elevate your daily living.
