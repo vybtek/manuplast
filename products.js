@@ -16,7 +16,7 @@ async function fetchProducts(containerId = "product-grid", view = "default") {
     const token = localStorage.getItem("token");
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
     const response = await fetch(
-      "https://api.vybtek.com/api/manuplast/categories",
+      "http://192.168.0.105:5000/api/manuplast/categories",
       { headers }
     );
 
@@ -90,7 +90,7 @@ async function fetchProducts(containerId = "product-grid", view = "default") {
               
               <div class="mt-4 flex flex-wrap gap-2">
                
-               <button onclick="openUpdateModal('${category.id}')" 
+               <button onclick="openUpdateModal('${category.slug}')" 
         class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition text-sm">
   Edit
 </button>
@@ -170,7 +170,7 @@ async function fetchProducts(containerId = "product-grid", view = "default") {
   }
 }
 
-function openUpdateModal(categoryId) {
+function openUpdateModal(slug) {
   const modal = document.getElementById("update-category-modal");
   if (!modal) {
     console.error("Update category modal not found");
@@ -205,7 +205,7 @@ function openUpdateModal(categoryId) {
     return;
   }
 
-  fetch(`https://api.vybtek.com/api/manuplast/categories/${categoryId}`, {
+  fetch(`http://192.168.0.105:5000/api/manuplast/categories/${slug}`, {
     headers: { Authorization: `Bearer ${token}` },
   })
     .then((response) => {
@@ -231,7 +231,7 @@ function openUpdateModal(categoryId) {
           <label for="update-name" class="block text-gray-700 mb-1">Category Name*</label>
           <input type="text" id="update-name" class="w-full p-2 border rounded" required />
         </div>
-         <div>
+        <div>
           <label for="update-slug" class="block text-gray-700 mb-1">Category Slug*</label>
           <input type="text" id="update-slug" class="w-full p-2 border rounded" required />
         </div>
@@ -286,6 +286,7 @@ function openUpdateModal(categoryId) {
       // Populate form fields with fallback values
       idInput.value = category.id || "";
       nameInput.value = category.name || "";
+      slugInput.value = category.slug || "";
       descriptionInput.value = category.description || "";
       if (category.image_url) {
         image.src = category.image_url;
@@ -324,7 +325,7 @@ function openUpdateModal(categoryId) {
           <label for="update-name" class="block text-gray-700 mb-1">Category Name*</label>
           <input type="text" id="update-name" class="w-full p-2 border rounded" required />
         </div>
-         <div>
+        <div>
           <label for="update-slug" class="block text-gray-700 mb-1">Category Slug*</label>
           <input type="text" id="update-slug" class="w-full p-2 border rounded" required />
         </div>
@@ -361,7 +362,7 @@ async function deleteCategory(id) {
 
   try {
     const response = await fetch(
-      `https://api.vybtek.com/api/manuplast/categories/${id}`,
+      `http://192.168.0.105:5000/api/manuplast/categories/${id}`,
       {
         method: "DELETE",
         headers: {
@@ -395,7 +396,7 @@ async function toggleActive(categoryId, currentStatus) {
 
   try {
     const response = await fetch(
-      `https://api.vybtek.com/api/manuplast/categories/${categoryId}/status`,
+      `http://192.168.0.105:5000/api/manuplast/categories/${categoryId}/status`,
       {
         method: "PATCH",
         headers: {
@@ -544,7 +545,7 @@ async function fetchProductDetail() {
   try {
     const token = localStorage.getItem("token");
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
-    const API_BASE_URL = "https://api.vybtek.com/api/manuplast";
+    const API_BASE_URL = "http://192.168.0.105:5000/api/manuplast";
 
     // Fetch category
     const categoryResponse = await fetch(
@@ -805,7 +806,7 @@ async function fetchProductDetail() {
                                 </div>
                                 <a href="type-detail?slug=${
                                   type.slug || type.id
-                                }&category_id=${category.id}"
+                                }&category_slug=${categorySlug}"
                                    class="flex items-center justify-center bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg transition w-full">
                                   <span>View Details</span>
                                   <i class="fas fa-arrow-right ml-2"></i>
@@ -900,16 +901,16 @@ class ProductDetailManager {
 
     const params = new URLSearchParams(window.location.search);
     const typeSlug = params.get("slug");
-    const categoryId = params.get("slug");
+    const categorySlug = params.get("category_slug"); // Use category_slug from URL
 
     console.log(
       "Fetching with Type Slug:",
       typeSlug,
-      "Category ID:",
-      categoryId
+      "Category Slug:",
+      categorySlug
     );
 
-    if (!typeSlug || !categoryId) {
+    if (!typeSlug || !categorySlug) {
       this.renderError("Product not found. Invalid product slug or category.");
       return;
     }
@@ -922,7 +923,7 @@ class ProductDetailManager {
       const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
       const productResponse = await fetch(
-        `https://api.vybtek.com/api/manuplast/producttypes/${typeSlug}`,
+        `http://192.168.0.105:5000/api/manuplast/producttypes/${typeSlug}`,
         { headers, timeout: 5000 }
       );
       if (!productResponse.ok) {
@@ -933,7 +934,8 @@ class ProductDetailManager {
       const product = await productResponse.json();
       console.log("Fetched Product:", JSON.stringify(product, null, 2));
 
-      if (!this.validateProduct(product, categoryId)) {
+      if (!this.validateProduct(product, categorySlug)) {
+        // Use categorySlug here
         this.renderError(
           "This product does not belong to the specified category."
         );
@@ -941,7 +943,7 @@ class ProductDetailManager {
       }
 
       const relatedResponse = await fetch(
-        `https://api.vybtek.com/api/manuplast/producttypes?category_slug=${categoryId}`,
+        `http://192.168.0.105:5000/api/manuplast/producttypes?category_slug=${categorySlug}`,
         { headers, timeout: 5000 }
       );
       if (!relatedResponse.ok) {
@@ -955,7 +957,7 @@ class ProductDetailManager {
       this.relatedProducts = this.processRelatedProducts(
         relatedProducts,
         typeSlug,
-        categoryId
+        categorySlug
       );
       console.log("Meta tags to be updated with:", this.product);
 
@@ -982,19 +984,16 @@ class ProductDetailManager {
   }
 
   validateProduct(product, expectedCategoryId) {
-    const productCategoryId = String(
-      product.category?.id || product.category_id || ""
-    ).trim();
+    const productCategorySlug = String(product.category?.slug || "").trim();
     const categoryId = String(expectedCategoryId).trim();
     console.log(
-      "Validating Product Category ID:",
-      productCategoryId,
+      "Validating Product Category Slug:",
+      productCategorySlug,
       "Expected:",
       categoryId
     );
-    return productCategoryId === categoryId;
+    return productCategorySlug === categoryId;
   }
-
   processProductData(rawProduct) {
     console.log("Raw Product Data:", JSON.stringify(rawProduct, null, 2));
     const allImages = Array.isArray(rawProduct.colors)
@@ -1078,17 +1077,28 @@ class ProductDetailManager {
     return processedProduct;
   }
 
-  processRelatedProducts(productTypes, currentTypeSlug, expectedCategoryId) {
+  processRelatedProducts(productTypes, currentTypeSlug, expectedCategorySlug) {
     if (!Array.isArray(productTypes)) return [];
-
+    console.log(
+      "Processing Related Products:",
+      productTypes,
+      "Current Slug:",
+      currentTypeSlug,
+      "Expected Category Slug:",
+      expectedCategorySlug
+    );
     return productTypes
       .filter((type) => {
-        const productCategoryId = String(
-          type.category?.id || type.category_id || ""
-        ).trim();
+        const productCategorySlug = String(type.category?.slug || "").trim();
+        console.log(
+          "Comparing Product Category Slug:",
+          productCategorySlug,
+          "with Expected:",
+          expectedCategorySlug
+        );
         return (
           String(type.slug) !== String(currentTypeSlug) &&
-          productCategoryId === String(expectedCategoryId).trim()
+          productCategorySlug === String(expectedCategorySlug).trim()
         );
       })
       .map((type) => ({
@@ -1767,127 +1777,135 @@ class ProductDetailManager {
 
   renderRelatedProducts() {
     const params = new URLSearchParams(window.location.search);
-    const categoryId = params.get("category_id");
-    console.log("Related Products Category ID:", categoryId);
+    const categorySlug = params.get("category_slug");
+    console.log(
+      "Rendering Related Products:",
+      this.relatedProducts,
+      "Category Slug:",
+      categorySlug
+    );
     return `
-      <div class="mt-12 p-8">
-        <h2 class="text-2xl font-bold text-gray-800 mb-6 text-start">
-          <i class="fas fa-box-open mr-2"></i>
-          Related Products
-        </h2>
-        ${
-          this.relatedProducts.length
-            ? `
-              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                ${this.relatedProducts
-                  .map(
-                    (type) => `
-                    <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition duration-300 flex flex-col items-center">
-                      <div class="relative w-full h-48 sm:h-56 md:h-64 overflow-hidden">
-                        <img src="${type.cover_image_url}"
-                             alt="${type.name}"
-                             class="w-full h-full object-cover" />
-                        <div class="absolute top-2 right-2 flex space-x-2">
-                          ${
-                            type.colors.length
-                              ? `<span class="bg-white text-red-600 text-xs px-2 py-1 rounded-full shadow">${type.colors.length} Colors</span>`
-                              : ""
-                          }
-                          ${
-                            type.sizes.length
-                              ? `<span class="bg-white text-red-600 text-xs px-2 py-1 rounded-full shadow">${type.sizes.length} Sizes</span>`
-                              : ""
-                          }
-                        </div>
-                      </div>
-                      <div class="p-4 w-full text-start">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-2">${
-                          type.name.slice(0, 50) || ""
-                        }</h3>
-                        <div class="mb-4">
-                          ${
-                            type.colors.length
-                              ? `
-                              <div class="flex items-center mb-2">
-                                <span class="text-sm font-medium text-gray-700 mr-2">Colors:</span>
-                                <div class="flex flex-wrap items-center">
-                                  ${type.colors
-                                    .slice(0, 4)
-                                    .map(
-                                      (color) => `
-                                        <div class="w-4 h-4 rounded-full border border-gray-200 mr-1"
-                                             style="background-color: ${this.getColorHex(
-                                               color
-                                             )}"
-                                             title="${color}"></div>
-                                      `
-                                    )
-                                    .join("")}
-                                  ${
-                                    type.colors.length > 4
-                                      ? `<span class="text-xs text-red-600 ml-1">+${
-                                          type.colors.length - 4
-                                        }</span>`
-                                      : ""
-                                  }
-                                </div>
-                              </div>
-                            `
-                              : ""
-                          }
-                          ${
-                            type.sizes.length
-                              ? `
-                              <div class="flex items-center flex-wrap">
-                                <span class="text-sm font-medium text-gray-700 mr-2">Sizes:</span>
-                                <div class="flex flex-wrap">
-                                  ${type.sizes
-                                    .slice(0, 3)
-                                    .map(
-                                      (size) => `
-                                        <span class="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded mr-1 mb-1">${size}</span>
-                                      `
-                                    )
-                                    .join("")}
-                                  ${
-                                    type.sizes.length > 3
-                                      ? `<span class="text-xs text-red-600 ml-1">+${
-                                          type.sizes.length - 3
-                                        }</span>`
-                                      : ""
-                                  }
-                                </div>
-                              </div>
-                            `
-                              : ""
-                          }
-                        </div>
-                        <a href="type-detail?slug=${
-                          type.slug
-                        }&category_id=${categoryId}"
-                           class="flex items-center justify-center bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg transition w-full text-sm">
-                          <span>View Details</span>
-                          <i class="fas fa-arrow-right ml-2"></i>
-                        </a>
+    <div class="mt-12 p-8">
+      <h2 class="text-2xl font-bold text-gray-800 mb-6 text-start">
+        <i class="fas fa-box-open mr-2"></i>
+        Related Products
+      </h2>
+      ${
+        this.relatedProducts.length
+          ? `
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              ${this.relatedProducts
+                .map(
+                  (type) => `
+                  <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition duration-300 flex flex-col items-center">
+                    <div class="relative w-full h-48 sm:h-56 md:h-64 overflow-hidden">
+                      <img src="${
+                        type.cover_image_url ||
+                        "https://via.placeholder.com/300"
+                      }"
+                           alt="${type.name}"
+                           class="w-full h-full object-cover" />
+                      <div class="absolute top-2 right-2 flex space-x-2">
+                        ${
+                          type.colors.length
+                            ? `<span class="bg-white text-red-600 text-xs px-2 py-1 rounded-full shadow">${type.colors.length} Colors</span>`
+                            : ""
+                        }
+                        ${
+                          type.sizes.length
+                            ? `<span class="bg-white text-red-600 text-xs px-2 py-1 rounded-full shadow">${type.sizes.length} Sizes</span>`
+                            : ""
+                        }
                       </div>
                     </div>
-                  `
-                  )
-                  .join("")}
+                    <div class="p-4 w-full text-start">
+                      <h3 class="text-lg font-semibold text-gray-800 mb-2">${
+                        type.name.slice(0, 50) || ""
+                      }</h3>
+                      <div class="mb-4">
+                        ${
+                          type.colors.length
+                            ? `
+                            <div class="flex items-center mb-2">
+                              <span class="text-sm font-medium text-gray-700 mr-2">Colors:</span>
+                              <div class="flex flex-wrap items-center">
+                                ${type.colors
+                                  .slice(0, 4)
+                                  .map(
+                                    (color) => `
+                                      <div class="w-4 h-4 rounded-full border border-gray-200 mr-1"
+                                           style="background-color: ${this.getColorHex(
+                                             color
+                                           )}"
+                                           title="${color}"></div>
+                                    `
+                                  )
+                                  .join("")}
+                                ${
+                                  type.colors.length > 4
+                                    ? `<span class="text-xs text-red-600 ml-1">+${
+                                        type.colors.length - 4
+                                      }</span>`
+                                    : ""
+                                }
+                              </div>
+                            </div>
+                          `
+                            : ""
+                        }
+                        ${
+                          type.sizes.length
+                            ? `
+                            <div class="flex items-center flex-wrap">
+                              <span class="text-sm font-medium text-gray-700 mr-2">Sizes:</span>
+                              <div class="flex flex-wrap">
+                                ${type.sizes
+                                  .slice(0, 3)
+                                  .map(
+                                    (size) => `
+                                      <span class="text-xs bg-gray-100 text-gray-800 px-2 py-1 rounded mr-1 mb-1">${size}</span>
+                                    `
+                                  )
+                                  .join("")}
+                                ${
+                                  type.sizes.length > 3
+                                    ? `<span class="text-xs text-red-600 ml-1">+${
+                                        type.sizes.length - 3
+                                      }</span>`
+                                    : ""
+                                }
+                              </div>
+                            </div>
+                          `
+                            : ""
+                        }
+                      </div>
+                      <a href="type-detail?slug=${
+                        type.slug
+                      }&category_slug=${categorySlug}"
+                         class="flex items-center justify-center bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg transition w-full text-sm">
+                        <span>View Details</span>
+                        <i class="fas fa-arrow-right ml-2"></i>
+                      </a>
+                    </div>
+                  </div>
+                `
+                )
+                .join("")}
+            </div>
+          `
+          : `
+            <div class="text-center py-12">
+              <div class="text-blue-500 text-5xl mb-4">
+                <i class="fas fa-box-open"></i>
               </div>
-            `
-            : `
-              <div class="text-center py-12">
-                <div class="text-blue-500 text-5xl mb-4">
-                  <i class="fas fa-box-open"></i>
-                </div>
-                <h3 class="text-2xl font-bold text-blue-800 mb-2">No Related Products</h3>
-                <p class="text-gray-600">Check back later for more products in this category.</p>
-              </div>
-            `
-        }
-      </div>
-    `;
+              <h3 class="text-2xl font-bold text-blue-800 mb-2">No Related Products</h3>
+              <p class="text-gray-600">Check back later for more products in this category.</p>
+            </div>
+          `
+      }
+    </div>
+  `;
   }
 
   setupImageGallery() {
@@ -2176,6 +2194,7 @@ class ProductDetailManager {
 
 document.addEventListener("DOMContentLoaded", () => {
   new ProductDetailManager();
+  new ProductDetailManager().fetchProductDetail();
 });
 
 if (typeof module !== "undefined" && module.exports) {
@@ -2184,9 +2203,9 @@ if (typeof module !== "undefined" && module.exports) {
 
 async function fetchProductForUpdate() {
   const params = new URLSearchParams(window.location.search);
-  const categoryId = params.get("slug");
+  const categorySlug = params.get("slug");
 
-  if (!categoryId) {
+  if (!categorySlug) {
     alert("Category not found!");
     return;
   }
@@ -2200,7 +2219,7 @@ async function fetchProductForUpdate() {
     }
 
     const response = await fetch(
-      `https://api.vybtek.com/api/manuplast/categories/${categoryId}`,
+      `http://192.168.0.105:5000/api/manuplast/categories/${categorySlug}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -2234,7 +2253,7 @@ document
       return;
     }
 
-    const productIdInput = document.getElementById("product-id");
+    const productIdInput = document.getElementById("id");
     const nameInput = document.getElementById("name");
     const slugInput = document.getElementById("slug");
     const imageInput = document.getElementById("image");
@@ -2315,9 +2334,9 @@ document
       formData.append("image", image);
 
       const categoryResponse = await fetch(
-        `https://api.vybtek.com/api/manuplast/categories/${categoryId}`,
+        `http://192.168.0.105:5000/api/manuplast/categories/${categoryId}`,
         {
-          method: "PUT",
+          method: "PATCH",
           headers: {
             Authorization: `Bearer ${token}`,
             "X-CSRF-Token": csrfToken,
@@ -2346,7 +2365,7 @@ document
         }
 
         const typeResponse = await fetch(
-          `https://api.vybtek.com/api/manuplast/producttypes`,
+          `http://192.168.0.105:5000/api/manuplast/producttypes`,
           {
             method: "POST",
             headers: {
@@ -2374,7 +2393,7 @@ document
           imageForm.append("producttype_id", typeId);
           imageForm.append("image", image);
           const imgResponse = await fetch(
-            `https://api.vybtek.com/api/manuplast/producttypeimages`,
+            `http://192.168.0.105:5000/api/manuplast/producttypeimages`,
             {
               method: "POST",
               headers: {
@@ -2393,7 +2412,7 @@ document
 
         for (const size of type.sizes) {
           const sizeResponse = await fetch(
-            `https://api.vybtek.com/api/manuplast/producttypesizes`,
+            `http://192.168.0.105:5000/api/manuplast/producttypesizes`,
             {
               method: "POST",
               headers: {
@@ -2414,7 +2433,7 @@ document
 
         for (const color of type.colors) {
           const colorResponse = await fetch(
-            `https://api.vybtek.com/api/manuplast/producttypecolors`,
+            `http://192.168.0.105:5000/api/manuplast/producttypecolors`,
             {
               method: "POST",
               headers: {
@@ -2473,7 +2492,7 @@ document
 
     try {
       const response = await fetch(
-        "https://api.vybtek.com/api/manuplast/categories",
+        "http://192.168.0.105:5000/api/manuplast/categories",
         {
           method: "POST",
           headers: {
@@ -2553,7 +2572,7 @@ document
 
     try {
       const response = await fetch(
-        `https://api.vybtek.com/api/manuplast/categories/${categoryId}`,
+        `http://192.168.0.105:5000/api/manuplast/categories/${categoryId}`,
         {
           method: "PATCH",
           headers: {

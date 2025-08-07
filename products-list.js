@@ -1,9 +1,10 @@
-const API_BASE_URL = "https://api.vybtek.com/api/manuplast";
+const API_BASE_URL = "http://192.168.0.105:5000/api/manuplast";
 
 // Load SortableJS from CDN
 const script = document.createElement("script");
 script.src = "https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js";
 script.onload = initializeSortable;
+script.onerror = () => console.error("Failed to load SortableJS");
 document.head.appendChild(script);
 
 let sortableInstances = new WeakMap();
@@ -90,7 +91,6 @@ const closeProductDetailsModalBtn = document.getElementById(
   "close-product-details-modal"
 );
 const detailProductName = document.getElementById("detail-product-name");
-const detailProductSlug = document.getElementById("detail-product-slug");
 const detailProductCategory = document.getElementById(
   "detail-product-category"
 );
@@ -135,6 +135,10 @@ const generateUniqueId = () =>
   `input-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
 
 function createCoverImagePreview(container, file = null, existingUrl = null) {
+  if (!container) {
+    console.error("Cover image preview container not found");
+    return;
+  }
   container.innerHTML = "";
   if (existingUrl || file) {
     const previewItem = document.createElement("div");
@@ -165,9 +169,15 @@ function createCoverImagePreview(container, file = null, existingUrl = null) {
     removeBtn.innerHTML = '<i class="fas fa-times"></i>';
     removeBtn.addEventListener("click", () => {
       previewItem.remove();
-      if (container.id === "add-cover-image-preview") {
+      if (
+        container.id === "add-cover-image-preview" &&
+        addProductCoverImageInput
+      ) {
         addProductCoverImageInput.value = "";
-      } else if (container.id === "update-cover-image-preview") {
+      } else if (
+        container.id === "update-cover-image-preview" &&
+        updateProductCoverImageInput
+      ) {
         updateProductCoverImageInput.value = "";
       }
     });
@@ -412,6 +422,10 @@ function collectFormData(containerIdPrefix) {
       const value = input.value.trim();
       if (value) features.push(value);
     });
+  } else {
+    console.warn(
+      `Features container ${containerIdPrefix}-features-container not found`
+    );
   }
 
   const specsContainer = document.getElementById(
@@ -436,6 +450,10 @@ function collectFormData(containerIdPrefix) {
           specifications.push(spec);
         }
       });
+  } else {
+    console.warn(
+      `Specifications container ${containerIdPrefix}-specifications-container not found`
+    );
   }
 
   return { features, specifications };
@@ -476,7 +494,7 @@ async function populateCategories(selectElement, selectedCategoryId = null) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     allCategories = await response.json();
-    console.log("Categories loaded:", allCategories); // Debugging
+    console.log("Categories loaded:", allCategories);
     selectElement.innerHTML =
       '<option value="" disabled selected>Select Category</option>';
 
@@ -512,7 +530,7 @@ async function populateCategoryFilter() {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     allCategories = await response.json();
-    console.log("Categories for filter loaded:", allCategories); // Debugging
+    console.log("Categories for filter loaded:", allCategories);
     categoryFilterSelect.innerHTML = '<option value="">All Categories</option>';
 
     allCategories.forEach((category) => {
@@ -522,7 +540,6 @@ async function populateCategoryFilter() {
       categoryFilterSelect.appendChild(option);
     });
 
-    // Trigger initial load with the default (empty) category
     loadProducts(categoryFilterSelect.value);
   } catch (error) {
     console.error("Error loading categories for filter:", error);
@@ -542,9 +559,10 @@ async function loadProducts(categoryId = "") {
     <p class="text-center text-gray-600 mt-4">Loading products...</p>
   `;
   try {
-    // Always fetch all products and filter client-side if necessary
-    const url = `${API_BASE_URL}/producttypes`;
-    console.log("Fetching products from:", url, "with categoryId:", categoryId);
+    const url = `${API_BASE_URL}/producttypes${
+      categoryId ? `?category_id=${categoryId}` : ""
+    }`;
+    console.log("Fetching products from:", url);
     const response = await fetch(url, {
       headers: {
         Authorization: `Bearer ${
@@ -560,16 +578,6 @@ async function loadProducts(categoryId = "") {
     }
     let products = await response.json();
     console.log("Products received:", products);
-
-    // Client-side filtering if categoryId is provided
-    if (categoryId) {
-      products = products.filter(
-        (product) =>
-          product.category_id === categoryId ||
-          (product.category && product.category.id === categoryId)
-      );
-      console.log("Filtered products for category", categoryId, ":", products);
-    }
 
     dashboardProductsList.innerHTML = "";
 
@@ -619,12 +627,12 @@ function createProductCard(product) {
   }
 
   const sizesText =
-    product.sizes && product.sizes.length > 0
+    product.sizes && Array.isArray(product.sizes) && product.sizes.length > 0
       ? product.sizes.map((s) => s.size).join(", ")
       : "N/A";
 
   const colorsText =
-    product.colors && product.colors.length > 0
+    product.colors && Array.isArray(product.colors) && product.colors.length > 0
       ? product.colors.map((c) => c.color).join(", ")
       : "N/A";
 
@@ -634,11 +642,13 @@ function createProductCard(product) {
 
   card.innerHTML = `
     <img src="${mainImageUrl}" alt="${
-    product.name
+    product.name || "Product"
   }" class="w-24 h-24 object-cover rounded-lg flex-shrink-0" />
     <div class="flex-1 text-center sm:text-left">
-      <h3 class="text-xl font-semibold text-gray-800">${product.name}</h3>
-            <h3 class="text-xl font-semibold text-gray-800">${product.slug}</h3>
+      <h3 class="text-xl font-semibold text-gray-800">${
+        product.name || "N/A"
+      }</h3>
+      <p class="text-gray-600 text-sm">Slug: ${product.slug || "N/A"}</p>
       <p class="text-gray-600 text-sm">Category: ${
         product.category ? product.category.name : "N/A"
       }</p>
@@ -666,20 +676,40 @@ function createProductCard(product) {
     </div>
   `;
 
-  card
-    .querySelector(".view-btn")
-    .addEventListener("click", () => openProductDetailsModal(product));
-  card
-    .querySelector(".edit-btn")
-    .addEventListener("click", () => openUpdateProductModal(product.id));
-  card
-    .querySelector(".delete-btn")
-    .addEventListener("click", () => deleteProduct(product.id, product.name));
-  card
-    .querySelector(".toggle-status-btn")
-    .addEventListener("click", () =>
-      toggleProductStatus(product.id, product.status)
-    );
+  const viewBtn = card.querySelector(".view-btn");
+  const editBtn = card.querySelector(".edit-btn");
+  const deleteBtn = card.querySelector(".delete-btn");
+  const toggleStatusBtn = card.querySelector(".toggle-status-btn");
+
+  if (viewBtn) {
+    viewBtn.addEventListener("click", () => {
+      console.log("View button clicked for product:", product);
+      openProductDetailsModal(product);
+    });
+  }
+  if (editBtn) {
+    editBtn.addEventListener("click", () => {
+      console.log("Edit button clicked for slug:", product.slug);
+      openUpdateProductModal(product.slug);
+    });
+  }
+  if (deleteBtn) {
+    deleteBtn.addEventListener("click", () => {
+      console.log("Delete button clicked for product:", product.id);
+      deleteProduct(product.id, product.name);
+    });
+  }
+  if (toggleStatusBtn) {
+    toggleStatusBtn.addEventListener("click", () => {
+      console.log(
+        "Toggle status button clicked for product:",
+        product.id,
+        "current status:",
+        product.status
+      );
+      toggleProductStatus(product.id, product.status);
+    });
+  }
 
   return card;
 }
@@ -693,9 +723,26 @@ function initializeAddProductModal() {
     !addSpecificationsContainer ||
     !addProductCategorySelect ||
     !addProductCoverImageInput ||
-    !addCoverImagePreview
+    !addCoverImagePreview ||
+    !closeAddProductModalBtn ||
+    !addNewColorFieldBtn ||
+    !addNewFeatureBtn ||
+    !addNewSpecificationBtn
   ) {
-    console.error("One or more DOM elements for Add Product modal not found");
+    console.error("One or more DOM elements for Add Product modal not found", {
+      addProductBtn: !!addProductBtn,
+      addProductForm: !!addProductForm,
+      addColorImageInputsContainer: !!addColorImageInputsContainer,
+      addFeaturesContainer: !!addFeaturesContainer,
+      addSpecificationsContainer: !!addSpecificationsContainer,
+      addProductCategorySelect: !!addProductCategorySelect,
+      addProductCoverImageInput: !!addProductCoverImageInput,
+      addCoverImagePreview: !!addCoverImagePreview,
+      closeAddProductModalBtn: !!closeAddProductModalBtn,
+      addNewColorFieldBtn: !!addNewColorFieldBtn,
+      addNewFeatureBtn: !!addNewFeatureBtn,
+      addNewSpecificationBtn: !!addNewSpecificationBtn,
+    });
     return;
   }
   addProductBtn.addEventListener("click", () => {
@@ -773,8 +820,8 @@ function initializeAddProductModal() {
         JSON.stringify(
           sizesValue
             .split(",")
-            .map((s) => s.trim())
-            .filter((s) => s)
+            .map((s) => ({ size: s.trim() }))
+            .filter((s) => s.size)
         )
       );
     } else {
@@ -874,18 +921,18 @@ function initializeAddProductModal() {
 
 // Helper function to convert base64 to Blob
 function dataURLtoBlob(dataurl) {
-  const arr = dataurl.split(","),
-    mime = arr[0].match(/:(.*?);/)[1],
-    bstr = atob(arr[1]),
-    n = bstr.length,
-    u8arr = new Uint8Array(n);
+  const arr = dataurl.split(",");
+  const mime = arr[0].match(/:(.*?);/)[1];
+  const bstr = atob(arr[1]);
+  const n = bstr.length;
+  const u8arr = new Uint8Array(n);
   for (let i = 0; i < n; i++) {
     u8arr[i] = bstr.charCodeAt(i);
   }
   return new Blob([u8arr], { type: mime });
 }
 
-async function openUpdateProductModal(productId) {
+async function openUpdateProductModal(productSlug) {
   if (
     !updateProductIdInput ||
     !updateProductNameInput ||
@@ -901,20 +948,40 @@ async function openUpdateProductModal(productId) {
     !updateCoverImagePreview
   ) {
     console.error(
-      "One or more DOM elements for Update Product modal not found"
+      "One or more DOM elements for Update Product modal not found",
+      {
+        updateProductIdInput: !!updateProductIdInput,
+        updateProductNameInput: !!updateProductNameInput,
+        updateProductSlugInput: !!updateProductSlugInput,
+        updateProductDescriptionInput: !!updateProductDescriptionInput,
+        updateProductPriceInput: !!updateProductPriceInput,
+        updateProductCategorySelect: !!updateProductCategorySelect,
+        updateProductSizesInput: !!updateProductSizesInput,
+        updateColorImageInputsContainer: !!updateColorImageInputsContainer,
+        updateFeaturesContainer: !!updateFeaturesContainer,
+        updateSpecificationsContainer: !!updateSpecificationsContainer,
+        updateProductCoverImageInput: !!updateProductCoverImageInput,
+        updateCoverImagePreview: !!updateCoverImagePreview,
+      }
     );
     return;
   }
   try {
-    const response = await fetch(`${API_BASE_URL}/producttypes/${productId}`, {
-      headers: {
-        Authorization: `Bearer ${
-          localStorage.getItem("token") || "YOUR_TOKEN_HERE"
-        }`,
-      },
-    });
+    const response = await fetch(
+      `${API_BASE_URL}/producttypes/${productSlug}`,
+      {
+        headers: {
+          Authorization: `Bearer ${
+            localStorage.getItem("token") || "YOUR_TOKEN_HERE"
+          }`,
+        },
+      }
+    );
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const errorData = await response.json();
+      throw new Error(
+        errorData.message || `HTTP error! status: ${response.status}`
+      );
     }
     const product = await response.json();
     console.log("Product fetched for update:", product);
@@ -1009,7 +1076,16 @@ function initializeUpdateProductModal() {
     !updateCoverImagePreview
   ) {
     console.error(
-      "One or more DOM elements for Update Product modal not found"
+      "One or more DOM elements for Update Product modal not found",
+      {
+        closeUpdateProductModalBtn: !!closeUpdateProductModalBtn,
+        updateAddNewColorFieldBtn: !!updateAddNewColorFieldBtn,
+        updateAddNewFeatureBtn: !!updateAddNewFeatureBtn,
+        updateAddNewSpecificationBtn: !!updateAddNewSpecificationBtn,
+        updateProductForm: !!updateProductForm,
+        updateProductCoverImageInput: !!updateProductCoverImageInput,
+        updateCoverImagePreview: !!updateCoverImagePreview,
+      }
     );
     return;
   }
@@ -1076,8 +1152,8 @@ function initializeUpdateProductModal() {
         JSON.stringify(
           sizesValue
             .split(",")
-            .map((s) => s.trim())
-            .filter((s) => s)
+            .map((s) => ({ size: s.trim() }))
+            .filter((s) => s.size)
         )
       );
     } else {
@@ -1189,7 +1265,9 @@ function initializeUpdateProductModal() {
 async function deleteProduct(productId, productName) {
   if (
     !confirm(
-      `Are you sure you want to delete product "${productName}"? This action cannot be undone.`
+      `Are you sure you want to delete product "${
+        productName || "this product"
+      }"? This action cannot be undone.`
     )
   ) {
     return;
@@ -1211,7 +1289,7 @@ async function deleteProduct(productId, productName) {
       );
     }
 
-    alert(`Product "${productName}" deleted successfully!`);
+    alert(`Product "${productName || "Product"}" deleted successfully!`);
     loadProducts(categoryFilterSelect?.value || "");
   } catch (error) {
     console.error("Error deleting product:", error);
@@ -1262,10 +1340,11 @@ async function toggleProductStatus(productId, currentStatus) {
   }
 }
 
-function openProductDetailsModal(product) {
+async function openProductDetailsModal(product) {
+  console.log("Opening product details modal for:", product);
+
   if (
     !detailProductName ||
-    !detailProductSlug ||
     !detailProductCategory ||
     !detailProductPrice ||
     !detailProductDescription ||
@@ -1276,14 +1355,28 @@ function openProductDetailsModal(product) {
     !detailProductDetailedDescription
   ) {
     console.error(
-      "One or more DOM elements for Product Details modal not found"
+      "One or more DOM elements for Product Details modal not found",
+      {
+        detailProductName: !!detailProductName,
+        detailProductCategory: !!detailProductCategory,
+        detailProductPrice: !!detailProductPrice,
+        detailProductDescription: !!detailProductDescription,
+        detailProductStatus: !!detailProductStatus,
+        detailProductSizes: !!detailProductSizes,
+        detailProductColors: !!detailProductColors,
+        detailProductCoverImage: !!detailProductCoverImage,
+        detailProductDetailedDescription: !!detailProductDetailedDescription,
+      }
     );
     return;
   }
-  console.log("Product details:", product);
+
+  if (!productDetailsModal) {
+    console.error("Product details modal element not found");
+    return;
+  }
 
   detailProductName.textContent = product.name || "N/A";
-  detailProductSlug.textContent = product.slug || "N/A";
   detailProductCategory.textContent = product.category
     ? product.category.name
     : "N/A";
@@ -1318,7 +1411,9 @@ function openProductDetailsModal(product) {
     product.colors.forEach((color) => {
       const colorDiv = document.createElement("div");
       colorDiv.className = "bg-gray-100 p-2 rounded-md";
-      colorDiv.innerHTML = `<p class="font-semibold">${color.color}:</p>`;
+      colorDiv.innerHTML = `<p class="font-semibold">${
+        color.color || "N/A"
+      }:</p>`;
 
       if (
         color.images &&
@@ -1329,8 +1424,8 @@ function openProductDetailsModal(product) {
         imageContainer.className = "flex flex-wrap gap-2 mt-1";
         color.images.forEach((image) => {
           const imgElement = document.createElement("img");
-          imgElement.src = image.image_url;
-          imgElement.alt = `Image for ${color.color}`;
+          imgElement.src = image.image_url || "";
+          imgElement.alt = `Image for ${color.color || "color"}`;
           imgElement.className = "w-20 h-20 object-cover rounded-md shadow-sm";
           imageContainer.appendChild(imgElement);
         });
@@ -1415,16 +1510,24 @@ function openProductDetailsModal(product) {
 }
 
 function initializeProductDetailsModal() {
-  if (!closeProductDetailsModalBtn) {
-    console.error("Close button for Product Details modal not found");
+  if (!closeProductDetailsModalBtn || !productDetailsModal) {
+    console.error(
+      "One or more DOM elements for Product Details modal initialization not found",
+      {
+        closeProductDetailsModalBtn: !!closeProductDetailsModalBtn,
+        productDetailsModal: !!productDetailsModal,
+      }
+    );
     return;
   }
-  closeProductDetailsModalBtn.addEventListener("click", () =>
-    closeModal(productDetailsModal)
-  );
+  closeProductDetailsModalBtn.addEventListener("click", () => {
+    console.log("Closing product details modal");
+    closeModal(productDetailsModal);
+  });
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+  console.log("DOM fully loaded, initializing application");
   if (
     !addProductBtn ||
     !addProductForm ||
@@ -1432,7 +1535,13 @@ document.addEventListener("DOMContentLoaded", () => {
     !dashboardProductsList ||
     !categoryFilterSelect
   ) {
-    console.error("One or more critical DOM elements not found");
+    console.error("One or more critical DOM elements not found", {
+      addProductBtn: !!addProductBtn,
+      addProductForm: !!addProductForm,
+      updateProductForm: !!updateProductForm,
+      dashboardProductsList: !!dashboardProductsList,
+      categoryFilterSelect: !!categoryFilterSelect,
+    });
     alert("Error: Page not loaded correctly. Please refresh.");
     return;
   }
