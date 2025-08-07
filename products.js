@@ -16,7 +16,7 @@ async function fetchProducts(containerId = "product-grid", view = "default") {
     const token = localStorage.getItem("token");
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
     const response = await fetch(
-      "http://192.168.0.105:5000/api/manuplast/categories",
+      "https://api.vybtek.com/api/manuplast/categories",
       { headers }
     );
 
@@ -205,7 +205,7 @@ function openUpdateModal(slug) {
     return;
   }
 
-  fetch(`http://192.168.0.105:5000/api/manuplast/categories/${slug}`, {
+  fetch(`https://api.vybtek.com/api/manuplast/categories/${slug}`, {
     headers: { Authorization: `Bearer ${token}` },
   })
     .then((response) => {
@@ -362,7 +362,7 @@ async function deleteCategory(id) {
 
   try {
     const response = await fetch(
-      `http://192.168.0.105:5000/api/manuplast/categories/${id}`,
+      `https://api.vybtek.com/api/manuplast/categories/${id}`,
       {
         method: "DELETE",
         headers: {
@@ -396,7 +396,7 @@ async function toggleActive(categoryId, currentStatus) {
 
   try {
     const response = await fetch(
-      `http://192.168.0.105:5000/api/manuplast/categories/${categoryId}/status`,
+      `https://api.vybtek.com/api/manuplast/categories/${categoryId}/status`,
       {
         method: "PATCH",
         headers: {
@@ -545,7 +545,7 @@ async function fetchProductDetail() {
   try {
     const token = localStorage.getItem("token");
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
-    const API_BASE_URL = "http://192.168.0.105:5000/api/manuplast";
+    const API_BASE_URL = "https://api.vybtek.com/api/manuplast";
 
     // Fetch category
     const categoryResponse = await fetch(
@@ -923,7 +923,7 @@ class ProductDetailManager {
       const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
       const productResponse = await fetch(
-        `http://192.168.0.105:5000/api/manuplast/producttypes/${typeSlug}`,
+        `https://api.vybtek.com/api/manuplast/producttypes/${typeSlug}`,
         { headers, timeout: 5000 }
       );
       if (!productResponse.ok) {
@@ -943,7 +943,7 @@ class ProductDetailManager {
       }
 
       const relatedResponse = await fetch(
-        `http://192.168.0.105:5000/api/manuplast/producttypes?category_slug=${categorySlug}`,
+        `https://api.vybtek.com/api/manuplast/producttypes?category_slug=${categorySlug}`,
         { headers, timeout: 5000 }
       );
       if (!relatedResponse.ok) {
@@ -2219,7 +2219,7 @@ async function fetchProductForUpdate() {
     }
 
     const response = await fetch(
-      `http://192.168.0.105:5000/api/manuplast/categories/${categorySlug}`,
+      `https://api.vybtek.com/api/manuplast/categories/${categorySlug}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -2334,7 +2334,7 @@ document
       formData.append("image", image);
 
       const categoryResponse = await fetch(
-        `http://192.168.0.105:5000/api/manuplast/categories/${categoryId}`,
+        `https://api.vybtek.com/api/manuplast/categories/${categoryId}`,
         {
           method: "PATCH",
           headers: {
@@ -2365,7 +2365,7 @@ document
         }
 
         const typeResponse = await fetch(
-          `http://192.168.0.105:5000/api/manuplast/producttypes`,
+          `https://api.vybtek.com/api/manuplast/producttypes`,
           {
             method: "POST",
             headers: {
@@ -2393,7 +2393,7 @@ document
           imageForm.append("producttype_id", typeId);
           imageForm.append("image", image);
           const imgResponse = await fetch(
-            `http://192.168.0.105:5000/api/manuplast/producttypeimages`,
+            `https://api.vybtek.com/api/manuplast/producttypeimages`,
             {
               method: "POST",
               headers: {
@@ -2412,7 +2412,7 @@ document
 
         for (const size of type.sizes) {
           const sizeResponse = await fetch(
-            `http://192.168.0.105:5000/api/manuplast/producttypesizes`,
+            `https://api.vybtek.com/api/manuplast/producttypesizes`,
             {
               method: "POST",
               headers: {
@@ -2433,7 +2433,7 @@ document
 
         for (const color of type.colors) {
           const colorResponse = await fetch(
-            `http://192.168.0.105:5000/api/manuplast/producttypecolors`,
+            `https://api.vybtek.com/api/manuplast/producttypecolors`,
             {
               method: "POST",
               headers: {
@@ -2492,7 +2492,7 @@ document
 
     try {
       const response = await fetch(
-        "http://192.168.0.105:5000/api/manuplast/categories",
+        "https://api.vybtek.com/api/manuplast/categories",
         {
           method: "POST",
           headers: {
@@ -2572,7 +2572,7 @@ document
 
     try {
       const response = await fetch(
-        `http://192.168.0.105:5000/api/manuplast/categories/${categoryId}`,
+        `https://api.vybtek.com/api/manuplast/categories/${categoryId}`,
         {
           method: "PATCH",
           headers: {

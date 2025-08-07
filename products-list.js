@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://192.168.0.105:5000/api/manuplast";
+const API_BASE_URL = "https://api.vybtek.com/api/manuplast";
 
 // Load SortableJS from CDN
 const script = document.createElement("script");
